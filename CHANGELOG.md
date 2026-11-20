@@ -6,7 +6,7 @@ Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập
 
 - Mọi mục dùng chung logo Trieu's Note ở góc trên trái; bấm vào là về trang chủ (thay biểu tượng ô lưới).
 - Danh mục kỹ thuật: bộ lọc chỉ còn Tất cả / Phẫu thuật / Thủ thuật (bỏ chọn chương, tuyến A–D, "Có quy trình KT"); thẻ kết quả chỉ hiện tên, mã, lĩnh vực, tuyến, phân độ; tên tương đương TT15, giá, nút xem quy trình và các thông tin khác nằm trong "Chi tiết".
-- Danh mục kỹ thuật › Văn bản tham chiếu: mỗi văn bản có "Chi tiết" tóm tắt nội dung chính, ngày ký/hiệu lực, hiệu lực hiện nay (kiểm tra 20/11/2026: QĐ 4442/4883 đã bị QĐ 7435 thay thế; TT43/2013, TT21/2017 hết hiệu lực từ 18/10/2024; TT15/2018, TT02/2017 đã được thay thế) và link nguồn.
+- Danh mục kỹ thuật › Văn bản tham chiếu: mỗi văn bản có "Chi tiết" tóm tắt nội dung chính, ngày ký/hiệu lực, hiệu lực hiện nay (kiểm tra 20/11/2026: QĐ 4442/4883 đã bị QĐ 7435 thay thế; TT43/2013, TT21/2017 hết hiệu lực từ 18/10/2024; TT15/2018, TT02/2017 đã được thay thế) và link nguồn. Văn bản bị thay thế có thêm khối "Văn bản thay thế, sửa đổi": QĐ 7435; TT23/2024 và Thông tư sửa đổi năm 2026 (Phụ lục 01 dùng đến hết 31/12/2027, Phụ lục 02 từ 01/01/2028, mã theo chương TT43/TT21 vẫn là mã kỹ thuật, giữ phân loại TT50); TT39/2018 → TT22/2023 → TT21/2024 (giá BHYT); TT14/2019 → TT21/2023 → TT21/2024 (khung giá không BHYT). TT43 có tóm tắt 4 tuyến và nguyên tắc phân tuyến theo nguyên văn.
 - Danh mục kỹ thuật › Chi tiết từng kỹ thuật: mục "Giải thích theo văn bản" cho chính dòng đó: ý nghĩa tuyến (TT43), phân loại và định mức nhân lực tối đa mỗi ca theo chuyên khoa (TT50 Phụ lục 1), giá nào áp dụng khi có/không có BHYT, tỷ lệ thanh toán khi làm kèm.
 
 ## 2.1.0 – 20/11/2026

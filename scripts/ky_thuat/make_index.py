@@ -3,9 +3,9 @@ Phiên bản ?v= lấy theo style.css trong index.html gốc của Trieu's Note.
 import re, sys
 from pathlib import Path
 src, out = sys.argv[1], sys.argv[2]
-body = open(src, encoding='utf-8').read()
 root = Path(__file__).resolve().parents[2]  # webapp/
 v = re.search(r'style\.css\?v=([\w.-]+)', (root / 'index.html').read_text(encoding='utf-8')).group(1)
+body = open(src, encoding='utf-8').read().replace('__V__', v)  # logo.svg?v=__V__ trong template
 head = f'''<!doctype html>
 <html lang="vi">
 <head>

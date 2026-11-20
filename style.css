@@ -232,9 +232,9 @@ details.gvsec[open] > summary { margin-bottom: 10px; }
 .mktbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 4px 0 12px; }
 
 /* ===== Trieu's Note: nút về trang chủ, lưới app, Ghi chú ===== */
-h1 a.home { display: flex; color: var(--muted); padding: 4px; margin-left: -4px; border-radius: 6px; }
-h1 a.home:hover { color: var(--accent); background: var(--card); }
-h1 a.home svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+/* Logo góc trên trái = nút về trang chủ, dùng chung mọi mục */
+h1 a.home { display: flex; flex: none; padding: 2px; margin-left: -2px; border-radius: 6px; }
+h1 a.home:hover { background: var(--card); box-shadow: var(--shadow); }
 .apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 8px; }
 .appcard { display: flex; gap: 14px; align-items: flex-start; color: inherit; text-decoration: none; }
 .appcard:hover { border-color: var(--accent); }

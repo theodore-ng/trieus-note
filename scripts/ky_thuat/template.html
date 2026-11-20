@@ -25,9 +25,9 @@ header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; backg
 header .wrap { padding-block: 12px 10px; display: grid; gap: 10px; }
 .brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 h1 { margin: 0; font: 600 21px/1.25 var(--serif); letter-spacing: -0.01em; text-wrap: balance; display: flex; align-items: center; gap: 8px; }
-h1 a.home { display: flex; flex: none; color: var(--muted); padding: 4px; margin-left: -4px; border-radius: 6px; }
-h1 a.home:hover { color: var(--accent); background: var(--surface); }
-h1 a.home svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+h1 a.home { display: flex; flex: none; padding: 2px; margin-left: -2px; border-radius: 6px; }
+h1 a.home:hover { background: var(--surface); box-shadow: var(--shadow); }
+h1 .logo { width: 30px; height: 30px; image-rendering: pixelated; display: block; }
 .src { font-size: 12px; color: var(--muted); white-space: nowrap; }
 .search { position: relative; }
 .search input { width: 100%; font: 500 16px var(--sans); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 40px 11px 14px; }
@@ -62,6 +62,8 @@ mark { background: var(--mark); color: var(--mark-ink); border-radius: 3px; padd
 .pr { background: var(--bg); border-radius: 8px; padding: 6px 8px; min-width: 0; }
 .pr small { display: block; font-size: 10.5px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
 .pr strong { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.card details[open] { display: grid; gap: 8px; }
+.card details[open] > summary { margin-bottom: 0; }
 details summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); list-style: none; padding-top: 2px; }
 details summary::-webkit-details-marker { display: none; }
 details summary::before { content: "▸ "; }
@@ -126,13 +128,22 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
 .jump button { font: 600 13px var(--sans); color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
 .grp { margin: 20px 0 8px; font: 600 18px var(--serif); display: flex; align-items: baseline; gap: 8px; scroll-margin-top: 72px; }
 .grp span { font-size: 12.5px; font-weight: 500; color: var(--muted); }
+.why { font-size: 13.5px; line-height: 1.55; background: var(--bg); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 8px 12px; }
+.why h4 { margin: 0 0 4px; font-size: 11.5px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.why p { margin: 4px 0; overflow-wrap: anywhere; }
+.refd summary { margin-top: 6px; font-size: 12.5px; }
+.refd ul { margin: 6px 0 0; padding-left: 18px; font-size: 13.5px; line-height: 1.55; }
+.refd li { margin: 3px 0; }
+.refd .st { margin: 8px 0 0; font-size: 13.5px; color: var(--ink); }
+.refd .srcs { margin: 4px 0 0; font-size: 12.5px; }
+.refd a { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
 </style>
 
 <header>
   <div class="wrap">
     <div class="brand">
-      <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg></a>Tra cứu danh mục kỹ thuật tương đương</h1>
+      <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=__V__" alt="Trieu's Note"></a>Tra cứu danh mục kỹ thuật tương đương</h1>
       <span class="src">QĐ 4442 · 4883</span>
     </div>
     <div class="search">
@@ -140,19 +151,11 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
       <button id="clear" type="button" aria-label="Xóa từ khóa" hidden>×</button>
     </div>
     <div class="filters">
-      <select id="chap" aria-label="Chương"><option value="">Tất cả chương</option></select>
       <div class="chips" id="kind" role="group" aria-label="Loại">
         <button class="chip" type="button" data-v="" aria-pressed="true">Tất cả</button>
         <button class="chip" type="button" data-v="P" aria-pressed="false">Phẫu thuật</button>
         <button class="chip" type="button" data-v="T" aria-pressed="false">Thủ thuật</button>
       </div>
-      <div class="chips" id="tuyen" role="group" aria-label="Phân tuyến">
-        <button class="chip" type="button" data-v="A" aria-pressed="false">A</button>
-        <button class="chip" type="button" data-v="B" aria-pressed="false">B</button>
-        <button class="chip" type="button" data-v="C" aria-pressed="false">C</button>
-        <button class="chip" type="button" data-v="D" aria-pressed="false">D</button>
-      </div>
-      <button class="chip qt" id="onlyqt" type="button" aria-pressed="false">Có quy trình KT</button>
       <button class="linkbtn" id="opentoc" type="button">Danh sách quy trình khoa</button>
     </div>
   </div>
@@ -168,18 +171,18 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
       <p class="hint">Gõ tên kỹ thuật hoặc mã vào ô tìm kiếm, hoặc chọn bộ lọc để xem kết quả. Tìm không phân biệt dấu: gõ “dat catheter” vẫn ra “Đặt catheter”.</p>
       <h2>Văn bản tham chiếu</h2>
       <ol class="refs">
-        <li><b>Quyết định 4442/QĐ-BYT</b> <span class="d">13/07/2018</span><p>Bộ Y tế phê duyệt danh mục kỹ thuật tương đương: đối chiếu từng kỹ thuật theo TT43, TT50, TT21 với tên dịch vụ và mức giá trong TT15/2018 để làm căn cứ thanh toán BHYT. Là nguồn chính của phụ lục.</p></li>
-        <li><b>Quyết định 4883/QĐ-BYT</b> <span class="d">08/08/2018</span><p>Sửa đổi, bổ sung danh mục tương đương của QĐ 4442: thêm một số kỹ thuật và hủy một số dòng (trong phụ lục ghi “đã hủy QĐ 4883”).</p></li>
-        <li><b>Thông tư 43/2013/TT-BYT</b><p>Quy định chi tiết phân tuyến chuyên môn kỹ thuật trong hệ thống khám bệnh, chữa bệnh. Nguồn của mã kỹ thuật và cột phân tuyến A–D.</p></li>
-        <li><b>Thông tư 50/2014/TT-BYT</b><p>Phân loại phẫu thuật, thủ thuật và định mức nhân lực. Nguồn của cột phân loại (PĐB, P1–P3, TĐB, T1–T3).</p></li>
-        <li><b>Thông tư 21/2017/TT-BYT</b><p>Sửa đổi, bổ sung danh mục kỹ thuật ban hành kèm TT43/2013.</p></li>
-        <li><b>Thông tư 15/2018/TT-BYT</b><p>Quy định thống nhất giá dịch vụ khám bệnh, chữa bệnh BHYT giữa các bệnh viện cùng hạng trên toàn quốc. Cột “Giá TT15” và “Tương đương TT15”.</p></li>
-        <li><b>Thông tư 37/2018/TT-BYT</b><p>Mức tối đa khung giá dịch vụ khám bệnh, chữa bệnh không thuộc phạm vi quỹ BHYT chi trả tại cơ sở nhà nước. Cột giá TT37 không lương và có lương.</p></li>
-        <li><b>Thông tư 02/2017/TT-BYT</b><p>Văn bản về khung giá dịch vụ không thuộc phạm vi BHYT, ban hành trước TT37/2018. Cột “Giá TT02”.</p></li>
+        <li><b>Quyết định 4442/QĐ-BYT</b> <span class="d">13/07/2018</span><p>Bộ Y tế phê duyệt danh mục kỹ thuật tương đương: đối chiếu từng kỹ thuật theo TT43, TT50, TT21 với tên dịch vụ và mức giá trong TT15/2018 để làm căn cứ thanh toán BHYT. Là nguồn chính của phụ lục.</p><details class="refd"><summary>Chi tiết</summary><ul><li>Tên đầy đủ: ban hành danh mục các dịch vụ kỹ thuật khám bệnh, chữa bệnh được xếp tương đương về kỹ thuật và chi phí thực hiện theo TT15/2018. Ký 13/07/2018 (Thứ trưởng Nguyễn Viết Tiến), hiệu lực từ ngày ký.</li><li>Là danh mục tương đương “đợt 4”: đối chiếu kỹ thuật theo TT43/2013, TT50/2014, TT21/2017 với dịch vụ đã có giá trong TT15/2018, làm cơ sở thanh toán chi phí khám chữa bệnh.</li><li>Phụ lục 01 thống nhất tên dịch vụ tương đương; Phụ lục 02 bổ sung mã giá mới để liên thông dữ liệu thanh toán BHYT (cột “Mã giá liên thông BHYT”).</li><li>Thay thế các QĐ tương đương năm 2016: 803, 984, 1016, 1724, 3025/QĐ-BYT.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> đã bị thay thế bởi <b>QĐ 7435/QĐ-BYT</b> (ký 14/12/2018, hiệu lực 15/12/2018): xếp tương đương theo giá TT39/2018, kế thừa danh mục cũ, đổi tên và hủy một số mã. Dữ liệu trong trang này vẫn là bản 4442/4883.</p><p class="srcs">Nguồn: <a href="https://luatvietnam.vn/y-te/quyet-dinh-4442-qd-byt-2018-danh-muc-cac-dich-vu-ky-thuat-kham-chua-benh-165218-d1.html" target="_blank" rel="noopener">luatvietnam (QĐ 4442)</a> · <a href="https://luatvietnam.vn/y-te/quyet-dinh-7435-qd-byt-229023-d1.html" target="_blank" rel="noopener">luatvietnam (QĐ 7435)</a></p></details></li>
+        <li><b>Quyết định 4883/QĐ-BYT</b> <span class="d">08/08/2018</span><p>Sửa đổi, bổ sung danh mục tương đương của QĐ 4442: thêm một số kỹ thuật và hủy một số dòng (trong phụ lục ghi “đã hủy QĐ 4883”).</p><details class="refd"><summary>Chi tiết</summary><ul><li>Ngày 08/08/2018. Bổ sung 256 dịch vụ tương đương (đã có trong danh mục tương đương theo TTLT 37/2015 nhưng chưa có trong QĐ 4442).</li><li>Hủy 09 mã tương đương không phù hợp và đính chính lỗi chính tả ở Phụ lục 1 của QĐ 4442 (trong phụ lục ghi “đã hủy QĐ 4883”).</li><li>Chưa đọc được nguyên văn; nội dung theo QĐ 7435 và trang tóm tắt văn bản.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> đã bị thay thế bởi QĐ 7435/QĐ-BYT từ 15/12/2018.</p><p class="srcs">Nguồn: <a href="https://luatvietnam.vn/tin-van-ban-moi/bo-sung-256-dich-vu-ky-thuat-kham-chua-benh-bhyt-186-17268-article.html" target="_blank" rel="noopener">luatvietnam (tin văn bản)</a> · <a href="https://luatvietnam.vn/y-te/quyet-dinh-7435-qd-byt-229023-d1.html" target="_blank" rel="noopener">luatvietnam (QĐ 7435)</a></p></details></li>
+        <li><b>Thông tư 43/2013/TT-BYT</b><p>Quy định chi tiết phân tuyến chuyên môn kỹ thuật trong hệ thống khám bệnh, chữa bệnh. Nguồn của mã kỹ thuật và cột phân tuyến A–D.</p><details class="refd"><summary>Chi tiết</summary><ul><li>Ngày 11/12/2013. Quy định chi tiết phân tuyến chuyên môn kỹ thuật đối với hệ thống cơ sở khám bệnh, chữa bệnh, kèm danh mục kỹ thuật theo chuyên khoa.</li><li>Trong danh mục, mỗi kỹ thuật được đánh dấu theo tuyến: A – trung ương, B – tỉnh, C – huyện, D – xã (cột “Tuyến” trong trang này).</li><li>Chưa đọc được nguyên văn (trang văn bản gốc không truy cập được); nội dung chi tiết về nguyên tắc phân tuyến cần đối chiếu văn bản gốc.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> <b>hết hiệu lực từ 18/10/2024</b>, bãi bỏ bởi Điều 3 TT23/2024/TT-BYT (danh mục kỹ thuật mới). TT23/2024 có Phụ lục 01 (theo chuyên khoa) áp dụng đến 30/06/2026 và Phụ lục 02 (theo hệ cơ quan, cấu trúc giải phẫu) áp dụng từ 01/07/2026; cơ sở đã có giấy phép được tiếp tục các kỹ thuật đã phê duyệt đến 30/06/2026.</p><p class="srcs">Nguồn: <a href="https://caselaw.vn/van-ban-phap-luat/413187-thong-tu-so-23-2024-tt-byt-ngay-18-10-2024-cua-bo-truong-bo-y-te-ve-danh-muc-ky-thuat-trong-kham-benh-chua-benh" target="_blank" rel="noopener">caselaw (TT23/2024)</a></p></details></li>
+        <li><b>Thông tư 50/2014/TT-BYT</b><p>Phân loại phẫu thuật, thủ thuật và định mức nhân lực. Nguồn của cột phân loại (PĐB, P1–P3, TĐB, T1–T3).</p><details class="refd"><summary>Chi tiết</summary><ul><li>Ký 26/12/2014 (Thứ trưởng Nguyễn Thị Xuyên), hiệu lực 15/02/2015; thay QĐ 1904/1998 và QĐ 2590/2004.</li><li>Phân loại phẫu thuật, thủ thuật của 26 chuyên khoa thành loại đặc biệt, I, II, III theo 5 tiêu chí: độ khó và phức tạp, mức nguy hiểm đến tính mạng, phương tiện, số người tham gia, thời gian thực hiện.</li><li>Loại đặc biệt: rất phức tạp, rất nguy hiểm, phần lớn ở tuyến trung ương, 3–4 giờ trở lên. Loại I: khá phức tạp, nguy hiểm, phần lớn ở trung ương và tỉnh, 2–3 giờ. Loại II: ít nguy hiểm hơn loại I, chủ yếu trung ương, tỉnh và một số cơ sở tuyến huyện, 1–3 giờ. Loại III: ít nguy hiểm hơn loại II, chủ yếu tuyến huyện, 1–2 giờ.</li><li>Phụ lục 1: định mức nhân lực tối đa mỗi ca theo chuyên khoa và loại; ca khó (ghép tạng, tim hở…) thủ trưởng cơ sở quyết định vượt định mức.</li><li>Danh mục là căn cứ chi phụ cấp phẫu thuật, thủ thuật theo QĐ 73/2011/QĐ-TTg.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> các trang tra cứu ghi còn hiệu lực; TT23/2024 (Điều 4) giữ mức phân loại theo TT50/2014 cho kỹ thuật thuộc Phụ lục 01.</p><p class="srcs">Nguồn: <a href="https://luatvietnam.vn/y-te/thong-tu-50-2014-tt-byt-bo-y-te-92154-d1.html" target="_blank" rel="noopener">luatvietnam</a> · <a href="https://caselaw.vn/van-ban-phap-luat/264179-thong-tu-50-2014-tt-byt-quy-dinh-viec-phan-loai-phau-thuat-thu-thuat-va-dinh-muc-nhan-luc-trong-tung-ca-phau-thuat-thu-thuat-do-bo-y-te-ban-hanh" target="_blank" rel="noopener">caselaw</a> · <a href="https://caselaw.vn/van-ban-phap-luat/413187-thong-tu-so-23-2024-tt-byt-ngay-18-10-2024-cua-bo-truong-bo-y-te-ve-danh-muc-ky-thuat-trong-kham-benh-chua-benh" target="_blank" rel="noopener">TT23/2024</a></p></details></li>
+        <li><b>Thông tư 21/2017/TT-BYT</b><p>Sửa đổi, bổ sung danh mục kỹ thuật ban hành kèm TT43/2013.</p><details class="refd"><summary>Chi tiết</summary><ul><li>Ký 10/05/2017 (Thứ trưởng Nguyễn Viết Tiến), hiệu lực 25/06/2017.</li><li>Sửa đổi, bổ sung danh mục kỹ thuật kèm TT43/2013: bổ sung kỹ thuật của 25 chuyên khoa, đánh số tiếp theo danh mục cũ.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> <b>hết hiệu lực từ 18/10/2024</b>, bãi bỏ bởi TT23/2024/TT-BYT.</p><p class="srcs">Nguồn: <a href="https://luatvietnam.vn/y-te/thong-tu-21-2017-tt-byt-bo-y-te-114423-d1.html" target="_blank" rel="noopener">luatvietnam</a> · <a href="https://caselaw.vn/van-ban-phap-luat/413187-thong-tu-so-23-2024-tt-byt-ngay-18-10-2024-cua-bo-truong-bo-y-te-ve-danh-muc-ky-thuat-trong-kham-benh-chua-benh" target="_blank" rel="noopener">TT23/2024</a></p></details></li>
+        <li><b>Thông tư 15/2018/TT-BYT</b><p>Quy định thống nhất giá dịch vụ khám bệnh, chữa bệnh BHYT giữa các bệnh viện cùng hạng trên toàn quốc. Cột “Giá TT15” và “Tương đương TT15”.</p><details class="refd"><summary>Chi tiết</summary><ul><li>Ký 30/05/2018 (Thứ trưởng Phạm Lê Tuấn), hiệu lực 15/07/2018; thay TTLT 37/2015.</li><li>Giá dịch vụ BHYT thống nhất giữa các bệnh viện cùng hạng, gồm chi phí trực tiếp và tiền lương (không gồm các khoản ngân sách nhà nước bảo đảm). Phụ lục: I khám, II ngày giường, III kỹ thuật và xét nghiệm, IV ghi chú.</li><li>Bệnh viện áp giá theo hạng tương đương; cơ sở chưa phân hạng, phòng khám tư nhân theo hạng IV; trạm y tế xã theo giá trạm y tế xã.</li><li>Một số quy tắc: từ lần khám thứ 2 trong cùng lần đến chỉ tính 30% (tối đa 2 lần giá); bàn khám trên 65 lượt/ngày thanh toán 50% từ lượt 66; can thiệp phát sinh trong cùng lần phẫu thuật tính 50% (cùng kíp) hoặc 80% (đổi kíp), thủ thuật phát sinh 80%.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> đã được thay bằng TT39/2018/TT-BYT, sau đó TT22/2023/TT-BYT (hiệu lực 17/11/2023, TT39/2018 và TT13/2019 hết hiệu lực); TT21/2024/TT-BYT (17/10/2024) quy định phương pháp định giá. Giá trong trang này là giá năm 2018, không phải giá hiện hành.</p><p class="srcs">Nguồn: <a href="https://vanban.vcci.com.vn/thong-tu-152018tt-byt-quy-dinh-ve-thong-nhat-gia-dich-vu-kham-benh-chua-benh-bao-hiem-y-te-giua-cac-benh-vien-cung-hang-tren-toan-quoc-va-huong-dan-ap-dung-gia-thanh-toan-chi-phi-kham-benh-chua-benh-trong-mot-so-truong-hop-do-bo-truong-bo-y-te-ban-hanh" target="_blank" rel="noopener">VCCI (TT15/2018)</a> · <a href="https://luatvietnam.vn/y-te/thong-tu-22-2023-tt-byt-gia-kham-benh-chua-benh-bhyt-benh-vien-cung-hang-277331-d1.html" target="_blank" rel="noopener">luatvietnam (TT22/2023)</a> · <a href="https://luatvietnam.vn/y-te/thong-tu-21-2024-tt-byt-quy-dinh-phuong-phap-dinh-gia-dich-vu-kham-chua-benh-368473-d1.html" target="_blank" rel="noopener">luatvietnam (TT21/2024)</a></p></details></li>
+        <li><b>Thông tư 37/2018/TT-BYT</b><p>Mức tối đa khung giá dịch vụ khám bệnh, chữa bệnh không thuộc phạm vi quỹ BHYT chi trả tại cơ sở nhà nước. Cột giá TT37 không lương và có lương.</p><details class="refd"><summary>Chi tiết</summary><ul><li>Ký 30/11/2018 (Thứ trưởng Nguyễn Trường Sơn), hiệu lực 15/01/2019.</li><li>Mức tối đa khung giá dịch vụ khám chữa bệnh không thuộc phạm vi thanh toán của quỹ BHYT tại cơ sở nhà nước. HĐND tỉnh quyết định giá cụ thể trong khung; Bộ trưởng Bộ Y tế quyết định với bệnh viện hạng đặc biệt và hạng I thuộc Bộ.</li><li>Khung giá có hai mức: chưa gồm và đã gồm chi phí tiền lương (hai cột “TT37 không lương / có lương” trong trang này).</li><li>Quy tắc áp giá tương tự TT15: lần khám thứ 2 tính 30%; can thiệp phát sinh trong cùng ca phẫu thuật 50% (cùng kíp) hoặc 80% (đổi kíp), thủ thuật 80%.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> trang tra cứu ghi còn hiệu lực; các phụ lục giá được thay bởi TT14/2019/TT-BYT (chưa đọc được nguyên văn). Thay thế TT02/2017 và TT44/2017.</p><p class="srcs">Nguồn: <a href="https://vanban.vcci.com.vn/thong-tu-372018tt-byt-quy-dinh-muc-toi-da-khung-gia-dich-vu-kham-benh-chua-benh-khong-thuoc-pham-vi-thanh-toan-cua-quy-bao-hiem-y-te" target="_blank" rel="noopener">VCCI (TT37/2018)</a></p></details></li>
+        <li><b>Thông tư 02/2017/TT-BYT</b><p>Văn bản về khung giá dịch vụ không thuộc phạm vi BHYT, ban hành trước TT37/2018. Cột “Giá TT02”.</p><details class="refd"><summary>Chi tiết</summary><ul><li>Ký 15/03/2017 (Thứ trưởng Phạm Lê Tuấn), hiệu lực 01/06/2017; sửa đổi bởi TT44/2017.</li><li>Mức tối đa khung giá dịch vụ khám chữa bệnh không thuộc phạm vi BHYT tại cơ sở nhà nước; giá gồm chi phí trực tiếp và tiền lương. Người có BHYT khi đó áp giá theo TTLT 37/2015.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> <b>hết hiệu lực từ 15/01/2019</b>, thay bằng TT37/2018/TT-BYT.</p><p class="srcs">Nguồn: <a href="https://luatvietnam.vn/y-te/thong-tu-02-2017-tt-byt-bo-y-te-113783-d1.html" target="_blank" rel="noopener">luatvietnam</a> · <a href="https://vanban.vcci.com.vn/thong-tu-372018tt-byt-quy-dinh-muc-toi-da-khung-gia-dich-vu-kham-benh-chua-benh-khong-thuoc-pham-vi-thanh-toan-cua-quy-bao-hiem-y-te" target="_blank" rel="noopener">TT37/2018</a></p></details></li>
         <li><b>Các QĐ tương đương trước đây</b> <span class="d">2016–2017</span><p>984, 803, 1016, 1724, 3025/QĐ-BYT (2016) và 2099/QĐ-BYT (2017). Hiện trong phần “Chi tiết” của từng kỹ thuật.</p></li>
         <li><b>Quy trình kỹ thuật chuyên ngành Phẫu thuật mạch máu</b> <span class="d">BV Chợ Rẫy, 2023</span><p id="qtnote">41 quy trình kỹ thuật của khoa, được ghép với dịch vụ có cùng tên trong phụ lục.</p></li>
       </ol>
-      <p class="legend"><b>Ký hiệu:</b> Tuyến A – Trung ương · B – Tỉnh · C – Huyện · D – Xã. Tóm tắt văn bản chỉ để tham khảo nhanh, khi cần hãy đối chiếu văn bản gốc. Dữ liệu giữ nguyên từ file Excel, kể cả các ô lỗi #N/A.</p>
+      <p class="legend"><b>Ký hiệu:</b> Tuyến A – Trung ương · B – Tỉnh · C – Huyện · D – Xã. Tóm tắt văn bản và hiệu lực được kiểm tra ngày 20/11/2026 từ các trang tra cứu văn bản (link trong từng mục), chỉ để tham khảo nhanh; khi dùng chính thức hãy đối chiếu văn bản gốc. Dữ liệu giữ nguyên từ file Excel, kể cả các ô lỗi #N/A.</p>
     </section>
   </div>
 </main>
@@ -212,10 +215,8 @@ P.forEach((p, k) => p.rows.forEach(i => { if (!ROWP.has(i)) ROWP.set(i, []); ROW
 function sentence(t) { const s = t.toLocaleLowerCase('vi'); return (s.charAt(0).toLocaleUpperCase('vi') + s.slice(1)).replace(/\babi\b/g, 'ABI').replace(/\bmuller\b/g, 'Muller'); }
 const IDX = R.map(r => fold([r[F.ten], r[F.ten15], r[F.ma], r[F.ma43], r[F.bhyt]].join(' | ')));
 
-const chapSel = document.getElementById('chap');
-D.chaps.forEach((c, i) => { const o = document.createElement('option'); o.value = i; o.textContent = c; chapSel.appendChild(o); });
 
-const st = { q: '', chap: '', kind: '', tuyen: new Set(), shown: 0, hits: [] };
+const st = { q: '', kind: '', shown: 0, hits: [] };
 const PAGE = 40;
 const $q = document.getElementById('q'), $list = document.getElementById('list'), $more = document.getElementById('more'), $count = document.getElementById('count'), $clear = document.getElementById('clear');
 
@@ -236,6 +237,38 @@ function money(v) { if (v === '' || v === null) return '—'; return typeof v ==
 function kindOf(l) { return l ? l[0].toUpperCase() : ''; }
 function loaiLabel(l) { return l.replace('DB', 'ĐB').replace('BD', 'ĐB'); }
 
+// ---- Giải thích theo văn bản (kiểm tra 20/11/2026; tóm tắt nguồn ở mục Văn bản tham chiếu)
+const TUYEN = { A: 'tuyến trung ương', B: 'tuyến tỉnh', C: 'tuyến huyện', D: 'tuyến xã' };
+const LOAI = [
+  ['đặc biệt', 'rất phức tạp, rất nguy hiểm đến tính mạng, phần lớn làm ở tuyến trung ương, thường 3–4 giờ trở lên'],
+  ['loại I', 'khá phức tạp, nguy hiểm đến tính mạng, phần lớn làm ở tuyến trung ương và tỉnh, thường 2–3 giờ'],
+  ['loại II', 'ít nguy hiểm hơn loại I, chủ yếu làm ở tuyến trung ương, tỉnh và một số cơ sở tuyến huyện, thường 1–3 giờ'],
+  ['loại III', 'ít nguy hiểm hơn loại II, chủ yếu làm ở tuyến huyện, thường 1–2 giờ'],
+];
+// Chuyên khoa TT50 theo số La Mã của chương; định mức nhân lực tối đa/ca (TT50/2014 Phụ lục 1):
+// [ĐB, I, II, III], mỗi ô [chính, phụ, gây mê chính, phụ mê, giúp việc, tổng]; null = nguồn không tách được, không hiển thị
+const CK = {"I": "Hồi sức cấp cứu và chống độc", "II": "Nội khoa", "III": "Nhi khoa", "IV": "Lao", "V": "Da liễu", "VI": "Tâm thần", "VII": "Nội tiết", "VIII": "Y học cổ truyền", "IX": "Gây mê hồi sức", "X": "Ngoại khoa", "XI": "Bỏng", "XII": "Ung bướu", "XIII": "Phụ sản", "XIV": "Mắt", "XV": "Tai Mũi Họng", "XVI": "Răng Hàm Mặt", "XVII": "Phục hồi chức năng", "XVIII": "Điện quang", "XIX": "Y học hạt nhân", "XX": "Nội soi chẩn đoán can thiệp", "XXI": "Thăm dò chức năng", "XXII": "Huyết học truyền máu", "XXIII": "Hóa sinh", "XXIV": "Vi sinh", "XXV": "Giải phẫu bệnh", "XXVI": "Vi phẫu", "XXVII": "Phẫu thuật nội soi", "XXVIII": "Phẫu thuật tạo hình thẩm mỹ"};
+const NL = { P: {"I": [[2, 5, 0, 0, 1, 8], [2, 4, 0, 0, 1, 7], [1, 4, 0, 0, 1, 6], [1, 3, 0, 0, 1, 5]], "II": [[2, 5, 0, 0, 1, 8], [2, 4, 0, 0, 1, 7], [1, 4, 0, 0, 1, 6], [1, 3, 0, 0, 1, 5]], "III": [[1, 4, 1, 1, 1, 8], [1, 3, 1, 0, 1, 6], [1, 3, 1, 0, 1, 6], [1, 3, 1, 0, 1, 6]], "IV": [[1, 4, 1, 1, 1, 8], [1, 3, 1, 1, 1, 7], [1, 3, 1, 0, 1, 6], [1, 2, 1, 0, 1, 5]], "V": [[1, 4, 1, 1, 1, 8], [1, 2, 1, 1, 1, 6], [1, 2, 1, 0, 1, 5], [1, 1, 1, 0, 0, 3]], "VII": [[1, 3, 1, 1, 1, 7], [1, 2, 1, 1, 1, 6], [1, 2, 1, 1, 1, 6], [1, 2, 1, 1, 1, 6]], "X": [[1, 3, 1, 2, 1, 8], [1, 3, 1, 2, 1, 8], [1, 2, 1, 2, 1, 7], [1, 2, 1, 2, 1, 7]], "XI": [[1, 3, 1, 2, 1, 8], [1, 2, 1, 2, 1, 7], [1, 2, 1, 2, 1, 7], [1, 2, 1, 1, 1, 6]], "XII": [[1, 3, 1, 1, 1, 7], [1, 3, 1, 1, 1, 7], [1, 2, 1, 0, 1, 5], [1, 2, 1, 0, 1, 5]], "XIII": [[1, 4, 1, 1, 1, 8], [1, 3, 1, 0, 1, 6], [1, 3, 1, 0, 1, 6], [1, 3, 1, 0, 1, 6]], "XIV": [[1, 3, 1, 0, 1, 6], [1, 3, 1, 0, 1, 6], [1, 2, 1, 0, 1, 5], [1, 2, 1, 0, 1, 5]], "XV": [[1, 4, 1, 1, 1, 8], [1, 2, 1, 1, 1, 6], [1, 2, 1, 1, 1, 6], [1, 2, 1, 1, 1, 6]], "XVI": [[1, 4, 1, 1, 1, 8], [1, 3, 1, 1, 1, 7], [1, 3, 1, 1, 1, 7], [1, 3, 1, 0, 1, 6]], "XX": [[1, 3, 1, 0, 1, 6], [1, 2, 1, 0, 1, 5], [1, 1, 1, 0, 1, 4], [1, 1, 1, 0, 1, 4]], "XXVII": [[1, 4, 1, 2, 1, 9], [1, 4, 1, 2, 1, 9], [1, 3, 1, 2, 1, 8], [1, 3, 1, 2, 1, 8]], "XXVIII": [[1, 3, 1, 1, 1, 7], [1, 3, 1, 1, 1, 7], [1, 3, 1, 0, 1, 6], null]}, T: {"I": [[1, 3, 1, 0, 1, 6], [1, 1, 1, 0, 1, 4], [1, 1, 0, 0, 1, 3], [1, 1, 0, 0, 0, 2]], "II": [[1, 3, 1, 0, 1, 6], [1, 1, 1, 0, 1, 4], [1, 1, 0, 0, 1, 3], [1, 1, 0, 0, 0, 2]], "III": [[1, 2, 0, 0, 1, 4], [1, 2, 0, 0, 0, 3], [1, 2, 0, 0, 0, 3], [1, 2, 0, 0, 0, 3]], "V": [[1, 2, 1, 0, 1, 5], [1, 1, 1, 0, 1, 4], [1, 1, 0, 0, 0, 2], [1, 1, 0, 0, 0, 2]], "VII": [[1, 1, 1, 0, 1, 4], [1, 1, 1, 0, 1, 4], [1, 1, 1, 0, 0, 3], [1, 1, 0, 0, 0, 2]], "IX": [[1, 2, 0, 0, 1, 4], [1, 2, 0, 0, 1, 4], [1, 1, 0, 0, 0, 2], [1, 1, 0, 0, 0, 2]], "X": [[1, 2, 1, 0, 1, 5], [1, 2, 1, 0, 1, 5], [1, 1, 1, 0, 0, 3], [1, 1, 1, 0, 0, 3]], "XI": [[1, 2, 1, 0, 1, 5], [1, 2, 1, 0, 1, 5], [1, 1, 1, 0, 1, 4], [1, 1, 1, 0, 0, 3]], "XII": [[1, 1, 1, 0, 0, 3], [1, 1, 0, 0, 0, 2], [1, 1, 0, 0, 0, 2], [1, 1, 0, 0, 0, 2]], "XIII": [[1, 2, 1, 0, 0, 4], [1, 2, 0, 0, 0, 3], [1, 2, 0, 0, 0, 3], [1, 2, 0, 0, 0, 3]], "XIV": [[1, 2, 1, 0, 1, 5], [1, 2, 1, 0, 1, 5], [1, 1, 1, 0, 1, 4], [1, 1, 0, 0, 1, 3]], "XV": [null, [1, 2, 0, 0, 0, 3], [1, 2, 0, 0, 0, 3], [1, 2, 0, 0, 0, 3]], "XVI": [[1, 2, 1, 0, 1, 5], [1, 2, 1, 0, 1, 5], [1, 2, 0, 0, 1, 4], [1, 2, 0, 0, 1, 4]], "XVII": [[1, 1, 0, 0, 1, 3], [1, 1, 0, 0, 1, 3], [1, 1, 0, 0, 0, 2], [1, 0, 0, 0, 0, 1]], "XVIII": [[1, 2, 1, 0, 1, 5], [1, 1, 1, 0, 1, 4], [1, 1, 1, 0, 0, 3], [1, 1, 0, 0, 0, 2]], "XIX": [[2, 3, 0, 0, 0, 5], [2, 2, 0, 0, 0, 4], null, null], "XX": [[1, 3, 1, 0, 1, 6], [1, 2, 1, 0, 1, 5], [1, 1, 1, 0, 1, 4], [1, 1, 1, 0, 0, 3]], "XXI": [[1, 1, 1, 0, 1, 4], [1, 2, 0, 0, 0, 3], [1, 2, 0, 0, 0, 3], [1, 1, 0, 0, 0, 2]], "XXII": [[1, 2, 0, 0, 1, 4], [1, 2, 0, 0, 1, 4], [1, 2, 0, 0, 0, 3], [1, 1, 0, 0, 0, 2]], "XXVIII": [[1, 2, 1, 0, 1, 5], [1, 2, 1, 0, 1, 5], [1, 1, 1, 0, 1, 4], [1, 1, 1, 0, 1, 4]]} };
+function staff(n, k) {
+  const lab = [k === 'P' ? 'phẫu thuật viên chính' : 'thủ thuật viên chính', 'phụ', 'bác sĩ gây mê chính', 'phụ mê', 'giúp việc'];
+  return n.slice(0, 5).map((x, i) => x ? `${x} ${lab[i]}` : '').filter(Boolean).join(', ') + ` (tổng ${n[5]} người)`;
+}
+function why(r) {
+  const out = [], tu = r[F.tuyen], l = r[F.loai], k = kindOf(l);
+  if (TUYEN[tu]) out.push(`<b>Tuyến ${tu}</b> – ${TUYEN[tu]}: phân tuyến kỹ thuật theo danh mục TT43/2013 (văn bản đã hết hiệu lực từ 18/10/2024, thay bằng danh mục TT23/2024).`);
+  if (k === 'P' || k === 'T') {
+    const ci = /DB|BD/.test(l) ? 0 : +l.slice(1), kind = k === 'P' ? 'phẫu thuật' : 'thủ thuật';
+    const roman = (D.chaps[r[F.chap]].match(/^([IVX]+)\./) || [])[1];
+    const n = roman && NL[k][roman] && NL[k][roman][ci];
+    out.push(`<b>${esc(loaiLabel(l))}</b> – ${kind} ${LOAI[ci][0]} theo TT50/2014: ${LOAI[ci][1]}. `
+      + (n ? `Định mức nhân lực tối đa mỗi ca (${CK[roman]}): ${staff(n, k)}.` : 'Định mức nhân lực: xem Phụ lục 1 TT50/2014.'));
+  }
+  out.push('<b>Có thẻ BHYT</b>: áp giá ở cột Giá TT15 – giá thống nhất giữa các bệnh viện cùng hạng, gồm chi phí trực tiếp và tiền lương (giá năm 2018; giá BHYT hiện hành theo văn bản mới hơn).');
+  out.push('<b>Không thuộc phạm vi BHYT</b>: cột TT37 là khung giá tối đa tại cơ sở nhà nước, giá cụ thể do HĐND tỉnh quyết định trong khung (hai mức chưa gồm / gồm tiền lương). Cột TT02 là khung giá cũ, hết hiệu lực từ 15/01/2019.');
+  out.push('<b>Làm kèm trong cùng lần phẫu thuật</b>: can thiệp phát sinh tính 50% giá nếu cùng kíp, 80% nếu đổi kíp; thủ thuật phát sinh tính 80% (TT15/2018, TT37/2018).');
+  return out.map(x => `<p>${x}</p>`).join('');
+}
+
 const $intro = document.getElementById('intro');
 (() => {
   const nP = R.filter(r => kindOf(r[F.loai]) === 'P').length, nT = R.filter(r => kindOf(r[F.loai]) === 'T').length;
@@ -253,10 +286,7 @@ function search() {
   const hits = [];
   for (let i = 0; i < R.length; i++) {
     const r = R[i];
-    if (st.chap !== '' && r[F.chap] !== +st.chap) continue;
     if (st.kind && kindOf(r[F.loai]) !== st.kind) continue;
-    if (st.tuyen.size && !st.tuyen.has(r[F.tuyen])) continue;
-    if (st.onlyqt && !ROWP.has(i)) continue;
     const s = IDX[i];
     let ok = true;
     for (const t of terms) if (s.indexOf(t) === -1) { ok = false; break; }
@@ -271,11 +301,11 @@ function search() {
   }
   st.hits = hits; st.terms = terms; st.shown = 0;
   $list.innerHTML = '';
-  const active = terms.length || st.chap !== '' || st.kind || st.tuyen.size || st.onlyqt;
+  const active = terms.length || st.kind;
   $intro.hidden = !!active; $count.hidden = !active;
   if (!active) { $more.hidden = true; return; }
-  $count.innerHTML = `<span><b>${hits.length.toLocaleString('vi-VN')}</b> kỹ thuật${terms.length || st.chap !== '' || st.kind || st.tuyen.size || st.onlyqt ? ' phù hợp' : ''}</span><span>Chạm “Chi tiết” để xem ghi chú, mã BHYT</span>`;
-  if (!hits.length) $list.innerHTML = '<div class="empty">Không tìm thấy kỹ thuật nào. Thử bớt từ khóa, gõ một phần của tên, hoặc bỏ bộ lọc.</div>';
+  $count.innerHTML = `<span><b>${hits.length.toLocaleString('vi-VN')}</b> kỹ thuật phù hợp</span><span>Chạm “Chi tiết” để xem giá, ghi chú, quy trình</span>`;
+  if (!hits.length) $list.innerHTML = '<div class="empty">Không tìm thấy kỹ thuật nào. Thử bớt từ khóa, gõ một phần của tên, hoặc chọn Tất cả.</div>';
   renderMore();
 }
 
@@ -284,7 +314,7 @@ function card(i) {
   const r = R[i], t = st.terms, k = kindOf(r[F.loai]);
   const cancelled = /hủy/i.test(r[F.ma]) || /huỷ/i.test(r[F.qd15]);
   const qt = ROWP.get(i) || [];
-  const badges = (qt.length ? '<span class="b b-qt" title="Có quy trình kỹ thuật của khoa">QTKT</span>' : '') + (cancelled ? '<span class="b b-x">Đã hủy</span>' : '')
+  const badges = (cancelled ? '<span class="b b-x">Đã hủy</span>' : '')
     + (r[F.tuyen] ? `<span class="b b-tuyen" title="Phân tuyến">Tuyến ${esc(r[F.tuyen])}</span>` : '')
     + (r[F.loai] ? `<span class="b b-${k === 'P' ? 'P' : 'T'}" title="Phân loại">${esc(loaiLabel(r[F.loai]))}</span>` : '');
   const det = [
@@ -305,16 +335,18 @@ function card(i) {
     row('STT trong phụ lục', esc(r[F.stt])),
   ].join('');
   return `<article class="card">
-    <div class="top"><div class="meta">${esc(D.chaps[r[F.chap]])} · <span class="code">${hl(r[F.ma], t)}</span></div><div class="badges">${badges}</div></div>
-    <div class="name">${hl(r[F.ten], t)}</div>
+    <div class="top"><div class="name">${hl(r[F.ten], t)}</div><div class="badges">${badges}</div></div>
+    <div class="meta"><span class="code">${hl(r[F.ma], t)}</span> · ${esc(D.chaps[r[F.chap]])}</div>
+    <details><summary>Chi tiết</summary>
     ${r[F.ten15] ? `<div class="eq">Tương đương TT15: <span>${hl(r[F.ten15], t)}</span></div>` : ''}
     <div class="prices">
       <div class="pr"><small>Giá TT15</small><strong>${money(r[F.g15])}</strong></div>
       <div class="pr"><small>TT37 có lương</small><strong>${money(r[F.g37c])}</strong></div>
       <div class="pr"><small>Giá TT02</small><strong>${money(r[F.g02])}</strong></div>
     </div>
+    <div class="why"><h4>Giải thích theo văn bản</h4>${why(r)}</div>
     ${qt.map(k => `<button class="openqt" type="button" data-qt="${k}">Xem quy trình kỹ thuật</button>`).join('')}
-    <details><summary>Chi tiết</summary><dl>${det}</dl></details>
+    <dl>${det}</dl></details>
   </article>`;
 }
 function renderMore() {
@@ -332,22 +364,12 @@ let tm;
 $q.addEventListener('input', () => { $clear.hidden = !$q.value; clearTimeout(tm); tm = setTimeout(() => { st.q = $q.value; search(); }, 150); });
 $q.addEventListener('keydown', e => { if (e.key === 'Enter') $q.blur(); });
 $clear.addEventListener('click', () => { $q.value = ''; $clear.hidden = true; st.q = ''; search(); $q.focus(); });
-chapSel.addEventListener('change', () => { st.chap = chapSel.value; search(); });
 document.getElementById('kind').addEventListener('click', e => {
   const b = e.target.closest('.chip'); if (!b) return;
   document.querySelectorAll('#kind .chip').forEach(x => x.setAttribute('aria-pressed', x === b));
   st.kind = b.dataset.v; search();
 });
-document.getElementById('tuyen').addEventListener('click', e => {
-  const b = e.target.closest('.chip'); if (!b) return;
-  const v = b.dataset.v, on = !st.tuyen.has(v);
-  on ? st.tuyen.add(v) : st.tuyen.delete(v);
-  b.setAttribute('aria-pressed', on); search();
-});
 $more.addEventListener('click', renderMore);
-document.getElementById('onlyqt').addEventListener('click', e => {
-  st.onlyqt = !st.onlyqt; e.currentTarget.setAttribute('aria-pressed', st.onlyqt); search();
-});
 
 // ---- reader for procedures; routed on #qt-N and #quy-trinh so the phone's back button closes it
 const $reader = document.getElementById('reader'), $rc = document.getElementById('rcontent'), $crumb = document.getElementById('rcrumb');

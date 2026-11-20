@@ -8,6 +8,7 @@ App cá nhân gồm nhiều mục con, mở từ trang chủ dạng thẻ, dùng
 |---|---|---|
 | **Ghi chú** | `notes/` | Ghi chép cá nhân: tạo, sửa (tự lưu), tìm kiếm không dấu, ghim, xuất sao lưu JSON |
 | **Quản lý tài chính** | `finance/` | Mô tả chi tiết bên dưới |
+| **Danh mục kỹ thuật** | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (QĐ 4442/4883) kèm quy trình kỹ thuật khoa Phẫu thuật mạch máu; dữ liệu nằm sẵn trong trang, không cần đăng nhập |
 
 🔗 **https://theodore-ng.github.io/trieus-note/** (trước đây: `gold-portfolio`)
 
@@ -66,6 +67,7 @@ finance/plan.js            CME, tối ưu danh mục, thẻ hồ sơ, Monte Carl
 finance/invest.js          Hướng dẫn giải ngân (ETF, quỹ mở, cổ phiếu)
 finance/macro.js           Vĩ mô, dòng tiền, rủi ro suy thoái, lạm phát
 supabase/schema.sql        Bảng portfolios/profiles/notes + Row Level Security
+ky-thuat/index.html        Danh mục kỹ thuật (sinh bởi scripts/ky_thuat/, không sửa tay)
 scripts/update_prices.py   → data/prices.json, data/macro.json
 scripts/update_invest.py   → data/invest.json
 data/vn_macro.json         Số liệu vĩ mô VN (cập nhật thủ công hằng tháng)
@@ -118,6 +120,14 @@ python scripts/update_prices.py && python scripts/update_invest.py
 ```
 
 ## Bảo trì
+
+- **Danh mục kỹ thuật** (khi có phụ lục Excel hoặc file quy trình Word mới; cần `openpyxl`, `python-docx`; file nguồn không đưa vào repo):
+  ```sh
+  python scripts/ky_thuat/docx2procs.py "QUY TRINH KT KHOA PTMM.docx" procs.json
+  python scripts/ky_thuat/build.py "<file phụ lục>.xlsx" scripts/ky_thuat/template.html page.html procs.json
+  python scripts/ky_thuat/make_index.py page.html ky-thuat/index.html
+  ```
+  Sửa giao diện ở `template.html` rồi build lại; `make_index.py` lấy số phiên bản theo `index.html` gốc nên chạy sau khi tăng `?v=`.
 
 - **Mỗi lần deploy:** tăng `?v=` của các file css/js trong mọi `index.html` (gốc, `notes/`, `finance/`). GitHub Pages cache 10 phút, nếu không tăng thì người dùng có thể thấy bản cũ.
 - **Hằng tháng** (sau khi Cục Thống kê công bố, khoảng ngày 6): cập nhật `data/vn_macro.json`, ghi nguồn và kỳ số liệu, đổi `asOf`.

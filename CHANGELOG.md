@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.1.0 – 20/11/2026
+
+- Mục mới **Danh mục kỹ thuật** (`ky-thuat/`): tra cứu danh mục kỹ thuật tương đương (QĐ 4442, 4883) và quy trình kỹ thuật khoa Phẫu thuật mạch máu, chuyển từ repo riêng `danh-muc-ky-thuat` vào Trieu's Note; đổi sang theme chung (nền giấy, chỉ giao diện sáng, tiêu đề Newsreader), có nút về trang chủ. Công cụ build ở `scripts/ky_thuat/`.
+
 ## 2.0.0 – 20/11/2026
 
 - Đổi thành **Trieu's Note**: trang chủ dạng thẻ chứa các mục con, một tài khoản đăng nhập dùng chung. Repo đổi tên `gold-portfolio` → `trieus-note`.

@@ -1,0 +1,421 @@
+<title>Danh mục kỹ thuật · Trieu's Note</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: one narrow column, sticky search band on top, result cards that expand in place */
+:root {
+  /* Theme Trieu's Note: nền giấy kem, mực nâu đen, nhấn đỏ gạch nung. Chỉ có giao diện sáng. */
+  color-scheme: light;
+  --bg: #f2ede2; --surface: #fbf8f1; --ink: #2b2620; --muted: #7a7264; --line: #e0d8c7;
+  --accent: #b5532c; --accent-soft: #f3e2d6; --mark: #f1d88f; --mark-ink: #2b2620;
+  --warn: #b03a2e; --warn-soft: #f5e0dc;
+  --p: #7c5c8f; --p-soft: #ece4f0; --t: #3f6c8c; --t-soft: #e0e9ef;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --shadow: 2px 2px 0 var(--line);
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--ink); }
+header .wrap { padding-block: 12px 10px; display: grid; gap: 10px; }
+.brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+h1 { margin: 0; font: 600 21px/1.25 var(--serif); letter-spacing: -0.01em; text-wrap: balance; display: flex; align-items: center; gap: 8px; }
+h1 a.home { display: flex; flex: none; color: var(--muted); padding: 4px; margin-left: -4px; border-radius: 6px; }
+h1 a.home:hover { color: var(--accent); background: var(--surface); }
+h1 a.home svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+.src { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.search { position: relative; }
+.search input { width: 100%; font: 500 16px var(--sans); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 11px 40px 11px 14px; }
+.search input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
+.search button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: var(--muted); font-size: 20px; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+select { font: 500 13px var(--sans); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; max-width: 100%; min-width: 0; flex: 1 1 200px; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font: 600 12.5px var(--sans); color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.chip[aria-pressed="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
+button:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+main .wrap { padding-block: 14px 40px; display: grid; gap: 10px; }
+.count { font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.count b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 12px 14px; display: grid; gap: 6px; min-width: 0; }
+.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+.meta { font-size: 11.5px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; min-width: 0; }
+.code { font: 500 12.5px var(--mono); color: var(--accent); letter-spacing: 0; text-transform: none; }
+.badges { display: flex; gap: 4px; flex-shrink: 0; }
+.b { font: 700 11.5px var(--sans); border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
+.b-tuyen { background: var(--accent-soft); color: var(--accent); }
+.b-P { background: var(--p-soft); color: var(--p); }
+.b-T { background: var(--t-soft); color: var(--t); }
+.b-x { background: var(--warn-soft); color: var(--warn); }
+.name { font-size: 16px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.eq { font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
+.eq span { color: var(--ink); }
+mark { background: var(--mark); color: var(--mark-ink); border-radius: 3px; padding: 0 1px; }
+.prices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 2px; }
+.pr { background: var(--bg); border-radius: 8px; padding: 6px 8px; min-width: 0; }
+.pr small { display: block; font-size: 10.5px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.pr strong { font-size: 14px; font-weight: 700; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+details summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent); list-style: none; padding-top: 2px; }
+details summary::-webkit-details-marker { display: none; }
+details summary::before { content: "▸ "; }
+details[open] summary::before { content: "▾ "; }
+dl { margin: 8px 0 0; display: grid; grid-template-columns: minmax(110px, 38%) minmax(0, 1fr); gap: 6px 12px; font-size: 13.5px; }
+dt { color: var(--muted); }
+dd { margin: 0; overflow-wrap: anywhere; }
+dd.mono { font-family: var(--mono); font-size: 12.5px; }
+.copy { font: 600 12px var(--sans); color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 6px; padding: 3px 8px; margin-left: 6px; cursor: pointer; }
+.more { justify-self: center; font: 600 14px var(--sans); color: var(--accent); background: var(--surface); border: 1.5px solid var(--accent); border-radius: 10px; padding: 10px 22px; cursor: pointer; }
+.empty { text-align: center; color: var(--muted); padding: 32px 8px; }
+.legend { font-size: 12.5px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 12px; margin: 4px 0 0; }
+.intro { display: grid; gap: 12px; }
+.intro h2 { margin: 6px 0 0; font-size: 13px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 600px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 12px 14px; min-width: 0; }
+.stat strong { display: block; font: 600 26px var(--serif); font-variant-numeric: tabular-nums; line-height: 1.2; }
+.stat:first-child { grid-column: 1 / -1; }
+.stat:first-child strong { color: var(--accent); }
+.stat span { font-size: 12.5px; color: var(--muted); }
+.hint { margin: 0; font-size: 14px; color: var(--muted); }
+.refs { margin: 0; padding: 0; list-style: none; display: grid; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
+.refs li { padding: 10px 14px; border-top: 1px solid var(--line); }
+.refs li:first-child { border-top: 0; }
+.refs .d { font-size: 12.5px; color: var(--muted); margin-left: 6px; white-space: nowrap; }
+.refs p { margin: 2px 0 0; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
+@media (max-width: 420px) { .prices { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; } .pr { padding: 5px 6px; } .pr strong { font-size: 13px; } dl { grid-template-columns: minmax(0, 1fr); gap: 0; } dd { margin-bottom: 6px; } }
+.b-qt { background: var(--accent); color: var(--surface); }
+.chip.qt[aria-pressed="false"] { color: var(--accent); border-color: var(--accent); }
+.openqt { justify-self: start; font: 600 13.5px var(--sans); color: var(--surface); background: var(--accent); border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+.linkbtn { font: 600 12.5px var(--sans); color: var(--accent); background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; white-space: nowrap; }
+#reader { position: fixed; inset: 0; z-index: 20; background: var(--bg); overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.rbar { position: sticky; top: 0; z-index: 2; background: var(--surface); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top, 0px); }
+.rbar .wrap { padding-block: 10px; display: flex; align-items: center; gap: 10px; }
+.rbar button { font: 600 14px var(--sans); color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer; flex-shrink: 0; }
+.rbar span { font-size: 13px; color: var(--muted); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rbody .wrap { padding-block: 16px calc(48px + env(safe-area-inset-bottom, 0px)); }
+.rbody h2 { margin: 0 0 10px; font: 600 22px var(--serif); line-height: 1.35; text-wrap: balance; }
+.svc { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.svc button { font: 500 12.5px var(--mono); color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 6px; padding: 4px 8px; cursor: pointer; text-align: left; }
+.svc .none { font-size: 13px; color: var(--warn); background: var(--warn-soft); border-radius: 8px; padding: 8px 10px; }
+.doc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 6px 16px 16px; font-size: 15px; line-height: 1.6; max-width: 72ch; }
+.doc p { margin: 6px 0; overflow-wrap: anywhere; }
+.doc p.h2 { margin-top: 18px; font-size: 15.5px; color: var(--accent); }
+.doc p.h3 { margin-top: 12px; }
+.doc p.li { display: flex; gap: 8px; }
+.doc p.li .mk { flex-shrink: 0; min-width: 1.2em; color: var(--muted); font-weight: 600; }
+.doc p.li > span:last-child { min-width: 0; }
+.doc p.l1 { padding-left: 18px; } .doc p.l2 { padding-left: 36px; } .doc p.l3 { padding-left: 52px; }
+.doc img { display: block; margin: 10px auto; border-radius: 6px; height: auto; }
+.doc .tw { overflow-x: auto; margin: 10px 0; }
+.doc table { border-collapse: collapse; font-size: 13.5px; min-width: 100%; }
+.doc td { border: 1px solid var(--line); padding: 4px 8px; vertical-align: top; }
+.doc td p { margin: 2px 0; }
+.doc td.cont { border-top-color: transparent; }
+.toc { display: grid; gap: 8px; }
+.toc button { display: grid; gap: 2px; text-align: left; font: 600 14.5px/1.4 var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
+.toc button small { font: 500 12px var(--mono); color: var(--accent); }
+.toc button small.no { font-family: var(--sans); color: var(--warn); }
+.jump { display: flex; flex-wrap: wrap; gap: 6px; }
+.jump button { font: 600 13px var(--sans); color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
+.grp { margin: 20px 0 8px; font: 600 18px var(--serif); display: flex; align-items: baseline; gap: 8px; scroll-margin-top: 72px; }
+.grp span { font-size: 12.5px; font-weight: 500; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<header>
+  <div class="wrap">
+    <div class="brand">
+      <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg></a>Tra cứu danh mục kỹ thuật tương đương</h1>
+      <span class="src">QĐ 4442 · 4883</span>
+    </div>
+    <div class="search">
+      <input id="q" type="search" placeholder="Tìm tên kỹ thuật hoặc mã, vd: catheter, 01.0007" autocomplete="off" enterkeyhint="search" aria-label="Từ khóa tìm kiếm">
+      <button id="clear" type="button" aria-label="Xóa từ khóa" hidden>×</button>
+    </div>
+    <div class="filters">
+      <select id="chap" aria-label="Chương"><option value="">Tất cả chương</option></select>
+      <div class="chips" id="kind" role="group" aria-label="Loại">
+        <button class="chip" type="button" data-v="" aria-pressed="true">Tất cả</button>
+        <button class="chip" type="button" data-v="P" aria-pressed="false">Phẫu thuật</button>
+        <button class="chip" type="button" data-v="T" aria-pressed="false">Thủ thuật</button>
+      </div>
+      <div class="chips" id="tuyen" role="group" aria-label="Phân tuyến">
+        <button class="chip" type="button" data-v="A" aria-pressed="false">A</button>
+        <button class="chip" type="button" data-v="B" aria-pressed="false">B</button>
+        <button class="chip" type="button" data-v="C" aria-pressed="false">C</button>
+        <button class="chip" type="button" data-v="D" aria-pressed="false">D</button>
+      </div>
+      <button class="chip qt" id="onlyqt" type="button" aria-pressed="false">Có quy trình KT</button>
+      <button class="linkbtn" id="opentoc" type="button">Danh sách quy trình khoa</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="count" id="count"></div>
+    <div id="list" style="display:grid;gap:10px"></div>
+    <button class="more" id="more" type="button" hidden>Xem thêm</button>
+    <section id="intro" class="intro">
+      <div class="stats" id="stats"></div>
+      <p class="hint">Gõ tên kỹ thuật hoặc mã vào ô tìm kiếm, hoặc chọn bộ lọc để xem kết quả. Tìm không phân biệt dấu: gõ “dat catheter” vẫn ra “Đặt catheter”.</p>
+      <h2>Văn bản tham chiếu</h2>
+      <ol class="refs">
+        <li><b>Quyết định 4442/QĐ-BYT</b> <span class="d">13/07/2018</span><p>Bộ Y tế phê duyệt danh mục kỹ thuật tương đương: đối chiếu từng kỹ thuật theo TT43, TT50, TT21 với tên dịch vụ và mức giá trong TT15/2018 để làm căn cứ thanh toán BHYT. Là nguồn chính của phụ lục.</p></li>
+        <li><b>Quyết định 4883/QĐ-BYT</b> <span class="d">08/08/2018</span><p>Sửa đổi, bổ sung danh mục tương đương của QĐ 4442: thêm một số kỹ thuật và hủy một số dòng (trong phụ lục ghi “đã hủy QĐ 4883”).</p></li>
+        <li><b>Thông tư 43/2013/TT-BYT</b><p>Quy định chi tiết phân tuyến chuyên môn kỹ thuật trong hệ thống khám bệnh, chữa bệnh. Nguồn của mã kỹ thuật và cột phân tuyến A–D.</p></li>
+        <li><b>Thông tư 50/2014/TT-BYT</b><p>Phân loại phẫu thuật, thủ thuật và định mức nhân lực. Nguồn của cột phân loại (PĐB, P1–P3, TĐB, T1–T3).</p></li>
+        <li><b>Thông tư 21/2017/TT-BYT</b><p>Sửa đổi, bổ sung danh mục kỹ thuật ban hành kèm TT43/2013.</p></li>
+        <li><b>Thông tư 15/2018/TT-BYT</b><p>Quy định thống nhất giá dịch vụ khám bệnh, chữa bệnh BHYT giữa các bệnh viện cùng hạng trên toàn quốc. Cột “Giá TT15” và “Tương đương TT15”.</p></li>
+        <li><b>Thông tư 37/2018/TT-BYT</b><p>Mức tối đa khung giá dịch vụ khám bệnh, chữa bệnh không thuộc phạm vi quỹ BHYT chi trả tại cơ sở nhà nước. Cột giá TT37 không lương và có lương.</p></li>
+        <li><b>Thông tư 02/2017/TT-BYT</b><p>Văn bản về khung giá dịch vụ không thuộc phạm vi BHYT, ban hành trước TT37/2018. Cột “Giá TT02”.</p></li>
+        <li><b>Các QĐ tương đương trước đây</b> <span class="d">2016–2017</span><p>984, 803, 1016, 1724, 3025/QĐ-BYT (2016) và 2099/QĐ-BYT (2017). Hiện trong phần “Chi tiết” của từng kỹ thuật.</p></li>
+        <li><b>Quy trình kỹ thuật chuyên ngành Phẫu thuật mạch máu</b> <span class="d">BV Chợ Rẫy, 2023</span><p id="qtnote">41 quy trình kỹ thuật của khoa, được ghép với dịch vụ có cùng tên trong phụ lục.</p></li>
+      </ol>
+      <p class="legend"><b>Ký hiệu:</b> Tuyến A – Trung ương · B – Tỉnh · C – Huyện · D – Xã. Tóm tắt văn bản chỉ để tham khảo nhanh, khi cần hãy đối chiếu văn bản gốc. Dữ liệu giữ nguyên từ file Excel, kể cả các ô lỗi #N/A.</p>
+    </section>
+  </div>
+</main>
+
+<div id="reader" hidden role="dialog" aria-modal="true" aria-labelledby="rtitle">
+  <div class="rbar"><div class="wrap"><button id="rback" type="button">← Quay lại</button><span id="rcrumb"></span></div></div>
+  <div class="rbody"><div class="wrap" id="rcontent"></div></div>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const R = D.rows;
+// index of fields in each row
+const F = { stt:0, chap:1, ma:2, ma43:3, ten:4, qd:5, tuyen:6, loai:7, s15:8, s37:9, s02:10, ten15:11, g15:12, gc15:13, pl4:14, g37k:15, g37c:16, gc37:17, g02:18, gc02:19, ck:20, bhyt:21, tdg:22, tdgc:23, qd15:24, ngay:25, qdc:26, ngayc:27 };
+
+// position-preserving accent folding (each NFC char -> one base char)
+function fold(str) {
+  let o = '';
+  for (const c of str) {
+    if (c === 'đ' || c === 'Đ') { o += 'd'; continue; }
+    const b = c.normalize('NFD')[0].toLowerCase();
+    o += b.length === 1 ? b : c;
+  }
+  return o;
+}
+// fold() iterates code points; keep a UTF-16-safe copy for highlighting
+const P = D.procs;
+const ROWP = new Map(); // row index -> [procedure index]
+P.forEach((p, k) => p.rows.forEach(i => { if (!ROWP.has(i)) ROWP.set(i, []); ROWP.get(i).push(k); }));
+function sentence(t) { const s = t.toLocaleLowerCase('vi'); return (s.charAt(0).toLocaleUpperCase('vi') + s.slice(1)).replace(/\babi\b/g, 'ABI').replace(/\bmuller\b/g, 'Muller'); }
+const IDX = R.map(r => fold([r[F.ten], r[F.ten15], r[F.ma], r[F.ma43], r[F.bhyt]].join(' | ')));
+
+const chapSel = document.getElementById('chap');
+D.chaps.forEach((c, i) => { const o = document.createElement('option'); o.value = i; o.textContent = c; chapSel.appendChild(o); });
+
+const st = { q: '', chap: '', kind: '', tuyen: new Set(), shown: 0, hits: [] };
+const PAGE = 40;
+const $q = document.getElementById('q'), $list = document.getElementById('list'), $more = document.getElementById('more'), $count = document.getElementById('count'), $clear = document.getElementById('clear');
+
+function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+function hl(text, terms) {
+  if (!text) return '';
+  if (!terms.length) return esc(text);
+  const chars = Array.from(text), f = fold(text);
+  const fchars = Array.from(f);
+  if (fchars.length !== chars.length) return esc(text);
+  const on = new Array(chars.length).fill(false);
+  for (const t of terms) { let i = 0, k; while ((k = f.indexOf(t, i)) !== -1) { const s = Array.from(f.slice(0, k)).length, n = Array.from(t).length; for (let j = s; j < s + n; j++) on[j] = true; i = k + t.length; } }
+  let o = '', open = false;
+  chars.forEach((c, i) => { if (on[i] && !open) { o += '<mark>'; open = true; } if (!on[i] && open) { o += '</mark>'; open = false; } o += esc(c); });
+  return o + (open ? '</mark>' : '');
+}
+function money(v) { if (v === '' || v === null) return '—'; return typeof v === 'number' ? v.toLocaleString('vi-VN') : esc(v); }
+function kindOf(l) { return l ? l[0].toUpperCase() : ''; }
+function loaiLabel(l) { return l.replace('DB', 'ĐB').replace('BD', 'ĐB'); }
+
+const $intro = document.getElementById('intro');
+(() => {
+  const nP = R.filter(r => kindOf(r[F.loai]) === 'P').length, nT = R.filter(r => kindOf(r[F.loai]) === 'T').length;
+  const nQ = P.filter(p => p.rows.length).length, vn = n => n.toLocaleString('vi-VN');
+  document.getElementById('stats').innerHTML = [
+    [vn(R.length), `kỹ thuật trong phụ lục, ${D.chaps.filter(c => /^[IVX]+\./.test(c)).length} chương`],
+    [vn(nP), 'phẫu thuật'], [vn(nT), 'thủ thuật'],
+    [vn(R.length - nP - nT), 'chưa phân loại'],
+    [P.length, `quy trình kỹ thuật khoa, ${nQ} đã ghép dịch vụ`],
+  ].map(([n, l]) => `<div class="stat"><strong>${n}</strong><span>${l}</span></div>`).join('');
+  document.getElementById('qtnote').textContent = `${P.length} quy trình kỹ thuật của khoa. ${nQ} quy trình đã ghép với dịch vụ có cùng tên trong phụ lục, ${P.length - nQ} quy trình chưa tìm thấy tên trùng.`;
+})();
+function search() {
+  const terms = fold(st.q.trim()).split(/\s+/).filter(Boolean);
+  const hits = [];
+  for (let i = 0; i < R.length; i++) {
+    const r = R[i];
+    if (st.chap !== '' && r[F.chap] !== +st.chap) continue;
+    if (st.kind && kindOf(r[F.loai]) !== st.kind) continue;
+    if (st.tuyen.size && !st.tuyen.has(r[F.tuyen])) continue;
+    if (st.onlyqt && !ROWP.has(i)) continue;
+    const s = IDX[i];
+    let ok = true;
+    for (const t of terms) if (s.indexOf(t) === -1) { ok = false; break; }
+    if (ok) hits.push(i);
+  }
+  // rank: name starts with / contains the whole phrase first
+  if (terms.length) {
+    const phrase = terms.join(' ');
+    const score = i => { const n = fold(R[i][F.ten]); return n.startsWith(phrase) ? 0 : n.includes(phrase) ? 1 : terms.every(t => n.includes(t)) ? 2 : 3; };
+    const sc = new Map(hits.map(i => [i, score(i)]));
+    hits.sort((a, b) => sc.get(a) - sc.get(b) || a - b);
+  }
+  st.hits = hits; st.terms = terms; st.shown = 0;
+  $list.innerHTML = '';
+  const active = terms.length || st.chap !== '' || st.kind || st.tuyen.size || st.onlyqt;
+  $intro.hidden = !!active; $count.hidden = !active;
+  if (!active) { $more.hidden = true; return; }
+  $count.innerHTML = `<span><b>${hits.length.toLocaleString('vi-VN')}</b> kỹ thuật${terms.length || st.chap !== '' || st.kind || st.tuyen.size || st.onlyqt ? ' phù hợp' : ''}</span><span>Chạm “Chi tiết” để xem ghi chú, mã BHYT</span>`;
+  if (!hits.length) $list.innerHTML = '<div class="empty">Không tìm thấy kỹ thuật nào. Thử bớt từ khóa, gõ một phần của tên, hoặc bỏ bộ lọc.</div>';
+  renderMore();
+}
+
+function row(label, val, cls) { return val === '' || val == null ? '' : `<dt>${label}</dt><dd${cls ? ` class="${cls}"` : ''}>${val}</dd>`; }
+function card(i) {
+  const r = R[i], t = st.terms, k = kindOf(r[F.loai]);
+  const cancelled = /hủy/i.test(r[F.ma]) || /huỷ/i.test(r[F.qd15]);
+  const qt = ROWP.get(i) || [];
+  const badges = (qt.length ? '<span class="b b-qt" title="Có quy trình kỹ thuật của khoa">QTKT</span>' : '') + (cancelled ? '<span class="b b-x">Đã hủy</span>' : '')
+    + (r[F.tuyen] ? `<span class="b b-tuyen" title="Phân tuyến">Tuyến ${esc(r[F.tuyen])}</span>` : '')
+    + (r[F.loai] ? `<span class="b b-${k === 'P' ? 'P' : 'T'}" title="Phân loại">${esc(loaiLabel(r[F.loai]))}</span>` : '');
+  const det = [
+    row('Mã tương đương', `${hl(r[F.ma], t)}<button class="copy" type="button" data-copy="${esc(r[F.ma])}">Chép</button>`, 'mono'),
+    row('Mã TT43/50/21', hl(r[F.ma43], t), 'mono'),
+    row('Mã giá liên thông BHYT', hl(r[F.bhyt], t), 'mono'),
+    row('Chuyên khoa TT15', esc(D.cks[r[F.ck]])),
+    row('Giá TT37 (không lương)', money(r[F.g37k])),
+    row('Ghi chú TT15', esc(r[F.gc15])),
+    row('Ghi chú (PL4 TT15)', esc(r[F.pl4])),
+    row('Ghi chú TT37', esc(r[F.gc37])),
+    row('Ghi chú TT02', esc(r[F.gc02])),
+    row('QĐ phê duyệt', esc(r[F.qd])),
+    row('STT TT15 / TT37 / TT02', esc([r[F.s15], r[F.s37], r[F.s02]].join(' / '))),
+    row('QĐ tương đương TT15', esc(r[F.qd15] + (r[F.ngay] ? ' · ' + r[F.ngay] : ''))),
+    row('QĐ tương đương cũ (TT37)', esc(r[F.qdc] + (r[F.ngayc] ? ' · ' + r[F.ngayc] : ''))),
+    row('Thay đổi', [r[F.tdg] ? 'giá' : '', r[F.tdgc] ? 'ghi chú' : ''].filter(Boolean).join(', ')),
+    row('STT trong phụ lục', esc(r[F.stt])),
+  ].join('');
+  return `<article class="card">
+    <div class="top"><div class="meta">${esc(D.chaps[r[F.chap]])} · <span class="code">${hl(r[F.ma], t)}</span></div><div class="badges">${badges}</div></div>
+    <div class="name">${hl(r[F.ten], t)}</div>
+    ${r[F.ten15] ? `<div class="eq">Tương đương TT15: <span>${hl(r[F.ten15], t)}</span></div>` : ''}
+    <div class="prices">
+      <div class="pr"><small>Giá TT15</small><strong>${money(r[F.g15])}</strong></div>
+      <div class="pr"><small>TT37 có lương</small><strong>${money(r[F.g37c])}</strong></div>
+      <div class="pr"><small>Giá TT02</small><strong>${money(r[F.g02])}</strong></div>
+    </div>
+    ${qt.map(k => `<button class="openqt" type="button" data-qt="${k}">Xem quy trình kỹ thuật</button>`).join('')}
+    <details><summary>Chi tiết</summary><dl>${det}</dl></details>
+  </article>`;
+}
+function renderMore() {
+  const end = Math.min(st.shown + PAGE, st.hits.length);
+  let h = '';
+  for (let j = st.shown; j < end; j++) h += card(st.hits[j]);
+  $list.insertAdjacentHTML('beforeend', h);
+  st.shown = end;
+  const left = st.hits.length - end;
+  $more.hidden = left <= 0;
+  $more.textContent = `Xem thêm ${Math.min(PAGE, left)} (còn ${left.toLocaleString('vi-VN')})`;
+}
+
+let tm;
+$q.addEventListener('input', () => { $clear.hidden = !$q.value; clearTimeout(tm); tm = setTimeout(() => { st.q = $q.value; search(); }, 150); });
+$q.addEventListener('keydown', e => { if (e.key === 'Enter') $q.blur(); });
+$clear.addEventListener('click', () => { $q.value = ''; $clear.hidden = true; st.q = ''; search(); $q.focus(); });
+chapSel.addEventListener('change', () => { st.chap = chapSel.value; search(); });
+document.getElementById('kind').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  document.querySelectorAll('#kind .chip').forEach(x => x.setAttribute('aria-pressed', x === b));
+  st.kind = b.dataset.v; search();
+});
+document.getElementById('tuyen').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  const v = b.dataset.v, on = !st.tuyen.has(v);
+  on ? st.tuyen.add(v) : st.tuyen.delete(v);
+  b.setAttribute('aria-pressed', on); search();
+});
+$more.addEventListener('click', renderMore);
+document.getElementById('onlyqt').addEventListener('click', e => {
+  st.onlyqt = !st.onlyqt; e.currentTarget.setAttribute('aria-pressed', st.onlyqt); search();
+});
+
+// ---- reader for procedures; routed on #qt-N and #quy-trinh so the phone's back button closes it
+const $reader = document.getElementById('reader'), $rc = document.getElementById('rcontent'), $crumb = document.getElementById('rcrumb');
+let scrollY0 = 0;
+function showReader(html, crumb) {
+  if ($reader.hidden) scrollY0 = window.scrollY;
+  $rc.innerHTML = html; $crumb.textContent = crumb;
+  $reader.hidden = false; $reader.scrollTop = 0; document.body.style.overflow = 'hidden';
+  document.getElementById('rback').focus({ preventScroll: true });
+}
+function hideReader() { if ($reader.hidden) return; $reader.hidden = true; document.body.style.overflow = ''; window.scrollTo(0, scrollY0); }
+function svcButtons(p) {
+  if (!p.rows.length) return '<div class="none">Chưa tìm thấy dịch vụ cùng tên trong phụ lục danh mục 4442/4883.</div>';
+  return p.rows.map(i => `<button type="button" data-code="${esc(R[i][F.ma])}">${esc(R[i][F.ma])} · ${esc(R[i][F.ten])}</button>`).join('');
+}
+function renderProc(k) {
+  const p = P[k]; if (!p) return renderToc();
+  showReader(`<h2 id="rtitle">${esc(sentence(p.t))}</h2><div class="svc">${svcButtons(p)}</div><div class="doc">${p.h}</div>`, `${GROUPS[p.g]} · Quy trình ${k + 1}/${P.length}`);
+}
+// procedure groups, decided with the department: classified by title
+const GROUPS = ['Phẫu thuật', 'Can thiệp mạch', 'Thủ thuật'];
+function groupOf(t) {
+  const f = fold(t);
+  if (/ethanol|tiem xo di dang|chi so abi/.test(f)) return 2;
+  if (/^(dat stent|chup|nong |dieu tri suy tinh mach|dieu tri u mau bang hoa chat)/.test(f)) return 1;
+  return 0;
+}
+P.forEach(p => { p.g = groupOf(p.t); });
+function renderToc() {
+  const n = P.filter(p => p.rows.length).length;
+  const item = k => { const p = P[k]; return `<button type="button" data-qt="${k}">${esc(sentence(p.t))}<small class="${p.rows.length ? '' : 'no'}">${p.rows.length ? p.rows.map(i => esc(R[i][F.ma])).join(' · ') : 'Chưa ghép dịch vụ'}</small></button>`; };
+  const secs = GROUPS.map((g, gi) => { const ks = P.map((p, k) => k).filter(k => P[k].g === gi); return { g, gi, ks }; });
+  showReader(`<h2 id="rtitle">Quy trình kỹ thuật – khoa Phẫu thuật mạch máu</h2>
+    <p style="margin:0 0 12px;color:var(--muted);font-size:13.5px">${P.length} quy trình · ${n} đã ghép với dịch vụ trong phụ lục · ${P.length - n} chưa tìm thấy tên trùng</p>
+    <div class="jump">${secs.map(s => `<button type="button" data-jump="grp-${s.gi}">${s.g} <b>${s.ks.length}</b></button>`).join('')}</div>
+    ${secs.map(s => `<h3 class="grp" id="grp-${s.gi}">${s.g} <span>${s.ks.length} quy trình</span></h3><div class="toc">${s.ks.map(item).join('')}</div>`).join('')}`, 'Danh sách quy trình');
+}
+function route() {
+  const h = location.hash.slice(1), m = h.match(/^qt-(\d+)$/);
+  if (m) renderProc(+m[1] - 1); else if (h === 'quy-trinh') renderToc(); else hideReader();
+}
+function go(h) { if (location.hash === '#' + h) route(); else location.hash = h; }
+window.addEventListener('hashchange', route);
+document.getElementById('opentoc').addEventListener('click', () => go('quy-trinh'));
+document.getElementById('rback').addEventListener('click', () => {
+  if (history.length > 1 && $reader.dataset.pushed) history.back();
+  else { history.replaceState(null, '', location.pathname + location.search); hideReader(); }
+});
+window.addEventListener('hashchange', () => { $reader.dataset.pushed = '1'; });
+$rc.addEventListener('click', e => {
+  const j = e.target.closest('[data-jump]'); if (j) { document.getElementById(j.dataset.jump).scrollIntoView({ block: 'start' }); return; }
+  const t = e.target.closest('[data-qt]'); if (t) { go('qt-' + (+t.dataset.qt + 1)); return; }
+  const c = e.target.closest('[data-code]');
+  if (c) {
+    $q.value = c.dataset.code; $clear.hidden = false; st.q = c.dataset.code;
+    history.replaceState(null, '', location.pathname + location.search); hideReader(); window.scrollTo(0, 0); search();
+  }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$reader.hidden) document.getElementById('rback').click(); });
+
+$list.addEventListener('click', e => {
+  const q = e.target.closest('.openqt'); if (q) { go('qt-' + (+q.dataset.qt + 1)); return; }
+  const b = e.target.closest('.copy'); if (!b) return;
+  const done = () => { b.textContent = 'Đã chép'; setTimeout(() => b.textContent = 'Chép', 1500); };
+  try { navigator.clipboard.writeText(b.dataset.copy).then(done, () => selectText(b)); } catch { selectText(b); }
+});
+function selectText(b) { const r = document.createRange(); r.selectNodeContents(b.parentNode); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+
+search();
+route();
+</script>

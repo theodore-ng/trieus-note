@@ -2,10 +2,10 @@
 /* Vĩ mô, dòng tiền, rủi ro suy thoái, lạm phát & sức mua. Dùng tiện ích trong app.js. */
 
 let M = null, VNM = null, INV = null, NEWS = null, OUTLOOK = null, flowPeriod = "chg3m";
-const RAW = "https://raw.githubusercontent.com/theodore-ng/gold-portfolio/main/data/";
+const RAW = "https://raw.githubusercontent.com/theodore-ng/trieus-note/main/data/";
 
 async function fetchJson(name) {
-  for (const u of [RAW + name, "data/" + name]) {
+  for (const u of [RAW + name, "../data/" + name]) {
     try { const r = await fetch(u + "?t=" + Date.now(), { cache: "no-store" }); if (r.ok) return await r.json(); } catch { /* thử nguồn sau */ }
   }
   return null;

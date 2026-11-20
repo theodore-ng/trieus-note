@@ -3,7 +3,7 @@
    Dữ liệu cá nhân chỉ nằm trong localStorage của trình duyệt. Đơn vị tiền: triệu VND. */
 
 const KEY = "quyvang_v1";
-const PRICE_URLS = ["https://raw.githubusercontent.com/theodore-ng/gold-portfolio/main/data/prices.json", "data/prices.json"];
+const PRICE_URLS = ["https://raw.githubusercontent.com/theodore-ng/trieus-note/main/data/prices.json", "../data/prices.json"];
 const PNJ_URL = "https://edge-api.pnj.io/ecom-frontend/v1/get-gold-price?zone=00";
 const DEFAULT_SETTINGS = { minKeep: 0, dcaMonths: 12, tranche: 1, extra: 1, premHigh: 10, premLow: 3, xauConfirm: 4450, xauSupport: 3900 };
 

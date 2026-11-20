@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quản lý tài chính · Trieu's Note</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f2ede2">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../logo.svg?v=2.0.0" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png?v=2.0.0" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.0.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<link rel="stylesheet" href="../style.css?v=2.0.0">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../config.js?v=2.0.0"></script>
+</head>
+<body>
+<header>
+  <div class="headin">
+    <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg></a><img class="logo" src="../logo.svg?v=2.0.0" alt="">Quản lý tài chính</h1>
+    <div class="row wrap gap">
+      <div id="priceStamp"><span class="muted small">Đang tải giá…</span></div>
+      <span id="saveState" class="muted small"></span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Đăng nhập -->
+  <section id="login" class="card narrow" hidden>
+    <h2>Đăng nhập</h2>
+    <form id="loginForm">
+      <label>Tên đăng nhập<input name="user" autocomplete="username" required></label>
+      <label>Mật khẩu<input name="pass" type="password" autocomplete="current-password" required></label>
+      <p id="loginErr" class="warn small"></p>
+      <button type="submit">Đăng nhập</button>
+    </form>
+    <p class="muted small">Tài khoản do quản trị viên cấp. Liên hệ quản trị viên nếu quên mật khẩu.</p>
+  </section>
+
+  <!-- Lần đầu: thiết lập -->
+  <section id="setup" class="card" hidden>
+    <h2>Thiết lập danh mục</h2>
+    <p class="muted" id="setupNote">Dữ liệu chỉ lưu trong trình duyệt này, không gửi lên máy chủ nào. Nhập file sao lưu nếu đã có.</p>
+    <form id="setupForm" class="grid">
+      <label>Số lượng vàng SJC (lượng)<input name="luong" type="number" step="0.01" min="0" required></label>
+      <label>Giá vốn (tr/lượng, bỏ trống nếu chưa rõ)<input name="cost" type="number" step="0.01" min="0"></label>
+      <label>Tiền mặt (tr VND)<input name="cash" type="number" step="0.01" min="0" value="0"></label>
+      <button type="submit">Bắt đầu</button>
+    </form>
+    <label class="filebtn">Nhập file sao lưu (.json)<input type="file" accept="application/json" data-import></label>
+  </section>
+
+  <div id="app" hidden>
+    <nav id="tabbar" aria-label="Chuyển mục">
+      <a href="#portfolio"><svg viewBox="0 0 24 24"><path d="M12 3v9h9A9 9 0 1 1 12 3zM15 3.5A9 9 0 0 1 20.5 9H15z"/></svg><span>Danh mục</span></a>
+      <a href="#market"><svg viewBox="0 0 24 24"><path d="M3 20h18M5 16l4-5 4 3 6-8"/></svg><span>Thị trường</span></a>
+      <a href="#strategy"><svg viewBox="0 0 24 24"><path d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 16a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM12 12h.01"/></svg><span>Chiến lược</span></a>
+      <a href="#execution"><svg viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg><span>Thực thi</span></a>
+      <a href="#account"><svg viewBox="0 0 24 24"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0"/></svg><span>Tài khoản</span></a>
+    </nav>
+
+    <!-- ===================== DANH MỤC: THEO DÕI VÀ ĐÁNH GIÁ ===================== -->
+    <div class="panel" data-tab="portfolio">
+      <div class="subnav" role="tablist">
+        <button type="button" data-sub="overview">Tổng quan</button>
+        <button type="button" data-sub="holdings">Nắm giữ &amp; giao dịch</button>
+        <button type="button" data-sub="performance">Hiệu quả</button>
+      </div>
+
+      <!-- Tổng quan -->
+      <div class="subpage" data-sub="overview" hidden>
+        <section class="kpis">
+          <div class="card kpi hero"><span>Giá trị tài sản ròng (NAV)</span><b id="kTotal"></b><small id="kDay"></small><small id="kDayWhy" class="why"></small>
+            <div class="spark"><canvas id="chartSpark"></canvas></div><small id="kSpark"></small></div>
+          <div class="card kpi"><span id="kPnlHead">Tăng trưởng tổng tài sản</span><b id="kPnl"></b><small id="kPnlNote"></small></div>
+          <div class="card kpi"><span>Thu nhập thụ động (ước tính)</span><b id="kInc"></b><small id="kIncNote"></small></div>
+          <div class="card kpi"><span>Giảm tỷ trọng vàng</span><b id="kGlide"></b><div class="progress"><div id="kGlideBar"></div></div><small id="kGlideNote"></small></div>
+        </section>
+
+        <section class="card">
+          <h2>Cơ cấu tài sản</h2>
+          <div class="row wrap">
+            <div class="donuts">
+              <figure><div class="donut"><canvas id="chartAlloc"></canvas></div><figcaption>Hiện tại</figcaption></figure>
+              <figure><div class="donut"><canvas id="chartAllocTgt"></canvas></div><figcaption id="allocTgtCap">Mục tiêu</figcaption></figure>
+            </div>
+            <div class="tablewrap allocwrap"><table id="allocTable" class="wrapfirst"></table></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Nắm giữ &amp; giao dịch -->
+      <div class="subpage" data-sub="holdings" hidden>
+        <p class="muted small">Mỗi loại tài sản một khối: bảng để khớp với số thực tế (sửa xong một ô, bấm ra ngoài là lưu) và các nút giao dịch bên dưới. Thay đổi làm sai lệch giao dịch đã có (vd. giảm số vàng dưới mức đã bán) sẽ bị từ chối.</p>
+
+        <details class="card acc" id="acc-gold" open>
+          <summary><span>Vàng</span><b id="accSum-gold"></b></summary>
+          <div class="tablewrap"><table id="adjLots" class="edit"></table></div>
+          <details class="addbox"><summary>Bán vàng</summary>
+            <form id="sellForm" class="grid">
+              <label>Ngày<input name="date" type="date" required></label>
+              <label>Số lượng (lượng)<input name="luong" type="number" step="0.01" min="0.01" required></label>
+              <label>Giá bán được (tr/lượng)<input name="price" type="number" step="0.01" min="0" required></label>
+              <label>Ghi chú<input name="note" maxlength="120" placeholder="VD: bán tại SJC Q1"></label>
+              <button type="submit">Ghi nhận bán</button>
+              <p class="muted small full" id="sellPreview"></p>
+            </form>
+          </details>
+          <details class="addbox"><summary>+ Thêm lô vàng</summary>
+            <form id="lotForm" class="grid">
+              <label>Loại<select name="kind"><option value="sjc">SJC miếng</option><option value="ring">Nhẫn 9999</option><option value="other">Khác (nhập giá)</option></select></label>
+              <label>Ngày mua<input name="date" type="date"></label>
+              <label>Số lượng (lượng)<input name="luong" type="number" step="any" min="0.01" required></label>
+              <label>Giá vốn (tr/lượng)<input name="cost" type="number" step="any" min="0"></label>
+              <label>Giá hiện tại (tr/lượng, chỉ loại khác)<input name="price" type="number" step="any" min="0"></label>
+              <label>Nơi mua / ghi chú<input name="note" maxlength="120"></label>
+              <label class="check"><input name="fromCash" type="checkbox"> Mua mới: trừ vào tiền mặt</label>
+              <button type="submit">Thêm lô</button>
+            </form>
+          </details>
+          <p class="muted small">1 chỉ = 0,1 lượng. SJC miếng định giá theo giá mua vào SJC, nhẫn 9999 theo giá mua vào nhẫn (PNJ), loại khác theo giá bạn nhập. Vàng đã có từ trước: bỏ trống "trừ vào tiền mặt". Khi ghi bán vàng, app trừ theo thứ tự lô từ trên xuống.</p>
+        </details>
+
+        <details class="card acc" id="acc-cash">
+          <summary><span>Tiền mặt</span><b id="accSum-cash"></b></summary>
+          <p>Hiện có: <b id="adjCashNow"></b></p>
+          <details class="addbox"><summary>Nạp / rút</summary>
+            <form id="cashForm" class="grid">
+              <label>Ngày<input name="date" type="date" required></label>
+              <label>Số tiền (tr VND, âm = chi ra)<input name="amount" type="number" step="0.01" required></label>
+              <label>Ghi chú<input name="note" maxlength="120" placeholder="VD: thu nhập tháng 11"></label>
+              <button type="submit">Ghi nhận</button>
+            </form>
+          </details>
+          <details class="addbox"><summary>Khớp số dư thực tế</summary>
+            <form id="adjCashForm" class="grid">
+              <label>Số dư thực tế (tr VND)<input name="actual" type="number" step="0.01" required></label>
+              <label>Ghi chú<input name="note" maxlength="120" placeholder="VD: khớp với tài khoản ngân hàng"></label>
+              <button type="submit">Điều chỉnh</button>
+            </form>
+            <p class="muted small">App ghi một giao dịch tiền mặt bằng phần chênh lệch (ghi chú "Điều chỉnh số dư"), nên lịch sử vẫn đầy đủ và có thể xóa nếu nhầm.</p>
+          </details>
+        </details>
+
+        <details class="card acc" id="acc-dep">
+          <summary><span>Tiền gửi có kỳ hạn</span><b id="accSum-dep"></b></summary>
+          <div class="tablewrap"><table id="adjDeps" class="edit"></table></div>
+          <details class="addbox"><summary>+ Gửi tiết kiệm</summary>
+            <form id="depForm" class="grid">
+              <label>Ngân hàng<input name="bank" required maxlength="40" placeholder="VD: Vietcombank"></label>
+              <label>Ngày gửi<input name="date" type="date" required></label>
+              <label>Số tiền gốc (tr VND)<input name="amount" type="number" step="any" min="0.01" required></label>
+              <label>Lãi suất (%/năm)<input name="rate" type="number" step="any" min="0" value="8.2" required></label>
+              <label>Kỳ hạn (tháng)<select name="months"><option>1</option><option selected>3</option><option>6</option><option>12</option><option>24</option></select></label>
+              <label class="check"><input name="fromCash" type="checkbox" checked> Gửi mới: trừ vào tiền mặt</label>
+              <button type="submit">Gửi tiết kiệm</button>
+            </form>
+          </details>
+          <p class="muted small">Sổ đã gửi từ trước: bỏ tick "trừ vào tiền mặt". Bảo hiểm tiền gửi tối đa 125 tr/người/ngân hàng. Lãi tính đơn, trả cuối kỳ. Đến hạn thì bấm "Tất toán" và nhập số tiền thực nhận.</p>
+        </details>
+
+        <div id="secAdjust" class="stack"></div>
+        <datalist id="dlCodes"></datalist>
+
+        <details class="card acc" id="acc-tx">
+          <summary><span>Lịch sử giao dịch</span><b id="accSum-tx"></b></summary>
+          <div class="tablewrap"><table id="txTable"></table></div>
+          <p class="muted small">Xóa giao dịch nhập nhầm; app từ chối nếu xóa làm sai lệch giao dịch khác (vd. xóa lần mua mà lần bán sau đó cần).</p>
+        </details>
+      </div>
+
+      <!-- Hiệu quả -->
+      <div class="subpage" data-sub="performance" hidden>
+        <section class="card">
+          <div class="row between">
+            <h2>Diễn biến giá trị danh mục</h2>
+            <div class="seg" id="range">
+              <button data-r="90">3M</button><button data-r="180">6M</button><button data-r="365" class="on">1Y</button><button data-r="0">Tất cả</button>
+            </div>
+          </div>
+          <p id="fundDay" class="small" style="margin:4px 0 10px"></p>
+          <div class="chartbox"><canvas id="chartFund"></canvas></div>
+          <p class="muted small">Nét đứt: giá SJC ước tính (trước khi có số liệu thật, ước tính theo giá thế giới × premium). Giả định đang giữ lượng vàng hiện có từ đầu biểu đồ đến ngày mua/bán đầu tiên. Chứng khoán và tài sản khác tính từ ngày mua theo giá hiện tại (chưa có lịch sử giá).</p>
+        </section>
+
+        <details class="card acc" id="btCard" data-k="bt" open>
+          <summary><span>Kiểm định quá khứ: nếu đã tái cơ cấu từ trước</span></summary>
+          <p class="muted small" style="margin-top:0">Lấy đúng tài sản bạn đang giữ, tính ngược về giá trị ở thời điểm trước đó; nếu khi ấy chia số tiền đó theo phân bổ chiến lược đang chọn thì hôm nay danh mục khác bao nhiêu.</p>
+          <div class="tablewrap"><table id="btTable"></table></div>
+          <p id="btNote" class="advice"></p>
+          <details class="gvsec" data-k="bt.class" open><summary>Từng lớp tài sản</summary>
+            <div class="seg" id="btWin" style="margin-bottom:8px"></div>
+            <div class="tablewrap"><table id="btClass"></table></div>
+          </details>
+          <details class="gvsec" data-k="bt.how"><summary>Cách tính</summary><p class="muted small">"Hiện trạng" = tài sản hiện có, không đổi số lượng (cột "hôm nay" khớp với số thật). "Mục tiêu" = phân bổ chiến lược theo khẩu vị rủi ro đang chọn (Chiến lược › Phân bổ chiến lược). Vàng theo giá SJC mua vào (giá bạn bán được), số lượng quy theo vàng miếng SJC; cổ phiếu lõi và vệ tinh theo VN-Index (chưa gồm cổ tức); quỹ trái phiếu theo lợi nhuận trung vị 12 tháng của các quỹ, tiết kiệm và tiền mặt theo lãi suất, chia theo thời gian. Không tính phí giao dịch, không tái cân bằng giữa kỳ. Là nhìn lại quá khứ, không phải dự báo.</p></details>
+        </details>
+      </div>
+    </div>
+
+    <!-- ===================== THỊ TRƯỜNG: NGHIÊN CỨU ===================== -->
+    <div class="panel" data-tab="market" hidden>
+      <div class="subnav" role="tablist">
+        <button type="button" data-sub="news">Tin tức</button>
+        <button type="button" data-sub="macro">Vĩ mô &amp; dòng tiền</button>
+        <button type="button" data-sub="gold">Vàng Việt Nam</button>
+      </div>
+      <div class="mktbar"><span id="mktStamp" class="muted small"></span><button type="button" class="ghost" id="mktRefresh">↻ Cập nhật &amp; phân tích lại</button></div>
+
+      <!-- Tin tức -->
+      <div class="subpage" data-sub="news" hidden>
+        <section class="card">
+          <h2>Chủ đề nóng 7 ngày</h2>
+          <div class="chips filt" id="newsHot"></div>
+          <p class="muted small">Số tin mỗi chủ đề trong 7 ngày; ↑/↓ so với 7 ngày trước. Bấm để lọc, bấm lại để bỏ lọc.</p>
+        </section>
+        <section class="card">
+          <div class="chips filt" id="newsSrc"></div>
+          <ul class="news" id="newsList"></ul>
+          <button type="button" class="ghost" id="newsMore" hidden>Xem thêm</button>
+          <p class="muted small" id="newsStamp"></p>
+        </section>
+      </div>
+
+      <!-- Vĩ mô &amp; dòng tiền -->
+      <div class="subpage" data-sub="macro" hidden>
+        <section class="card">
+          <h2 id="outlookHead">Nhận định vĩ mô</h2>
+          <div id="outlookBox"></div>
+        </section>
+
+        <section class="card">
+          <h2>Chu kỳ kinh tế &amp; dòng tiền</h2>
+          <div id="cycleBox"></div>
+        </section>
+
+        <section class="card">
+          <h2>Ngành được tập trung đầu tư</h2>
+          <div id="sectorBox"></div>
+        </section>
+
+        <section class="card">
+          <h2>Kinh tế Việt Nam</h2>
+          <div class="tiles" id="vnTiles"></div>
+          <p class="muted small" id="vnNote"></p>
+        </section>
+
+        <section class="card">
+          <div class="row between">
+            <h2>Dòng tiền liên thị trường</h2>
+            <div class="seg" id="flowPeriod"><button data-f="chg1m">1M</button><button data-f="chg3m" class="on">3M</button><button data-f="chg1y">1Y</button></div>
+          </div>
+          <p id="flowSummary"></p>
+          <div class="chartbox tall"><canvas id="chartFlow"></canvas></div>
+        </section>
+
+        <section class="card">
+          <h2>Rủi ro suy thoái</h2>
+          <p id="recLevel"></p>
+          <div class="tablewrap"><table id="recTable"></table></div>
+          <p class="small" id="recVN"></p>
+          <h3 class="sub">Đường cong lợi suất Mỹ 10 năm − 3 tháng (vùng đỏ = đảo ngược)</h3>
+          <div class="chartbox short"><canvas id="chartCurve"></canvas></div>
+        </section>
+
+        <section class="card">
+          <h2>Lạm phát &amp; sức mua</h2>
+          <div class="tiles" id="inflTiles"></div>
+          <div class="chartbox"><canvas id="chartInfl"></canvas></div>
+          <p class="muted small" id="inflNote"></p>
+          <h3 class="sub">Lạm phát Việt Nam theo năm (* = bình quân từ đầu năm nay)</h3>
+          <div class="chartbox short"><canvas id="chartCpi"></canvas></div>
+          <p class="muted small" id="macroStamp"></p>
+        </section>
+
+        <section class="card">
+          <h2>Giá vàng (tr/lượng)</h2>
+          <div class="chartbox"><canvas id="chartGold"></canvas></div>
+        </section>
+      </div>
+
+      <!-- Vàng Việt Nam -->
+      <div class="subpage" data-sub="gold" hidden>
+        <details class="card acc" id="goldVN" data-k="gv" open>
+          <summary><span>Vàng Việt Nam: premium, chênh lệch mua–bán, vùng đáy và kỳ vọng</span><b id="gvSum"></b></summary>
+          <div class="tiles" id="gvTiles"></div>
+          <details class="gvsec" data-k="gv.charts" open><summary>Biểu đồ premium và chênh lệch mua–bán</summary>
+            <div class="grid2">
+              <div><h3 class="sub" style="margin-top:0">Premium so với thế giới quy đổi</h3><div class="chartbox short"><canvas id="chartGvPrem"></canvas></div></div>
+              <div><h3 class="sub" style="margin-top:0">Chênh lệch mua–bán (tr/lượng)</h3><div class="chartbox short"><canvas id="chartGvSpread"></canvas></div></div>
+            </div>
+          </details>
+          <details class="gvsec" data-k="gv.read"><summary>Cung cầu và độ ổn định</summary><div id="gvRead"></div></details>
+          <details class="gvsec" data-k="gv.bottom"><summary>Sau đỉnh: vàng đã có đáy chưa?</summary><div id="gvBottom"></div></details>
+          <details class="gvsec" data-k="gv.factors"><summary>Kỳ vọng khi ghép với vĩ mô và dòng tiền</summary><div id="gvFactors"></div></details>
+          <details class="gvsec" data-k="gv.policy" id="gvPolicy" hidden><summary id="gvPolicyT"></summary><div id="gvPolicyB"></div></details>
+          <details class="gvsec" data-k="gv.how"><summary>Nguồn và cách tính</summary><p class="muted small">Giá SJC và nhẫn SJC 99,99% (chi nhánh TP.HCM) lấy từ SJC, giá hiện tại từ PNJ; giá thế giới = vàng giao sau COMEX × USD/VND, quy ra lượng (37,5 g). Premium = giá bán trong nước / thế giới quy đổi − 1. Chỉ dùng ngày có giá thật. Đánh giá theo quy tắc đơn giản, có giải thích từng yếu tố; không phải khuyến nghị đầu tư.</p></details>
+        </details>
+      </div>
+    </div>
+
+    <!-- ===================== CHIẾN LƯỢC: LẬP KẾ HOẠCH ===================== -->
+    <div class="panel" data-tab="strategy" hidden>
+      <div class="subnav" role="tablist">
+        <button type="button" data-sub="saa">Phân bổ chiến lược</button>
+        <button type="button" data-sub="projection">Dự phóng</button>
+      </div>
+
+      <!-- Phân bổ chiến lược -->
+      <div class="subpage" data-sub="saa" hidden>
+        <details class="card acc" id="cmeCard" data-k="cme">
+          <summary><span>Giả định kỳ vọng thị trường (CME)</span><b>chỉnh được</b></summary>
+          <form id="assumeForm" class="grid"></form>
+        </details>
+
+        <section class="card">
+          <h2>Phân bổ tài sản chiến lược (SAA)</h2>
+          <div class="pcards" id="profileCards"></div>
+          <p class="muted small">Bấm vào một thẻ để chọn khẩu vị rủi ro. Số liệu mỗi thẻ là trung vị của 600 kịch bản theo giả định CME ở trên.</p>
+          <div class="tablewrap"><table id="planTable"></table></div>
+          <div id="recBox" class="recbox"></div>
+          <p class="muted small" id="planNote"></p>
+        </section>
+      </div>
+
+      <!-- Dự phóng -->
+      <div class="subpage" data-sub="projection" hidden>
+        <details class="card acc" id="cmpCard" data-k="cmp" open>
+          <summary><span>Dự phóng: danh mục mục tiêu so với hiện trạng</span><b id="cmpSum"></b></summary>
+          <div class="row between"><h3 class="sub" style="margin:0">Kỳ hạn</h3>
+            <div class="seg" id="horizon">
+              <button data-h="1">1Y</button><button data-h="3">3Y</button><button data-h="5">5Y</button><button data-h="10">10Y</button>
+            </div>
+          </div>
+          <div class="chartbox"><canvas id="chartCmp"></canvas></div>
+          <div class="tablewrap"><table id="cmpTable"></table></div>
+          <p id="cmpBreakeven" class="advice"></p>
+          <details class="gvsec" data-k="cmp.how"><summary>Cách tính</summary><p class="muted small">Mô phỏng 2.000 kịch bản theo tháng. "Hiện trạng" = danh mục hiện tại, không tái cân bằng. "Mục tiêu" = phân bổ chiến lược theo khẩu vị rủi ro đang chọn (Chiến lược › Phân bổ chiến lược), tái cân bằng mỗi năm, giả định chuyển đổi ngay (thực tế chuyển dần nên kết quả sẽ nằm giữa hai đường). Vùng mờ là khoảng 5%–95% kịch bản. Kết quả phụ thuộc hoàn toàn vào giả định, không phải dự báo.</p></details>
+        </details>
+      </div>
+    </div>
+
+    <!-- ===================== THỰC THI ===================== -->
+    <div class="panel" data-tab="execution" hidden>
+      <div class="subnav" role="tablist">
+        <button type="button" data-sub="actions">Việc cần làm</button>
+        <button type="button" data-sub="gold-plan">Giảm tỷ trọng vàng</button>
+        <button type="button" data-sub="deploy">Giải ngân</button>
+      </div>
+
+      <!-- Việc cần làm -->
+      <div class="subpage" data-sub="actions" hidden>
+        <section class="card">
+          <h2 id="todoHead">Việc cần làm hôm nay</h2>
+          <ul class="todo" id="todoList"></ul>
+        </section>
+
+        <section class="card">
+          <div class="row between">
+            <h2>Rà soát danh mục</h2>
+            <button type="button" id="btnAnalyze">Rà soát danh mục</button>
+          </div>
+          <div id="analysisBox"><p class="muted small">Bấm "Rà soát danh mục" để tổng hợp tài sản hiện có, so với phân bổ chiến lược đang chọn và bối cảnh vĩ mô: lớp nào cần tăng/giảm, bao nhiêu mỗi tháng, mốc 3/6/12 tháng. Tính ngay trên trình duyệt, không gửi dữ liệu đi đâu.</p></div>
+        </section>
+      </div>
+
+      <!-- Giảm tỷ trọng vàng -->
+      <div class="subpage" data-sub="gold-plan" hidden>
+        <section class="card" id="glide">
+          <h2>Kế hoạch giảm tỷ trọng vàng</h2>
+          <div class="progress"><div id="glideBar"></div></div>
+          <p id="glideProgress"></p>
+          <p id="glideHead" class="small"></p>
+          <p id="glideAdvice" class="advice"></p>
+          <div id="glideSchedule" class="sched"></div>
+          <p class="muted small" id="glideRule"></p>
+          <details><summary>Chỉnh quy tắc</summary>
+            <form id="setForm" class="grid">
+              <label>Giữ tối thiểu (lượng)<input name="minKeep" type="number" step="1" min="0"></label>
+              <label>Giải ngân cổ phiếu trong (tháng)<input name="dcaMonths" type="number" step="1" min="1"></label>
+              <label>Mỗi đợt (lượng)<input name="tranche" type="number" step="0.5" min="0"></label>
+              <label>Bán thêm (lượng)<input name="extra" type="number" step="0.5" min="0"></label>
+              <label>Premium cao (%)<input name="premHigh" type="number" step="0.5"></label>
+              <label>Premium thấp (%)<input name="premLow" type="number" step="0.5"></label>
+              <label>Vàng TG xác nhận đáy ($)<input name="xauConfirm" type="number"></label>
+              <label>Vàng TG hỗ trợ ($)<input name="xauSupport" type="number"></label>
+              <button type="submit">Lưu quy tắc</button>
+            </form>
+          </details>
+        </section>
+      </div>
+
+      <!-- Giải ngân -->
+      <div class="subpage" data-sub="deploy" hidden>
+        <section class="card">
+          <h2>Kế hoạch giải ngân</h2>
+          <div id="investBody"></div>
+        </section>
+      </div>
+    </div>
+
+    <!-- ===================== TÀI KHOẢN ===================== -->
+    <div class="panel" data-tab="account" hidden>
+      <div class="subnav" role="tablist">
+        <button type="button" data-sub="user">Người dùng &amp; sao lưu</button>
+        <button type="button" data-sub="about">Giới thiệu</button>
+      </div>
+
+      <!-- Người dùng &amp; sao lưu -->
+      <div class="subpage" data-sub="user" hidden>
+        <section class="card">
+          <h2>Người dùng</h2>
+          <div id="userBox" hidden>
+            <p>Đăng nhập: <b id="userName"></b> <span id="userRole" class="badge" hidden>Quản trị</span></p>
+            <p class="muted small">Dữ liệu lưu trong tài khoản và đồng bộ giữa các thiết bị. Chỉ bạn xem được.</p>
+            <form id="pwForm" class="grid">
+              <label>Mật khẩu mới<input name="pw" type="password" autocomplete="new-password" minlength="8" required></label>
+              <label>Nhập lại mật khẩu mới<input name="pw2" type="password" autocomplete="new-password" minlength="8" required></label>
+              <button type="submit">Đổi mật khẩu</button>
+            </form>
+            <p id="pwMsg" class="small"></p>
+            <button id="btnLogout" type="button" class="danger">Đăng xuất</button>
+          </div>
+          <p id="acctLocal" class="muted">Chế độ cục bộ: không có đăng nhập, dữ liệu chỉ nằm trong trình duyệt này. Hãy xuất file sao lưu thường xuyên.</p>
+        </section>
+
+        <section class="card">
+          <h2>Sao lưu dữ liệu</h2>
+          <p class="muted small">Xuất file sao lưu sau mỗi lần cập nhật. Ở chế độ cục bộ, xóa dữ liệu trình duyệt là mất toàn bộ.</p>
+          <div class="row wrap gap">
+            <button id="btnExport" type="button">Xuất sao lưu (.json)</button>
+            <label class="filebtn">Nhập sao lưu<input type="file" accept="application/json" data-import></label>
+            <button id="btnReset" type="button" class="danger">Xóa toàn bộ dữ liệu</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- Giới thiệu -->
+      <div class="subpage" data-sub="about" hidden>
+      <section class="card about">
+        <h2>Quản lý tài chính</h2>
+        <p>Web app cá nhân quản trị danh mục <b>vàng, tiền mặt, tiết kiệm, chứng khoán và tài sản khác</b> và chuyển dần sang danh mục tối ưu theo phương pháp <b>CFA</b>, có điều chỉnh theo dữ liệu thị trường Việt Nam và thế giới.</p>
+        <p class="muted small">Phiên bản <b id="appVer">—</b> · <a href="https://github.com/theodore-ng/trieus-note#readme" target="_blank" rel="noopener">README đầy đủ</a></p>
+        <p class="advice small">Công cụ theo dõi và lập kế hoạch, <b>không phải khuyến nghị đầu tư</b>. Kết quả tối ưu và mô phỏng phụ thuộc hoàn toàn vào giả định.</p>
+      </section>
+
+      <section class="card about">
+        <h2>Cấu trúc</h2>
+        <p class="small">Theo quy trình quản lý danh mục: <b>lập kế hoạch</b> (kỳ vọng thị trường → phân bổ chiến lược) → <b>thực thi</b> (tái cơ cấu, giao dịch) → <b>theo dõi và đánh giá</b>.</p>
+        <p class="small"><b>Danh mục</b> · Tổng quan: giá trị tài sản ròng (NAV), lãi/lỗ, cơ cấu tài sản. Nắm giữ &amp; giao dịch theo từng lớp (vàng SJC/nhẫn, tiền mặt, tiền gửi có kỳ hạn, cổ phiếu &amp; ETF, chứng chỉ quỹ, trái phiếu, tài sản khác). Hiệu quả: diễn biến giá trị danh mục và kiểm định quá khứ (nếu đã tái cơ cấu từ 1/6/12 tháng trước).</p>
+        <p class="small"><b>Thị trường</b> · Tin tức (CafeF, Vietstock, VnEconomy). Vĩ mô &amp; dòng tiền: nhận định quý, chu kỳ kinh tế, dòng tiền liên thị trường, ngành được tập trung đầu tư, rủi ro suy thoái, lạm phát. Vàng Việt Nam: premium, chênh lệch mua–bán, vùng đáy, kỳ vọng.</p>
+        <p class="small"><b>Chiến lược</b> · Phân bổ chiến lược: giả định kỳ vọng thị trường (CME), phân bổ tối ưu theo khẩu vị rủi ro. Dự phóng: Monte Carlo danh mục mục tiêu so với hiện trạng.</p>
+        <p class="small"><b>Thực thi</b> · Việc cần làm và rà soát danh mục, kế hoạch giảm tỷ trọng vàng (quy tắc chỉnh ngay trong thẻ), kế hoạch giải ngân.</p>
+        <p class="small"><b>Tài khoản</b> · Đăng nhập, đổi mật khẩu, sao lưu dữ liệu; giới thiệu.</p>
+      </section>
+
+      <section class="card about">
+        <h2>Phương pháp</h2>
+        <ol class="reasons">
+          <li><b>Kỳ vọng thị trường (CME)</b> cho từng lớp tài sản: tiết kiệm theo lãi hiện tại; trái phiếu theo lợi nhuận quỹ; cổ phiếu theo Grinold–Kroner, điều chỉnh theo xu hướng VN-Index (MA200) và rủi ro suy thoái; vàng trừ phần premium SJC dự kiến co lại.</li>
+          <li><b>Tối ưu trung bình–phương sai</b>: tối đa U = E(R) − ½·λ·σ² (λ = 8 / 4 / 2) dưới ràng buộc IPS: quỹ khẩn cấp, vàng tối thiểu/tối đa, trần cổ phiếu và vệ tinh.</li>
+          <li><b>Kế hoạch giảm tỷ trọng vàng</b>: bán theo đợt hằng tháng, tăng/giảm/tạm dừng theo premium SJC và giá vàng thế giới.</li>
+        </ol>
+      </section>
+
+      <section class="card about">
+        <h2>Nguồn dữ liệu</h2>
+        <div class="tablewrap"><table class="wrapfirst">
+          <tr><th>Dữ liệu</th><th>Nguồn</th><th>Cập nhật</th></tr>
+          <tr><td>Giá vàng SJC, nhẫn</td><td>PNJ</td><td>Trực tiếp / 4 lần/ngày</td></tr>
+          <tr><td>Vàng TG, USD/VND, chỉ số, VIX</td><td>Yahoo Finance</td><td>4 lần/ngày</td></tr>
+          <tr><td>Lợi suất, Sahm, chênh lệch HY, CPI Mỹ</td><td>FRED</td><td>4 lần/ngày</td></tr>
+          <tr><td>VN-Index, ETF, cổ phiếu, P/E, P/B, ROE</td><td>VNDirect</td><td>4 lần/ngày</td></tr>
+          <tr><td>Quỹ mở (NAV, hiệu suất, phí)</td><td>fmarket</td><td>4 lần/ngày</td></tr>
+          <tr><td>CPI, GDP, tín dụng, đầu tư công VN</td><td>Cục Thống kê, NHNN, Bộ Tài chính</td><td>Thủ công hằng tháng</td></tr>
+        </table></div>
+      </section>
+
+      <section class="card about">
+        <h2>Bảo mật</h2>
+        <p class="small">Repo không chứa dữ liệu tài sản cá nhân. Khi đăng nhập, dữ liệu nằm trong Supabase được bảo vệ bằng Row Level Security (mỗi người chỉ đọc/ghi được dữ liệu của mình). Ở chế độ cục bộ, dữ liệu chỉ nằm trong trình duyệt.</p>
+      </section>
+      </div>
+    </div>
+  </div>
+</main>
+<script src="plan.js?v=2.0.0"></script>
+<script src="macro.js?v=2.0.0"></script>
+<script src="invest.js?v=2.0.0"></script>
+<script src="app.js?v=2.0.0"></script>
+<script src="tabs.js?v=2.0.0"></script>
+</body>
+</html>

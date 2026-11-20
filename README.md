@@ -1,10 +1,23 @@
-# Quản lý tài chính
+# Trieu's Note
 
 <img src="logo.svg" width="64" alt="">
 
-Web app cá nhân quản trị danh mục **vàng, tiền mặt, tiết kiệm, chứng khoán và tài sản khác** và chuyển dần sang danh mục tối ưu theo phương pháp **CFA**, có điều chỉnh theo dữ liệu thị trường Việt Nam và thế giới.
+App cá nhân gồm nhiều mục con, mở từ trang chủ dạng thẻ, dùng chung một tài khoản đăng nhập:
 
-🔗 **https://theodore-ng.github.io/gold-portfolio/**
+| Mục | Đường dẫn | Nội dung |
+|---|---|---|
+| **Ghi chú** | `notes/` | Ghi chép cá nhân: tạo, sửa (tự lưu), tìm kiếm không dấu, ghim, xuất sao lưu JSON |
+| **Quản lý tài chính** | `finance/` | Mô tả chi tiết bên dưới |
+
+🔗 **https://theodore-ng.github.io/trieus-note/** (trước đây: `gold-portfolio`)
+
+Dữ liệu cá nhân chỉ nằm ở Supabase (khi đăng nhập, bảo vệ bằng Row Level Security) hoặc trong trình duyệt (chế độ cục bộ khi `config.js` để trống). Phiên đăng nhập dùng chung giữa các mục vì cùng origin.
+
+---
+
+# Quản lý tài chính
+
+Web app cá nhân quản trị danh mục **vàng, tiền mặt, tiết kiệm, chứng khoán và tài sản khác** và chuyển dần sang danh mục tối ưu theo phương pháp **CFA**, có điều chỉnh theo dữ liệu thị trường Việt Nam và thế giới.
 
 > Công cụ theo dõi và lập kế hoạch, **không phải khuyến nghị đầu tư**. Kết quả tối ưu và mô phỏng phụ thuộc hoàn toàn vào giả định.
 
@@ -44,13 +57,15 @@ Mọi giả định và ràng buộc chỉnh được trong mục *Giả định
 ## Kiến trúc
 
 ```
-index.html, style.css      Giao diện (HTML/CSS/JS thuần + Chart.js, không cần build)
-app.js                     Trạng thái, giao dịch, lộ trình bán vàng, biểu đồ, đăng nhập/lưu trữ
-plan.js                    CME, tối ưu danh mục, thẻ hồ sơ, Monte Carlo
-invest.js                  Hướng dẫn giải ngân (ETF, quỹ mở, cổ phiếu)
-macro.js                   Vĩ mô, dòng tiền, rủi ro suy thoái, lạm phát
-config.js                  URL + khóa publishable của Supabase (để trống = chế độ cục bộ)
-supabase/schema.sql        Bảng portfolios/profiles + Row Level Security
+index.html, core.js        Trang chủ Trieu's Note: đăng nhập dùng chung, lưới thẻ các mục
+style.css, config.js       Giao diện chung (HTML/CSS/JS thuần, không cần build); URL + khóa publishable Supabase (để trống = chế độ cục bộ)
+notes/                     Ghi chú (notes.js: danh sách, tìm kiếm, sửa tự lưu)
+finance/index.html         Quản lý tài chính (+ Chart.js)
+finance/app.js             Trạng thái, giao dịch, lộ trình bán vàng, biểu đồ, đăng nhập/lưu trữ
+finance/plan.js            CME, tối ưu danh mục, thẻ hồ sơ, Monte Carlo
+finance/invest.js          Hướng dẫn giải ngân (ETF, quỹ mở, cổ phiếu)
+finance/macro.js           Vĩ mô, dòng tiền, rủi ro suy thoái, lạm phát
+supabase/schema.sql        Bảng portfolios/profiles/notes + Row Level Security
 scripts/update_prices.py   → data/prices.json, data/macro.json
 scripts/update_invest.py   → data/invest.json
 data/vn_macro.json         Số liệu vĩ mô VN (cập nhật thủ công hằng tháng)
@@ -104,7 +119,7 @@ python scripts/update_prices.py && python scripts/update_invest.py
 
 ## Bảo trì
 
-- **Mỗi lần deploy:** tăng `?v=` của các file css/js trong `index.html`. GitHub Pages cache 10 phút, nếu không tăng thì người dùng có thể thấy bản cũ.
+- **Mỗi lần deploy:** tăng `?v=` của các file css/js trong mọi `index.html` (gốc, `notes/`, `finance/`). GitHub Pages cache 10 phút, nếu không tăng thì người dùng có thể thấy bản cũ.
 - **Hằng tháng** (sau khi Cục Thống kê công bố, khoảng ngày 6): cập nhật `data/vn_macro.json`, ghi nguồn và kỳ số liệu, đổi `asOf`.
 - **Khi có sự kiện doanh nghiệp:** cập nhật `RISK_NOTES` trong `scripts/update_invest.py`, luôn ghi nguồn. Danh sách mã theo dõi nằm ở `STOCKS` và `ETFS`.
 - **Khi đổi phương pháp hoặc giả định mặc định** trong `plan.js`: tăng `PLAN_VERSION` để dữ liệu cũ của người dùng chuyển sang giả định mới.

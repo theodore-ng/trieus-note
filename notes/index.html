@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ghi chú · Trieu's Note</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f2ede2">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../logo.svg?v=2.0.0" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png?v=2.0.0" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.0.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<link rel="stylesheet" href="../style.css?v=2.0.0">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../config.js?v=2.0.0"></script>
+</head>
+<body>
+<header>
+  <div class="headin">
+    <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><svg viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></svg></a>Ghi chú</h1>
+    <span id="saveState" class="muted small"></span>
+  </div>
+</header>
+
+<main>
+  <p id="loadErr" class="card warn" hidden></p>
+  <div id="notes" class="notes" hidden>
+    <aside class="card nlist">
+      <div class="row gap">
+        <input id="q" type="search" placeholder="Tìm ghi chú…" aria-label="Tìm ghi chú">
+        <button type="button" id="btnNew">Mới</button>
+      </div>
+      <ul id="list"></ul>
+      <div class="row wrap gap small">
+        <span id="count" class="muted"></span>
+        <button type="button" class="ghost" id="btnExport">Xuất sao lưu</button>
+      </div>
+    </aside>
+
+    <section class="card neditor" id="editor">
+      <p id="empty" class="muted center">Chọn một ghi chú hoặc bấm <b>Mới</b>.</p>
+      <form id="noteForm" hidden autocomplete="off" onsubmit="return false">
+        <div class="row gap">
+          <a class="back ghostlink" href="#">‹ Danh sách</a>
+          <input name="title" class="ntitle" placeholder="Tiêu đề" aria-label="Tiêu đề">
+        </div>
+        <textarea name="body" placeholder="Viết ghi chú…" aria-label="Nội dung"></textarea>
+        <div class="row wrap gap small">
+          <span id="meta" class="muted"></span>
+          <label class="check"><input type="checkbox" name="pinned"> Ghim</label>
+          <button type="button" class="danger" id="btnDel">Xóa</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</main>
+
+<script src="../core.js?v=2.0.0"></script>
+<script src="notes.js?v=2.0.0"></script>
+</body>
+</html>

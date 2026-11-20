@@ -230,3 +230,37 @@ details.gvsec[open] > summary { margin-bottom: 10px; }
 /* Ô NAV: nguyên nhân thay đổi; thanh cập nhật tab Thị trường */
 .kpi small.why { display: block; margin-top: 4px; }
 .mktbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin: 4px 0 12px; }
+
+/* ===== Trieu's Note: nút về trang chủ, lưới app, Ghi chú ===== */
+h1 a.home { display: flex; color: var(--muted); padding: 4px; margin-left: -4px; border-radius: 6px; }
+h1 a.home:hover { color: var(--accent); background: var(--card); }
+h1 a.home svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linejoin: round; }
+.apps { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 8px; }
+.appcard { display: flex; gap: 14px; align-items: flex-start; color: inherit; text-decoration: none; }
+.appcard:hover { border-color: var(--accent); }
+.appcard h2 { margin: 0 0 4px; }
+.appcard p { margin: 0; }
+.appcard svg { width: 36px; height: 36px; flex: none; fill: none; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.notes { display: grid; grid-template-columns: 300px 1fr; gap: 14px; align-items: start; }
+.nlist { display: flex; flex-direction: column; gap: 10px; position: sticky; top: 70px; max-height: calc(100vh - 90px); }
+.nlist ul { list-style: none; margin: 0; padding: 0; overflow-y: auto; border-top: 1px solid var(--line); }
+.nlist li a { display: flex; flex-direction: column; gap: 2px; padding: 8px 6px; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
+.nlist li a span:first-of-type { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nlist li a:hover { background: var(--bg); }
+.nlist li a.on { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.nlist li.muted { padding: 10px 6px; }
+.neditor form { display: flex; flex-direction: column; gap: 10px; }
+.ntitle { font: 600 20px/1.5 var(--serif); border-color: transparent; background: transparent; padding: 4px 6px; }
+.ntitle:focus, .neditor textarea:focus { outline: none; border-color: var(--muted); }
+.neditor textarea { font: inherit; color: var(--ink); min-height: 60vh; resize: vertical; padding: 10px; border: 1px solid transparent; border-radius: 8px; background: var(--bg); width: 100%; }
+.neditor .row .danger { margin-left: auto; }
+a.ghostlink { color: var(--accent); text-decoration: none; white-space: nowrap; font-size: 14px; }
+.neditor .back { display: none; }
+@media (max-width: 820px) {
+  .notes { grid-template-columns: 1fr; }
+  .nlist { position: static; max-height: none; }
+  .notes:not(.editing) .neditor, .notes.editing .nlist { display: none; }
+  .neditor .back { display: inline; }
+  .neditor textarea { min-height: 65vh; }
+}

@@ -1,6 +1,12 @@
 # Nhật ký thay đổi
 
-Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong `index.html`.
+Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
+
+## 2.0.0 – 20/11/2026
+
+- Đổi thành **Trieu's Note**: trang chủ dạng thẻ chứa các mục con, một tài khoản đăng nhập dùng chung. Repo đổi tên `gold-portfolio` → `trieus-note`.
+- **Quản lý tài chính** chuyển vào `finance/` (giữ nguyên 5 tab và dữ liệu; nút về trang chủ cạnh tiêu đề).
+- Mục mới **Ghi chú** (`notes/`): tạo, sửa tự lưu, tìm kiếm không dấu, ghim, xóa, xuất sao lưu; lưu Supabase (bảng `notes`) hoặc trong trình duyệt.
 
 ## 1.0.8 – 13/11/2026
 

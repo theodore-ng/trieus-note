@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.6.1 – 23/11/2026
+
+- Ghi chú: hướng dẫn tạo phím tắt lấy ghi chú từ iPhone chuyển sang tiếng Anh, dùng đúng tên tác vụ của iOS tiếng Anh (Show in Share Sheet, Make Markdown from Rich Text, URL Encode, Text, Open URLs, Send a Copy); phím tắt đổi tên thành "Send to Trieu's Note".
+
 ## 2.6.0 – 23/11/2026
 
 - Ghi chú: **lấy ghi chú từ app Ghi chú (Notes) trên iPhone**. Phím tắt "Gửi tới Trieu's Note" (hướng dẫn tạo ngay trong trang Ghi chú) gửi ghi chú đang mở qua Bảng chia sẻ: chuyển sang Markdown, mở `…/notes/#import&body=…` (nội dung nằm sau dấu #, không gửi lên máy chủ); app hỏi xác nhận, dòng đầu thành tiêu đề, gắn nhãn #iPhone; gửi lại cùng ghi chú không bị trùng. Chưa đăng nhập thì giữ ghi chú chờ, đăng nhập xong nhận tiếp.

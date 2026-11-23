@@ -7,20 +7,20 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f2ede2">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="../logo.svg?v=2.6.0" type="image/svg+xml">
-<link rel="icon" href="../favicon-32.png?v=2.6.0" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.6.0">
+<link rel="icon" href="../logo.svg?v=2.6.1" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png?v=2.6.1" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.6.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
-<link rel="stylesheet" href="../style.css?v=2.6.0">
+<link rel="stylesheet" href="../style.css?v=2.6.1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="../config.js?v=2.6.0"></script>
+<script src="../config.js?v=2.6.1"></script>
 </head>
 <body>
 <header>
   <div class="headin">
-    <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.6.0" alt="Trieu's Note"></a>Ghi chú</h1>
+    <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.6.1" alt="Trieu's Note"></a>Ghi chú</h1>
     <span id="saveState" class="muted small"></span>
   </div>
 </header>
@@ -46,18 +46,19 @@
         <button type="button" class="ghost" id="btnExport">Xuất sao lưu</button>
         <label class="ghost filebtn small">Nhập sao lưu<input type="file" accept=".json,.txt,.jsonl,application/json,text/plain" id="fileImport" hidden></label>
       </div>
-      <details class="iphone small" data-k="notes.iphone">
-        <summary>Lấy ghi chú từ iPhone</summary>
-        <p>Tạo một lần phím tắt <b>Gửi tới Trieu's Note</b> trong app <b>Phím tắt</b> (Shortcuts):</p>
+      <details class="iphone small" data-k="notes.iphone" lang="en">
+        <summary>Import from iPhone Notes</summary>
+        <p>Create the shortcut <b>Send to Trieu's Note</b> once in the <b>Shortcuts</b> app:</p>
         <ol>
-          <li>Bấm <b>+</b>, đặt tên <b>Gửi tới Trieu's Note</b>. Ở biểu tượng ⓘ, bật <b>Hiển thị trong Bảng chia sẻ</b>; loại đầu vào: Văn bản, Văn bản có định dạng.</li>
-          <li>Thêm <b>Tạo Markdown từ Văn bản có Định dạng</b> (Make Markdown from Rich Text), đầu vào: <i>Đầu vào Phím tắt</i>.</li>
-          <li>Thêm <b>Mã hóa URL</b> (URL Encode) cho kết quả Markdown.</li>
-          <li>Thêm <b>Văn bản</b> (Text): dán <code id="ipUrl">https://theodore-ng.github.io/trieus-note/notes/#import&amp;body=</code> rồi chèn biến <i>Văn bản đã mã hóa URL</i> ngay sau dấu =.</li>
-          <li>Thêm <b>Mở URL</b> (Open URLs).</li>
+          <li>Tap <b>+</b> to create a new shortcut and name it <b>Send to Trieu's Note</b>.</li>
+          <li>Tap <b>ⓘ</b> (Details) and turn on <b>Show in Share Sheet</b>. At the top, the shortcut now shows <i>Receive … from Share Sheet</i>: tap it and keep only <b>Text</b> and <b>Rich Text</b>.</li>
+          <li>Add the action <b>Make Markdown from Rich Text</b>; its input should be <i>Shortcut Input</i>.</li>
+          <li>Add <b>URL Encode</b> (input: <i>Markdown from Rich Text</i>).</li>
+          <li>Add <b>Text</b> and paste <code id="ipUrl">https://theodore-ng.github.io/trieus-note/notes/#import&amp;body=</code>, then insert the variable <i>URL Encoded Text</i> right after the <b>=</b> (no space).</li>
+          <li>Add <b>Open URLs</b> (input: <i>Text</i>). Tap <b>Done</b>.</li>
         </ol>
-        <p>Dùng: trong app Ghi chú, mở ghi chú → <b>Chia sẻ</b> (hoặc ⋯ › Gửi bản sao) → <b>Gửi tới Trieu's Note</b> → Safari mở trang này, bấm OK. Ghi chú mới có nhãn <b>#iPhone</b>, dòng đầu thành tiêu đề; gửi lại cùng ghi chú không bị trùng.</p>
-        <p class="muted">Nếu Bảng chia sẻ của Ghi chú không hiện phím tắt: chọn toàn bộ chữ trong ghi chú → Chia sẻ, hoặc sao chép ghi chú rồi đổi bước 2 thành <b>Lấy Bảng tạm</b> (Get Clipboard) và chạy phím tắt. Phím tắt mở bằng Safari: cần đăng nhập Trieu's Note trong Safari.</p>
+        <p><b>To use:</b> in Notes, open a note → tap <b>Share</b> (or <b>⋯</b> › <b>Send a Copy</b>) → <b>Send to Trieu's Note</b> → Safari opens this page, tap <b>OK</b>. The first line becomes the title and the note is tagged <b>#iPhone</b>; sending the same note again does not create a duplicate.</p>
+        <p class="muted">If the shortcut doesn't appear in the Share Sheet: select all text in the note and tap Share, or copy the note, replace the input of step 3 with a <b>Get Clipboard</b> action and run the shortcut from the Shortcuts app. The shortcut opens Safari, so you need to be signed in to Trieu's Note in Safari.</p>
       </details>
     </aside>
 
@@ -95,7 +96,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
-<script src="../core.js?v=2.6.0"></script>
-<script src="notes.js?v=2.6.0"></script>
+<script src="../core.js?v=2.6.1"></script>
+<script src="notes.js?v=2.6.1"></script>
 </body>
 </html>

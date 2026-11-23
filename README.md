@@ -20,8 +20,8 @@ Dữ liệu cá nhân chỉ nằm ở Supabase (khi đăng nhập, bảo vệ b�
 
 # Ghi chú › Lấy ghi chú từ iPhone
 
-- **Từng ghi chú (Bảng chia sẻ):** phím tắt "Gửi tới Trieu's Note" = *Tạo Markdown từ Văn bản có Định dạng* (đầu vào phím tắt) → *Mã hóa URL* → *Văn bản* `https://theodore-ng.github.io/trieus-note/notes/#import&body=` + kết quả mã hóa → *Mở URL*; bật Hiển thị trong Bảng chia sẻ. Tham số tùy chọn: `title`, `folder`. Hướng dẫn đầy đủ trong trang Ghi chú (khối "Lấy ghi chú từ iPhone").
-- **Hàng loạt (Nhập sao lưu):** file .json/.txt chứa các đối tượng `{"title", "body", "created", "modified", "folder"}` (mảng JSON, `{"notes": [...]}` hoặc nhiều đối tượng nối tiếp); ngày nên ở dạng ISO 8601 (*Định dạng Ngày* › ISO 8601 trong Phím tắt).
+- **Từng ghi chú (Share Sheet):** phím tắt "Send to Trieu's Note" (iPhone tiếng Anh) = *Make Markdown from Rich Text* (Shortcut Input) → *URL Encode* → *Text* `https://theodore-ng.github.io/trieus-note/notes/#import&body=` + *URL Encoded Text* → *Open URLs*; bật *Show in Share Sheet*, nhận Text + Rich Text. Tham số tùy chọn: `title`, `folder`. Hướng dẫn đầy đủ (tiếng Anh) trong trang Ghi chú, khối "Import from iPhone Notes".
+- **Hàng loạt (Nhập sao lưu):** file .json/.txt chứa các đối tượng `{"title", "body", "created", "modified", "folder"}` (mảng JSON, `{"notes": [...]}` hoặc nhiều đối tượng nối tiếp); ngày nên ở dạng ISO 8601 (*Format Date* › ISO 8601 trong Shortcuts).
 - Ghi chú nhập vào có nhãn `iPhone` (+ tên thư mục); mã ghi chú cố định nên nhập lại không trùng. Chỉ nhập một chiều, sửa ở một bên không cập nhật bên kia.
 
 ---

@@ -10,6 +10,7 @@ App cá nhân gồm nhiều mục con, mở từ trang chủ dạng thẻ, dùng
 | **Quản lý tài chính** | `finance/` | Mô tả chi tiết bên dưới |
 | **Danh mục kỹ thuật** | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (QĐ 4442/4883) kèm quy trình kỹ thuật khoa Phẫu thuật mạch máu; dữ liệu nằm sẵn trong trang, không cần đăng nhập |
 | **PAD Classification** | `pad/` | Phân loại bệnh động mạch chi dưới: Fontaine, Rutherford, WIfI (giao diện tiếng Anh, tính trên trình duyệt, không cần đăng nhập) |
+| **Heparin IV Calc.** | `heparin/` | Liều heparin IV theo cân nặng, chỉnh liều theo aPTT (Dager 2018); giao diện tiếng Anh, tính trên trình duyệt |
 
 🔗 **https://theodore-ng.github.io/trieus-note/** (trước đây: `gold-portfolio`)
 
@@ -64,6 +65,27 @@ Trang `pad/` phân loại bệnh động mạch chi dưới (peripheral arterial
 Kèm cảnh báo lâm sàng (ABI > 1,3, thiếu dữ liệu huyết động…). Chỉ là công cụ hỗ trợ quyết định, không thay thế đánh giá lâm sàng.
 
 Logic ở `pad/classification.js`, chuyển nguyên trạng từ bản Python gốc `scripts/pad/classification.py` (repo `pad-classification` cũ, PyScript). Khi sửa logic: sửa cả hai, chạy `pytest scripts/pad/tests` (47 test) rồi `scripts/pad/parity.py` (so JS với Python trên lưới đầu vào quanh mọi ngưỡng, phải "OK").
+
+---
+
+# Heparin IV Calc.
+
+Trang `heparin/` tính liều heparin không phân đoạn truyền tĩnh mạch theo Dager 2018 (ASHP, Table 3-5):
+
+| Chỉ định | Bolus | Truyền | aPTT đích | Theo dõi |
+|---|---|---|---|---|
+| VTE (DVT/PE) | 80 IU/kg | 18 IU/kg/giờ | 60–100 giây | aPTT |
+| STEMI + rt-PA liều đầy đủ | 60 IU/kg (tối đa 4.000) | 12 IU/kg/giờ (tối đa 1.000/giờ) | 50–70 giây | aPTT |
+| STEMI + rt-PA phối hợp | 60 IU/kg (tối đa 3.000) | 7 IU/kg/giờ (tối đa 800/giờ) | 50–70 giây | aPTT |
+| NSTEMI / đau thắt ngực không ổn định | 60 IU/kg (tối đa 4.000) | 12 IU/kg/giờ (tối đa 1.000/giờ) | 50–70 giây | aPTT |
+| PCI + GP IIb/IIIa | 50–70 IU/kg | — | — | ACT |
+| PCI đơn thuần | 70–100 IU/kg | — | — | ACT |
+
+Nồng độ = IU trong túi / mL dung môi; mL làm tròn 1 chữ số thập phân; tốc độ không âm. Chỉnh liều theo bảng aPTT của từng nhóm (VTE; tim mạch). Chỉ là công cụ hỗ trợ, bác sĩ phải kiểm tra liều trước khi dùng.
+
+Logic ở `heparin/heparin.js`, chuyển nguyên trạng từ bản TypeScript gốc `scripts/heparin/*.ts` (repo `heparin-web-app` cũ). Khi sửa logic: sửa cả hai rồi chạy `scripts/heparin/parity.py` (dịch chính file .ts trong Edge và so với JS, phải "OK").
+
+**Cần rà lại (giữ nguyên từ bản gốc):** bảng chỉnh liều tim mạch được bản gốc ghi là "adapted from standard protocol", không lấy trực tiếp từ Dager; mục Safety notes ghi "aPTT > mức trên của đích thì ngưng 1 giờ" nhưng bảng chỉ ngưng khi aPTT > 120 (VTE) / > 90 giây (tim mạch).
 
 ---
 
@@ -123,6 +145,8 @@ supabase/schema.sql        Bảng portfolios/profiles/notes + Row Level Security
 ky-thuat/index.html        Danh mục kỹ thuật (sinh bởi scripts/ky_thuat/, không sửa tay)
 pad/                       PAD Classification (classification.js = logic, app.js = giao diện)
 scripts/pad/               Bản Python chuẩn, 47 test, parity.py so JS với Python
+heparin/                   Heparin IV Calc. (heparin.js = logic, app.js = giao diện)
+scripts/heparin/           Bản TypeScript gốc, parity.py so JS với TS
 scripts/update_prices.py   → data/prices.json, data/macro.json
 scripts/update_invest.py   → data/invest.json
 data/vn_macro.json         Số liệu vĩ mô VN (cập nhật thủ công hằng tháng)

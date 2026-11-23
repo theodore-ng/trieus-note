@@ -340,3 +340,57 @@ button.tag.on { background: var(--dep); color: #fff; border-color: var(--dep); }
 .md th, .md td { border: 1px solid var(--line); padding: 4px 10px; text-align: left; }
 .md hr { border: 0; border-top: 1px solid var(--line); }
 .md img { max-width: 100%; }
+
+/* ===== Heparin IV Calc (heparin/) ===== */
+.hepcols { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 14px; align-items: start; }
+.hepmain, .hepside { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.hepside { position: sticky; top: 70px; }
+.hep h2 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.hepwarn { margin: 0; padding: 10px 14px; border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--line)); background: color-mix(in srgb, var(--gold) 10%, var(--card)); border-radius: var(--radius); font-size: 14px; }
+.hepsteps { margin: 0; padding-left: 22px; font-size: 14px; display: flex; flex-direction: column; gap: 3px; }
+.hepchips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.hepchips button { background: var(--bg); color: var(--ink); border: 1px solid var(--line); padding: 6px 12px; font-size: 13px; font-weight: 600; }
+.hepchips button.act { color: var(--muted); }
+.hepchips button.on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.acttag { display: inline-block; font: 700 10.5px var(--sans); letter-spacing: .04em; padding: 1px 6px; border-radius: 4px; background: color-mix(in srgb, var(--bond) 15%, var(--card)); color: var(--bond); vertical-align: 1px; }
+.hepchips button.on .acttag { background: var(--card); }
+.hepnum { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.hepnum .unit { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); overflow: hidden; }
+.hepnum .unit input { border: 0; background: transparent; font-size: 16px; }
+.hepnum .unit i { font-style: normal; padding: 0 12px; color: var(--muted); font-weight: 500; }
+.hepgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 10px; }
+.hepmodes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hepmodes button { background: var(--card); color: var(--accent); border: 2px solid color-mix(in srgb, var(--accent) 45%, var(--line)); padding: 12px; font-size: 15px; }
+.hepmodes button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.hepconc { margin: 0 0 10px; padding: 8px 12px; background: var(--bg); border-radius: 8px; font-size: 14px; }
+.hepbands { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; padding: 8px 12px; background: var(--bg); border-radius: 8px; margin-bottom: 10px; }
+.hepbands b { flex-basis: 100%; }
+.hephead { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 10px; }
+.hephead h2 { margin: 0; }
+.hepres { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.hepbig { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); margin-bottom: 10px; }
+.hepres .hepbig { margin-bottom: 0; }
+.hepbig small { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; font-weight: 600; }
+.hepbig b { font: 600 26px/1.2 var(--serif); }
+.hepbig span { font-size: 14px; color: var(--muted); }
+.hepbig em { font-style: normal; font-size: 12.5px; color: var(--down); font-weight: 600; }
+.hepbig.ok { border-color: color-mix(in srgb, var(--up) 45%, var(--line)); background: color-mix(in srgb, var(--up) 8%, var(--card)); }
+.hepalert { margin: 10px 0 0; font-size: 13.5px; color: #8a5a12; background: color-mix(in srgb, var(--gold) 10%, var(--card)); padding: 8px 12px; border-radius: 8px; }
+.hepstop { margin: 0 0 10px; padding: 10px 12px; border-radius: 8px; background: color-mix(in srgb, var(--down) 10%, var(--card)); color: var(--down); font-weight: 700; }
+.hepout { border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); }
+.hepkv { list-style: none; margin: 0 0 8px; padding: 0; font-size: 14px; }
+.hepkv li { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-bottom: 1px solid var(--line); }
+.hepkv li span { color: var(--muted); }
+.hepkv li b { text-align: right; font-weight: 600; }
+.hepkv small { color: var(--muted); font-weight: 500; }
+.hepul { margin: 0; padding-left: 18px; font-size: 13.5px; display: flex; flex-direction: column; gap: 3px; }
+table.hepband { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.hepband th, table.hepband td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.hepband tr.ok td { background: color-mix(in srgb, var(--up) 9%, var(--card)); }
+table.hepband tr.mid td { background: color-mix(in srgb, var(--equity) 9%, var(--card)); }
+table.hepband tr.hi td { background: color-mix(in srgb, var(--down) 9%, var(--card)); }
+.heprefs summary { cursor: pointer; font-weight: 600; }
+.heprefs ol { margin: 8px 0 0; padding-left: 20px; font-size: 12.5px; display: flex; flex-direction: column; gap: 5px; overflow-wrap: anywhere; }
+.heprefs a { color: var(--accent); }
+@media (max-width: 900px) { .hepcols { grid-template-columns: 1fr; } .hepside { position: static; } }
+@media (max-width: 520px) { .hepgrid { grid-template-columns: 1fr; } }

@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.5.0 – 23/11/2026
+
+- Mục mới **Heparin IV Calc.** (`heparin/`): liều heparin truyền tĩnh mạch theo cân nặng và chỉnh liều theo aPTT cho VTE, STEMI (rt-PA liều đầy đủ / phối hợp), NSTEMI/UA; PCI (theo dõi ACT) chỉ hiện khoảng liều bolus. Dung dịch pha tùy chọn (IU trong túi + mL dung môi), giới hạn liều tối đa, ngưng truyền 1 giờ khi aPTT quá cao, nút Copy Orders, bảng hướng dẫn và 12 tài liệu tham khảo (Dager 2018, ASHP). Chuyển từ repo riêng `heparin-web-app` (React/TypeScript) sang JavaScript, giao diện tiếng Anh theo theme Trieu's Note; logic khớp 100% bản TypeScript gốc (14.644 ca kiểm, `scripts/heparin/parity.py`).
+
 ## 2.4.0 – 23/11/2026
 
 - Quản lý tài chính › Chiến lược: mục mới **Điều chỉnh chiến thuật (TAA)** với nút **Phân tích lại toàn bộ** (tải lại giá vàng, vĩ mô, lãi suất, dòng tiền, quỹ rồi tính lại mọi phân tích). Chấm điểm tín hiệu từng lớp tài sản: vàng (bảng yếu tố vàng VN + trạng thái đáy sau đỉnh), cổ phiếu lõi (dòng tiền, pha chu kỳ, phần bù rủi ro so với tiết kiệm), quỹ trái phiếu (lợi nhuận so với tiết kiệm, lợi suất Mỹ, pha chu kỳ), tiền mặt + tiết kiệm (lãi suất thực, rủi ro suy thoái, đình lạm) → đề xuất nghiêng tối đa ±5 điểm % quanh SAA, tổng nghiêng bằng 0, giữ ràng buộc IPS; so sánh lợi nhuận kỳ vọng và độ biến động trước–sau, số tiền cần chuyển mỗi tháng. Bấm **Áp dụng** mới đổi mục tiêu (lưu mức nghiêng, SAA vẫn tự cập nhật theo CME); **Bỏ điều chỉnh** để về SAA; nhắc phân tích lại sau 90 ngày hoặc khi tín hiệu đổi.

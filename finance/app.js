@@ -365,6 +365,7 @@ function render() {
   renderAlloc(st);
   renderCharts(st);
   renderPlan(st);
+  renderTAA(st);
   renderInvest(st);
   renderInflation(st);
   sellPreview();

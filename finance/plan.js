@@ -148,7 +148,8 @@ function currentMix(st) {
 }
 
 function targetMix(total, profileKey) {
-  const k = profileKey || planCfg().profile, p = profCfg(k), w = optimal(k, total).w;
+  const k = profileKey || planCfg().profile, p = profCfg(k), w0 = optimal(k, total).w;
+  const t = activeTilt(k), w = t ? applyTilt(w0, t, bounds(total, p)) : w0; // điều chỉnh chiến thuật đã áp dụng (taa.js)
   const liquid = (total * w.liquid) / 100, cash = Math.min(p.emergency, liquid);
   return { gold: (total * w.gold) / 100, cash, dep: liquid - cash, bond: (total * w.bond) / 100, equity: (total * w.equity) / 100, sat: (total * w.sat) / 100 };
 }
@@ -304,7 +305,8 @@ function renderPlan(st) {
     <p class="small"><b>Kết quả:</b> ${frontier}.</p>
     <p class="muted small">CME tính lại tự động khi dữ liệu thị trường (4 lần/ngày) và số liệu vĩ mô VN (hằng tháng) thay đổi, nên đề xuất thay đổi theo. Kết quả nhạy nhất với kỳ vọng cổ phiếu và vàng: chỉnh ở <a href="#strategy" data-focus="assumeForm">Chiến lược › Giả định CME</a>.</p>` +
     (p.profile !== p.risk ? `<p class="advice small">Bạn đang áp dụng khẩu vị <b>${esc(PROFILES[p.profile].name)}</b>, khác với mức rủi ro bạn chọn (${esc(PROFILES[p.risk].name)}). <button type="button" class="ghost" data-apply-rec>Áp dụng đề xuất</button></p>` : "");
-  $("#planNote").textContent = `Bảng trên là các bước điều chỉnh để danh mục khớp với khẩu vị ${PROFILES[p.profile].name}. Chuyển dần trong 12–18 tháng, không làm một lần; vàng bán theo kế hoạch giảm tỷ trọng vàng (Thực thi).`;
+  $("#planNote").textContent = `Bảng trên là các bước điều chỉnh để danh mục khớp với khẩu vị ${PROFILES[p.profile].name}. Chuyển dần trong 12–18 tháng, không làm một lần; vàng bán theo kế hoạch giảm tỷ trọng vàng (Thực thi).`
+    + (activeTilt(p.profile) ? ` Mục tiêu đã gồm điều chỉnh chiến thuật áp dụng ngày ${fmtDate(S.settings.tilt.at)} (Chiến lược › Điều chỉnh chiến thuật).` : "");
 
   if (analysisAt) { analysisAt = new Date(); renderAnalysis(st); } // đã bấm Phân tích: cập nhật theo dữ liệu mới
 

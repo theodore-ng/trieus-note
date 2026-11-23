@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.4.0 – 23/11/2026
+
+- Quản lý tài chính › Chiến lược: mục mới **Điều chỉnh chiến thuật (TAA)** với nút **Phân tích lại toàn bộ** (tải lại giá vàng, vĩ mô, lãi suất, dòng tiền, quỹ rồi tính lại mọi phân tích). Chấm điểm tín hiệu từng lớp tài sản: vàng (bảng yếu tố vàng VN + trạng thái đáy sau đỉnh), cổ phiếu lõi (dòng tiền, pha chu kỳ, phần bù rủi ro so với tiết kiệm), quỹ trái phiếu (lợi nhuận so với tiết kiệm, lợi suất Mỹ, pha chu kỳ), tiền mặt + tiết kiệm (lãi suất thực, rủi ro suy thoái, đình lạm) → đề xuất nghiêng tối đa ±5 điểm % quanh SAA, tổng nghiêng bằng 0, giữ ràng buộc IPS; so sánh lợi nhuận kỳ vọng và độ biến động trước–sau, số tiền cần chuyển mỗi tháng. Bấm **Áp dụng** mới đổi mục tiêu (lưu mức nghiêng, SAA vẫn tự cập nhật theo CME); **Bỏ điều chỉnh** để về SAA; nhắc phân tích lại sau 90 ngày hoặc khi tín hiệu đổi.
+
 ## 2.3.0 – 23/11/2026
 
 - **Ghi chú** thành app ghi chú đầy đủ: thư mục Ghi chú / Lưu trữ / Thùng rác (kèm số lượng; thùng rác tự xóa hẳn sau 30 ngày, khôi phục hoặc xóa vĩnh viễn được), nhãn (gắn nhiều nhãn, lọc theo nhãn, gợi ý nhãn đã có), Markdown với chế độ Viết / Xem (tiêu đề, đậm, danh sách, bảng, link mở tab mới; HTML được lọc an toàn bằng DOMPurify), checklist `- [ ]` tick được ngay trong chế độ Xem, nhập sao lưu (chỉ thêm ghi chú chưa có).

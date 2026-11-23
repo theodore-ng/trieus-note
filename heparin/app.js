@@ -76,7 +76,7 @@
       <section class="card"><h2>Safety notes</h2><ul class="hepul">
         <li>Verify all doses clinically before administration.</li><li>Institutional protocol overrides this calculator.</li>
         <li>Minimum infusion rate is 0 mL/hr — never run negative.</li><li>All mL values are rounded to 1 decimal place.</li>
-        ${calc ? `<li>For aPTT &gt;${p.targetAPTT.high} sec, hold infusion for 1 hour before resuming.</li>` : ""}</ul></section>
+        ${calc ? `<li>For aPTT &gt;${p.apttBands.find((b) => b.holdOneHour).from - 1} sec, hold infusion for 1 hour before resuming.</li>` : ""}</ul></section>
       <details class="card heprefs"><summary>References <span class="muted small">${HEP.REFERENCES.length} sources</span></summary><ol>
         ${HEP.REFERENCES.map((r) => `<li>${esc(r.title)}. <span class="muted">${esc(r.source)}, ${r.year}.</span> <a href="${esc(r.url)}" target="_blank" rel="noopener noreferrer">${esc(r.url)}</a></li>`).join("")}</ol></details>`;
   }

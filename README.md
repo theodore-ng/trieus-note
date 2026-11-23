@@ -85,7 +85,7 @@ Nồng độ = IU trong túi / mL dung môi; mL làm tròn 1 chữ số thập p
 
 Logic ở `heparin/heparin.js`, chuyển nguyên trạng từ bản TypeScript gốc `scripts/heparin/*.ts` (repo `heparin-web-app` cũ). Khi sửa logic: sửa cả hai rồi chạy `scripts/heparin/parity.py` (dịch chính file .ts trong Edge và so với JS, phải "OK").
 
-**Cần rà lại (giữ nguyên từ bản gốc):** bảng chỉnh liều tim mạch được bản gốc ghi là "adapted from standard protocol", không lấy trực tiếp từ Dager; mục Safety notes ghi "aPTT > mức trên của đích thì ngưng 1 giờ" nhưng bảng chỉ ngưng khi aPTT > 120 (VTE) / > 90 giây (tim mạch).
+**Khác bản gốc:** từ 2.5.2, Safety notes lấy ngưỡng ngưng truyền 1 giờ theo bảng (VTE > 120 giây, tim mạch > 90 giây) thay vì "> mức trên của đích" (lệch với bảng). **Cần rà lại:** bảng chỉnh liều tim mạch được bản gốc ghi là "adapted from standard protocol", không lấy trực tiếp từ Dager.
 
 ---
 

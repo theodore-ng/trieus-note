@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.5.2 – 23/11/2026
+
+- Heparin › Safety notes: ngưỡng ngưng truyền 1 giờ lấy theo bảng chỉnh liều của chỉ định đang chọn (VTE: aPTT > 120 giây; STEMI/NSTEMI: > 90 giây). Bản gốc ghi "> mức trên của đích" (> 100 / > 70 giây), lệch với bảng.
+
 ## 2.5.1 – 23/11/2026
 
 - Quản lý tài chính › Thực thi: gộp mục con "Giảm tỷ trọng vàng" vào **Việc cần làm** thành khối thu gọn (dòng tiêu đề tóm tắt "Đã bán x/y lượng · tháng này: …", mở ra là tiến độ, lịch bán, chỉnh quy tắc); tab Thực thi còn Việc cần làm · Giải ngân.

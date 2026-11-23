@@ -7,20 +7,20 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f2ede2">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="logo.svg?v=2.1.1" type="image/svg+xml">
-<link rel="icon" href="favicon-32.png?v=2.1.1" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2.1.1">
+<link rel="icon" href="logo.svg?v=2.2.0" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png?v=2.2.0" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=2.2.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
-<link rel="stylesheet" href="style.css?v=2.1.1">
+<link rel="stylesheet" href="style.css?v=2.2.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="config.js?v=2.1.1"></script>
+<script src="config.js?v=2.2.0"></script>
 </head>
 <body>
 <header>
   <div class="headin">
-    <h1><a class="home" href="./" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="logo.svg?v=2.1.1" alt="Trieu's Note"></a>Trieu's Note</h1>
+    <h1><a class="home" href="./" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="logo.svg?v=2.2.0" alt="Trieu's Note"></a>Trieu's Note</h1>
     <div id="userBox" class="row wrap gap small" hidden>
       <span>Xin chào, <b id="userName"></b></span>
       <button type="button" class="ghost" id="btnLogout">Đăng xuất</button>
@@ -54,6 +54,10 @@
         <svg viewBox="0 0 24 24"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z"/></svg>
         <div><h2>Danh mục kỹ thuật</h2><p class="muted small">Tra cứu danh mục kỹ thuật tương đương (QĐ 4442, 4883) và quy trình kỹ thuật khoa Phẫu thuật mạch máu.</p></div>
       </a>
+      <a class="card appcard" href="pad/">
+        <svg viewBox="0 0 24 24"><path d="M9 3v7l-3 9a2 2 0 0 0 2 2h3l1-5 1 5h3a2 2 0 0 0 2-2l-3-9V3M9 3h6"/></svg>
+        <div><h2>PAD Classification</h2><p class="muted small">Phân loại bệnh động mạch chi dưới: Fontaine, Rutherford, WIfI.</p></div>
+      </a>
     </div>
     <p id="modeNote" class="muted small"></p>
   </section>
@@ -61,7 +65,7 @@
   <p class="muted small center">Trieu's Note · phiên bản <b id="appVer">—</b></p>
 </main>
 
-<script src="core.js?v=2.1.1"></script>
+<script src="core.js?v=2.2.0"></script>
 <script>
 (async () => {
   const { $ } = TN;

@@ -9,6 +9,7 @@ App cá nhân gồm nhiều mục con, mở từ trang chủ dạng thẻ, dùng
 | **Ghi chú** | `notes/` | Ghi chép cá nhân: tạo, sửa (tự lưu), tìm kiếm không dấu, ghim, xuất sao lưu JSON |
 | **Quản lý tài chính** | `finance/` | Mô tả chi tiết bên dưới |
 | **Danh mục kỹ thuật** | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (QĐ 4442/4883) kèm quy trình kỹ thuật khoa Phẫu thuật mạch máu; dữ liệu nằm sẵn trong trang, không cần đăng nhập |
+| **PAD Classification** | `pad/` | Phân loại bệnh động mạch chi dưới: Fontaine, Rutherford, WIfI (giao diện tiếng Anh, tính trên trình duyệt, không cần đăng nhập) |
 
 🔗 **https://theodore-ng.github.io/trieus-note/** (trước đây: `gold-portfolio`)
 
@@ -49,6 +50,20 @@ Tóm tắt văn bản chỉ để tham khảo nhanh; khi dùng chính thức c�
 - **Văn bản thay thế QĐ 7435:** chưa tìm thấy. Muốn cập nhật dữ liệu sang QĐ 7435 cần file Excel phụ lục của quyết định này.
 - **Cột TT37 "có lương / không lương":** TT37/2018 không nêu rõ khi nào áp dụng mức nào; trang chỉ ghi là hai mức của khung giá.
 - **Định mức nhân lực TT50 Phụ lục 1:** lấy từ bản đăng lại (caselaw.vn) vì không mở được file gốc; mỗi ô đã cộng kiểm tra. Các ô nguồn ghi lệch hoặc không tách được loại để trống, trang hiện "xem Phụ lục 1 TT50/2014": phẫu thuật Điện quang, Vi phẫu, Tạo hình thẩm mỹ loại III; thủ thuật Lao, Tâm thần, Y học cổ truyền, Giải phẫu bệnh, Tai Mũi Họng loại đặc biệt, Y học hạt nhân loại II–III. Các chương Hóa sinh, Vi sinh và phẫu thuật Gây mê hồi sức không có bảng. Nên đối chiếu file gốc trước khi dùng chính thức.
+
+---
+
+# PAD Classification
+
+Trang `pad/` phân loại bệnh động mạch chi dưới (peripheral arterial disease):
+
+- **Fontaine** (I, IIa, IIb, III, IV) từ ABI, đau cách hồi + quãng đường đi không đau, đau khi nghỉ, mất mô.
+- **Rutherford** (Grade 0–3 / Category 0–6) từ triệu chứng, mức mất mô so với khớp cổ–bàn ngón, áp lực cổ chân/ngón, test thảm lăn.
+- **WIfI** (Wound, Ischemia, foot Infection) → giai đoạn nguy cơ cắt cụt 1 năm và lợi ích tái thông mạch (Mills 2014, Table VI–VII); I lấy mức nặng nhất trong ABI, áp lực cổ chân, áp lực ngón, TcPO₂.
+
+Kèm cảnh báo lâm sàng (ABI > 1,3, thiếu dữ liệu huyết động…). Chỉ là công cụ hỗ trợ quyết định, không thay thế đánh giá lâm sàng.
+
+Logic ở `pad/classification.js`, chuyển nguyên trạng từ bản Python gốc `scripts/pad/classification.py` (repo `pad-classification` cũ, PyScript). Khi sửa logic: sửa cả hai, chạy `pytest scripts/pad/tests` (47 test) rồi `scripts/pad/parity.py` (so JS với Python trên lưới đầu vào quanh mọi ngưỡng, phải "OK").
 
 ---
 
@@ -104,6 +119,8 @@ finance/invest.js          Hướng dẫn giải ngân (ETF, quỹ mở, cổ ph
 finance/macro.js           Vĩ mô, dòng tiền, rủi ro suy thoái, lạm phát
 supabase/schema.sql        Bảng portfolios/profiles/notes + Row Level Security
 ky-thuat/index.html        Danh mục kỹ thuật (sinh bởi scripts/ky_thuat/, không sửa tay)
+pad/                       PAD Classification (classification.js = logic, app.js = giao diện)
+scripts/pad/               Bản Python chuẩn, 47 test, parity.py so JS với Python
 scripts/update_prices.py   → data/prices.json, data/macro.json
 scripts/update_invest.py   → data/invest.json
 data/vn_macro.json         Số liệu vĩ mô VN (cập nhật thủ công hằng tháng)

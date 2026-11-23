@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.2.0 – 23/11/2026
+
+- Mục mới **PAD Classification** (`pad/`): phân loại bệnh động mạch chi dưới theo Fontaine, Rutherford, WIfI; chuyển từ repo riêng `pad-classification` (PyScript) sang JavaScript nên mở tức thì, giao diện tiếng Anh theo theme Trieu's Note, kết quả cập nhật ngay khi nhập. Logic khớp 100% bản Python gốc (24.487 ca kiểm, `scripts/pad/parity.py`); bản Python và 47 test gốc giữ ở `scripts/pad/`.
+
 ## 2.1.1 – 20/11/2026
 
 - Mọi mục dùng chung logo Trieu's Note ở góc trên trái; bấm vào là về trang chủ (thay biểu tượng ô lưới).

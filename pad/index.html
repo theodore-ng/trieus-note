@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PAD Classification · Trieu's Note</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f2ede2">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="../logo.svg?v=2.2.0" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png?v=2.2.0" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.2.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
+<link rel="stylesheet" href="../style.css?v=2.2.0">
+</head>
+<body>
+<header>
+  <div class="headin">
+    <h1><a class="home" href="../" aria-label="Back to Trieu's Note home" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.2.0" alt="Trieu's Note"></a>PAD Classification</h1>
+    <span class="muted small">Fontaine · Rutherford · WIfI</span>
+  </div>
+</header>
+
+<main class="pad">
+  <div class="subnav" role="tablist">
+    <button type="button" data-p="fontaine">Fontaine</button>
+    <button type="button" data-p="rutherford">Rutherford</button>
+    <button type="button" data-p="wifi">WIfI</button>
+  </div>
+
+  <!-- ==================== FONTAINE ==================== -->
+  <section class="card padp" data-p="fontaine" hidden>
+    <form id="fForm" autocomplete="off" onsubmit="return false">
+      <fieldset>
+        <legend>Hemodynamic</legend>
+        <label class="num">ABI <input name="abi" type="number" min="0" max="2" step="0.01" placeholder="e.g. 0.65"><span class="muted small">leave blank if unknown</span></label>
+      </fieldset>
+      <fieldset>
+        <legend>Symptoms</legend>
+        <label class="check"><input type="checkbox" name="claud"> Intermittent claudication present</label>
+        <label class="num indent" data-show="claud">Pain-free walking distance <input name="dist" type="number" min="0" max="5000" step="1" placeholder="e.g. 150"><span class="muted small">metres</span></label>
+        <label class="check"><input type="checkbox" name="rest"> Ischemic rest pain</label>
+        <label class="check"><input type="checkbox" name="tissue"> Tissue loss (ulceration or gangrene)</label>
+      </fieldset>
+    </form>
+    <div class="padres" id="fRes"></div>
+  </section>
+
+  <!-- ==================== RUTHERFORD ==================== -->
+  <section class="card padp" data-p="rutherford" hidden>
+    <form id="rForm" autocomplete="off" onsubmit="return false">
+      <fieldset>
+        <legend>Symptoms</legend>
+        <label class="check"><input type="checkbox" name="claud"> Claudication present</label>
+        <label class="check"><input type="checkbox" name="rest"> Ischemic rest pain</label>
+        <label class="check"><input type="checkbox" name="tissue"> Tissue loss (ulceration / gangrene)</label>
+        <div class="indent" data-show="tissue">
+          <p class="small muted">Extent of tissue loss:</p>
+          <label class="check"><input type="radio" name="tm" value="below" checked> Distal to transmetatarsal level</label>
+          <label class="check"><input type="radio" name="tm" value="above"> Proximal to TM level / foot not salvageable</label>
+          <label class="check"><input type="radio" name="tm" value="unknown"> Unknown</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Hemodynamic data</legend>
+        <label class="num">Resting ankle pressure <input name="rap" type="number" min="0" max="300" step="1" placeholder="mmHg"><span class="muted small">mmHg</span></label>
+        <label class="num">Toe pressure <input name="tp" type="number" min="0" max="200" step="1" placeholder="mmHg"><span class="muted small">mmHg</span></label>
+      </fieldset>
+      <fieldset>
+        <legend>Treadmill exercise test (for claudication grading)</legend>
+        <p class="small muted">Standard protocol: 5 min, 12% grade, 2 mph</p>
+        <div class="row wrap gap small">Completes treadmill:
+          <label class="check"><input type="radio" name="tread" value="yes"> Yes</label>
+          <label class="check"><input type="radio" name="tread" value="no"> No</label>
+          <label class="check"><input type="radio" name="tread" value="na" checked> Not done / N/A</label>
+        </div>
+        <label class="num">Post-exercise ankle pressure <input name="post" type="number" min="0" max="300" step="1" placeholder="mmHg"><span class="muted small">mmHg</span></label>
+      </fieldset>
+    </form>
+    <div class="padres" id="rRes"></div>
+  </section>
+
+  <!-- ==================== WIfI ==================== -->
+  <section class="card padp" data-p="wifi" hidden>
+    <form id="wForm" autocomplete="off" onsubmit="return false">
+      <fieldset>
+        <legend>W — Wound</legend>
+        <label class="opt"><input type="radio" name="w" value="0" checked><b>0</b><span><strong>No wound / ischemic rest pain only</strong><small>No ulcer; patient may have rest pain or minor skin changes</small></span></label>
+        <label class="opt"><input type="radio" name="w" value="1"><b>1</b><span><strong>Small / shallow ulcer(s)</strong><small>Distal leg or foot; no exposed bone (IPJ toe exposure still W=1)</small></span></label>
+        <label class="opt"><input type="radio" name="w" value="2"><b>2</b><span><strong>Deeper ulcer</strong><small>Exposed tendon, capsule, or bone; or shallow heel ulcer ± bone involvement</small></span></label>
+        <label class="opt"><input type="radio" name="w" value="3"><b>3</b><span><strong>Extensive / deep ulcer</strong><small>Involving forefoot ± midfoot; or deep heel ulcer ± calcaneal involvement</small></span></label>
+      </fieldset>
+      <fieldset>
+        <legend>I — Ischemia (enter available measures)</legend>
+        <p class="small muted">The score uses the <b>most severe</b> measure provided. WIfI uses ABI ≥ 0.80 for I=0 (different from the PAD diagnostic threshold of 0.9).</p>
+        <label class="num">ABI <input name="abi" type="number" min="0" max="2" step="0.01" placeholder="e.g. 0.55"></label>
+        <label class="num">Ankle pressure <input name="ap" type="number" min="0" max="300" step="1" placeholder="mmHg"><span class="muted small">mmHg</span></label>
+        <label class="num">Toe pressure <input name="tp" type="number" min="0" max="200" step="1" placeholder="mmHg"><span class="muted small">mmHg</span></label>
+        <label class="num"><span>TcPO<sub>2</sub></span> <input name="tc" type="number" min="0" max="100" step="1" placeholder="mmHg"><span class="muted small">mmHg</span></label>
+      </fieldset>
+      <fieldset>
+        <legend>fI — foot Infection (IDSA / IWGDF criteria)</legend>
+        <label class="opt"><input type="radio" name="fi" value="0" checked><b>0</b><span><strong>No infection</strong><small>No local or systemic signs of infection</small></span></label>
+        <label class="opt"><input type="radio" name="fi" value="1"><b>1</b><span><strong>Mild / local infection</strong><small>Erythema &gt; 0.5 cm and ≤ 2 cm around wound; no systemic involvement</small></span></label>
+        <label class="opt"><input type="radio" name="fi" value="2"><b>2</b><span><strong>Moderate infection</strong><small>Erythema &gt; 2 cm, or lymphangitis, fascia spread, deep abscess, or gangrene; no SIRS</small></span></label>
+        <label class="opt"><input type="radio" name="fi" value="3"><b>3</b><span><strong>Severe infection</strong><small>Any local infection + ≥ 2 SIRS criteria (fever/hypothermia, tachycardia, tachypnoea, leukocytosis/leukopenia)</small></span></label>
+      </fieldset>
+    </form>
+    <div class="padres" id="wRes"></div>
+  </section>
+
+  <section class="card small muted padref">
+    <p><b>Clinical decision support only.</b> This tool is intended to assist, not replace, clinical judgment. Always verify classifications against current guidelines and individual patient context.</p>
+    <p><b>References</b></p>
+    <ul>
+      <li>Fontaine R, Kim M, Kieny R. Die chirurgische Behandlung der peripheren Durchblutungsstörungen. <em>Helv Chir Acta</em>. 1954;21(5-6):499-533.</li>
+      <li>Rutherford RB et al. Suggested standards for reports dealing with lower extremity ischemia. <em>J Vasc Surg</em>. 1986;4(1):80-94.</li>
+      <li>Mills JL Sr et al. The Society for Vascular Surgery Lower Extremity Threatened Limb Classification System: Risk stratification based on wound, ischemia, and foot infection (WIfI). <em>J Vasc Surg</em>. 2014;59(1):220-234.</li>
+    </ul>
+  </section>
+</main>
+
+<script src="classification.js?v=2.2.0"></script>
+<script src="app.js?v=2.2.0"></script>
+</body>
+</html>

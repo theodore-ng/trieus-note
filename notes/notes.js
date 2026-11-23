@@ -315,22 +315,39 @@
     return norm({ id: await stableId(`apple-notes|${title || first}|${a.created ?? ""}`), title: title || first || "(Không tiêu đề)", body: b, created_at: created, updated_at: modified, tags });
   }
 
+  /** Một file Markdown (vd Notes trên iPhone › Export as Markdown) = một ghi chú: tiêu đề = dòng đầu, không có thì tên file;
+      ngày tạo/sửa = ngày của file; mã theo tiêu đề + nội dung (giống nút Dán) nên nhập lại không trùng. */
+  async function fromMarkdown(file) {
+    const text = (await file.text()).replace(/^﻿/, "");
+    const name = file.name.replace(/\.(md|markdown|txt)$/i, "");
+    const first = text.trimStart().split("\n")[0].replace(/^#+\s*/, "").trim();
+    const n = await fromApple({ title: first ? "" : name, body: text.trimStart(), created: file.lastModified, modified: file.lastModified });
+    n.id = await stableId(`apple-share|${n.title}|${n.body}`);
+    return n;
+  }
+  const isMd = (f) => /\.(md|markdown)$/i.test(f.name) || f.type === "text/markdown";
+
+  // Nhập file: nhiều file .md (mỗi file 1 ghi chú) hoặc file sao lưu / file xuất hàng loạt (.json, .txt)
   $("#fileImport").onchange = async (e) => {
-    const file = e.target.files[0];
+    const files = [...e.target.files];
     e.target.value = "";
-    if (!file) return;
+    if (!files.length) return;
     try {
-      const arr = parseObjects(await file.text());
       const backup = (n) => n && typeof n.id === "string" && typeof n.title === "string" && typeof n.body === "string" && n.created_at && n.updated_at;
       const apple = (n) => n && !n.id && ("title" in n || "body" in n);
-      let items, src;
-      if (arr.every(backup)) { items = arr.map(norm); src = "sao lưu"; }
-      else if (arr.every(apple)) { items = await Promise.all(arr.map(fromApple)); src = "Ghi chú iPhone"; }
-      else throw new Error("file không đúng định dạng sao lưu ghi chú hoặc file xuất từ Ghi chú iPhone");
+      const items = [], srcs = new Set();
+      for (const file of files) {
+        if (isMd(file)) { items.push(await fromMarkdown(file)); srcs.add("Markdown"); continue; }
+        const arr = parseObjects(await file.text());
+        if (arr.every(backup)) { items.push(...arr.map(norm)); srcs.add("sao lưu"); }
+        else if (arr.every(apple)) { items.push(...(await Promise.all(arr.map(fromApple)))); srcs.add("Ghi chú iPhone"); }
+        else throw new Error(`${file.name}: không đúng định dạng (cần .md, file sao lưu hoặc file xuất từ Ghi chú iPhone)`);
+      }
+      const src = [...srcs].join(", ");
       const fresh = items.filter((n, i) => !byId(n.id) && items.findIndex((m) => m.id === n.id) === i);
       const skip = items.length - fresh.length;
-      if (!fresh.length) { alert(`Không có ghi chú mới (${items.length} ghi chú trong file đã có).`); return; }
-      if (!confirm(`Nhập ${fresh.length} ghi chú mới từ ${src}${skip ? ` (bỏ qua ${skip} ghi chú đã có)` : ""}? Ghi chú đã có không bị thay đổi.`)) return;
+      if (!fresh.length) { alert(`Không có ghi chú mới (${items.length} ghi chú đã có).`); return; }
+      if (!confirm(`Nhập ${fresh.length} ghi chú mới (${src})${skip ? `, bỏ qua ${skip} ghi chú đã có` : ""}? Ghi chú đã có không bị thay đổi.`)) return;
       notes.push(...fresh);
       for (const n of fresh) await store.put(n);
       state(`Đã nhập ${fresh.length} ghi chú ✓`);
@@ -338,23 +355,39 @@
     } catch (err) { alert("Không nhập được: " + err.message); }
   };
 
-  /** Nhận 1 ghi chú gửi từ phím tắt iPhone qua địa chỉ: …/notes/#import&title=…&body=… (title tùy chọn; body là Markdown).
-      Hash không được gửi lên máy chủ. Gửi lại cùng nội dung thì báo đã có, không tạo bản trùng. */
-  async function takeImport(hash) {
-    const q = new URLSearchParams(hash.replace(/^#import[?&]?/, ""));
-    const body = q.get("body") || q.get("text") || "";
-    if (!body.trim() && !(q.get("title") || "").trim()) { history.replaceState(null, "", location.pathname); return false; }
-    const n = await fromApple({ title: q.get("title") || "", body, folder: q.get("folder") || "" });
+  /** Tạo ghi chú từ chữ gửi sang (phím tắt hoặc nút Dán): dòng đầu = tiêu đề, nhãn #iPhone; cùng nội dung thì không tạo lại. */
+  async function addShared({ title = "", body = "", folder = "" }, ask) {
+    const n = await fromApple({ title, body, folder });
     n.id = await stableId(`apple-share|${n.title}|${n.body}`);
     const have = byId(n.id);
     if (have) { alert("Ghi chú này đã được nhập trước đó."); location.replace("#" + have.id); return true; }
-    if (!confirm(`Thêm ghi chú từ iPhone: "${n.title}"?`)) { history.replaceState(null, "", location.pathname); return false; }
+    if (ask && !confirm(`Thêm ghi chú từ iPhone: "${n.title}"?`)) return false;
     notes.push(n);
     try { await store.put(n); state("Đã nhập từ iPhone ✓"); } catch (e) { notes.pop(); alert("Không lưu được: " + e.message); return false; }
     ui.view = "all"; saveUi();
     location.replace("#" + n.id);
     return true;
   }
+  /** Nhận 1 ghi chú gửi từ phím tắt iPhone qua địa chỉ: …/notes/#import&title=…&body=… (title tùy chọn; body là Markdown).
+      Hash không được gửi lên máy chủ. Gửi lại cùng nội dung thì báo đã có, không tạo bản trùng. */
+  async function takeImport(hash) {
+    const q = new URLSearchParams(hash.replace(/^#import[?&]?/, ""));
+    const body = q.get("body") || q.get("text") || "", title = q.get("title") || "";
+    if (!body.trim() && !title.trim()) { history.replaceState(null, "", location.pathname); return false; }
+    const ok = await addShared({ title, body, folder: q.get("folder") || "" }, true); // từ địa chỉ trang: luôn hỏi trước
+    if (!ok) history.replaceState(null, "", location.pathname);
+    return ok;
+  }
+  // Nút Dán: lấy chữ vừa sao chép (vd chọn hết chữ trong app Notes › Copy) thành ghi chú mới
+  $("#btnPaste").onclick = async () => {
+    let text = "";
+    try { text = await navigator.clipboard.readText(); } catch { /* trình duyệt chặn đọc bộ nhớ tạm */ }
+    if (!text.trim()) {
+      alert("Không đọc được nội dung vừa sao chép. Bấm Mới rồi nhấn giữ trong ô nội dung › Paste.");
+      return;
+    }
+    await addShared({ body: text }, false);
+  };
   let pend = location.hash.startsWith("#import") ? location.hash : null;
   try { pend ||= sessionStorage.getItem(PENDING); sessionStorage.removeItem(PENDING); } catch { /* bỏ qua */ }
   if (pend) await takeImport(pend);

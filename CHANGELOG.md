@@ -2,6 +2,13 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.6.2 – 23/11/2026
+
+- Ghi chú: thêm cách lấy ghi chú từ iPhone không cần phím tắt:
+  - Nút **Nhập file** nhận file **Markdown (.md)**, chọn được nhiều file một lần (vd Notes › Export as Markdown): mỗi file một ghi chú, dòng đầu thành tiêu đề, ngày theo file, nhãn #iPhone; nhập lại không trùng. Vẫn nhận file sao lưu .json.
+  - Nút **Dán** cạnh Mới: tạo ghi chú từ chữ vừa sao chép (vd chọn hết chữ trong Notes › Copy).
+- Bỏ khối hướng dẫn tạo phím tắt trong trang (phức tạp). Địa chỉ `#import&body=…` cho phím tắt vẫn hoạt động.
+
 ## 2.6.1 – 23/11/2026
 
 - Ghi chú: hướng dẫn tạo phím tắt lấy ghi chú từ iPhone chuyển sang tiếng Anh, dùng đúng tên tác vụ của iOS tiếng Anh (Show in Share Sheet, Make Markdown from Rich Text, URL Encode, Text, Open URLs, Send a Copy); phím tắt đổi tên thành "Send to Trieu's Note".

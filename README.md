@@ -20,9 +20,11 @@ Dữ liệu cá nhân chỉ nằm ở Supabase (khi đăng nhập, bảo vệ b�
 
 # Ghi chú › Lấy ghi chú từ iPhone
 
-- **Từng ghi chú (Share Sheet):** phím tắt "Send to Trieu's Note" (iPhone tiếng Anh) = *Make Markdown from Rich Text* (Shortcut Input) → *URL Encode* → *Text* `https://theodore-ng.github.io/trieus-note/notes/#import&body=` + *URL Encoded Text* → *Open URLs*; bật *Show in Share Sheet*, nhận Text + Rich Text. Tham số tùy chọn: `title`, `folder`. Hướng dẫn đầy đủ (tiếng Anh) trong trang Ghi chú, khối "Import from iPhone Notes".
-- **Hàng loạt (Nhập sao lưu):** file .json/.txt chứa các đối tượng `{"title", "body", "created", "modified", "folder"}` (mảng JSON, `{"notes": [...]}` hoặc nhiều đối tượng nối tiếp); ngày nên ở dạng ISO 8601 (*Format Date* › ISO 8601 trong Shortcuts).
-- Ghi chú nhập vào có nhãn `iPhone` (+ tên thư mục); mã ghi chú cố định nên nhập lại không trùng. Chỉ nhập một chiều, sửa ở một bên không cập nhật bên kia.
+- **Export as Markdown → Nhập file (đề xuất):** trong Notes, mở ghi chú › ⋯ › Export as Markdown › Save to Files; trong Trieu's Note bấm **Nhập file**, chọn một hoặc nhiều file `.md`. Mỗi file một ghi chú (dòng đầu = tiêu đề, không có thì tên file; ngày theo file; nhãn `iPhone`).
+- **Copy → Dán:** chọn hết chữ trong ghi chú › Copy; trong Trieu's Note bấm **Dán** (Safari hỏi Paste).
+- **Phím tắt (nâng cao, không còn hướng dẫn trong trang):** mở `https://theodore-ng.github.io/trieus-note/notes/#import&body=<URL Encoded Text>` (tham số tùy chọn `title`, `folder`); app hỏi xác nhận.
+- **Hàng loạt dạng JSON:** file .json/.txt chứa các đối tượng `{"title", "body", "created", "modified", "folder"}` (mảng, `{"notes": [...]}` hoặc nhiều đối tượng nối tiếp), ngày ISO 8601.
+- Mã ghi chú cố định theo nội dung (hoặc tiêu đề + ngày tạo với JSON) nên nhập lại hay dán lại không trùng. Chỉ nhập một chiều. Ảnh đính kèm trong file Markdown không được nhập.
 
 ---
 

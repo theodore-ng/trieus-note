@@ -6,7 +6,7 @@ App cá nhân gồm nhiều mục con, mở từ trang chủ dạng thẻ, dùng
 
 | Mục | Đường dẫn | Nội dung |
 |---|---|---|
-| **Ghi chú** | `notes/` | Ghi chép cá nhân: tạo, sửa (tự lưu), Markdown Viết/Xem, checklist tick được, nhãn, ghim, lưu trữ, thùng rác (tự xóa sau 30 ngày), tìm kiếm không dấu, xuất/nhập sao lưu JSON |
+| **Ghi chú** | `notes/` | Ghi chép cá nhân: tạo, sửa (tự lưu), Markdown Viết/Xem, checklist tick được, nhãn, ghim, lưu trữ, thùng rác (tự xóa sau 30 ngày), tìm kiếm không dấu, xuất/nhập sao lưu JSON, lấy ghi chú từ app Ghi chú iPhone qua phím tắt |
 | **Quản lý tài chính** | `finance/` | Mô tả chi tiết bên dưới |
 | **Danh mục kỹ thuật** | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (QĐ 4442/4883) kèm quy trình kỹ thuật khoa Phẫu thuật mạch máu; dữ liệu nằm sẵn trong trang, không cần đăng nhập |
 | **PAD Classification** | `pad/` | Phân loại bệnh động mạch chi dưới: Fontaine, Rutherford, WIfI (giao diện tiếng Anh, tính trên trình duyệt, không cần đăng nhập) |
@@ -15,6 +15,14 @@ App cá nhân gồm nhiều mục con, mở từ trang chủ dạng thẻ, dùng
 🔗 **https://theodore-ng.github.io/trieus-note/** (trước đây: `gold-portfolio`)
 
 Dữ liệu cá nhân chỉ nằm ở Supabase (khi đăng nhập, bảo vệ bằng Row Level Security) hoặc trong trình duyệt (chế độ cục bộ khi `config.js` để trống). Phiên đăng nhập dùng chung giữa các mục vì cùng origin.
+
+---
+
+# Ghi chú › Lấy ghi chú từ iPhone
+
+- **Từng ghi chú (Bảng chia sẻ):** phím tắt "Gửi tới Trieu's Note" = *Tạo Markdown từ Văn bản có Định dạng* (đầu vào phím tắt) → *Mã hóa URL* → *Văn bản* `https://theodore-ng.github.io/trieus-note/notes/#import&body=` + kết quả mã hóa → *Mở URL*; bật Hiển thị trong Bảng chia sẻ. Tham số tùy chọn: `title`, `folder`. Hướng dẫn đầy đủ trong trang Ghi chú (khối "Lấy ghi chú từ iPhone").
+- **Hàng loạt (Nhập sao lưu):** file .json/.txt chứa các đối tượng `{"title", "body", "created", "modified", "folder"}` (mảng JSON, `{"notes": [...]}` hoặc nhiều đối tượng nối tiếp); ngày nên ở dạng ISO 8601 (*Định dạng Ngày* › ISO 8601 trong Phím tắt).
+- Ghi chú nhập vào có nhãn `iPhone` (+ tên thư mục); mã ghi chú cố định nên nhập lại không trùng. Chỉ nhập một chiều, sửa ở một bên không cập nhật bên kia.
 
 ---
 

@@ -5,7 +5,7 @@
    Thư mục đang xem, nhãn đang lọc và chế độ Viết/Xem nhớ trong localStorage `trieusnote_ui`. */
 (async () => {
   const { $, esc, sb } = TN;
-  const KEY = "trieusnote_notes_v1", UI_KEY = "trieusnote_ui", TRASH_DAYS = 30;
+  const KEY = "trieusnote_notes_v1", UI_KEY = "trieusnote_ui", TRASH_DAYS = 30, PENDING = "trieusnote_pending";
   const COLS = "id, title, body, pinned, archived, deleted_at, tags, created_at, updated_at";
   const f = $("#noteForm"), pv = $("#preview");
   let user = null, notes = [], cur = null, pending = null, timer = null;
@@ -188,7 +188,10 @@
   /* ---------- khởi động ---------- */
   if (sb) {
     user = await TN.currentUser();
-    if (!user) { location.replace("../"); return; } // đăng nhập ở trang chủ
+    if (!user) { // đăng nhập ở trang chủ; giữ ghi chú đang gửi từ iPhone để nhận sau khi đăng nhập
+      if (location.hash.startsWith("#import")) try { sessionStorage.setItem(PENDING, location.hash); } catch { /* bỏ qua */ }
+      location.replace("../"); return;
+    }
   }
   try { notes = (await store.all()).map(norm); } catch (e) {
     const box = $("#loadErr");
@@ -275,17 +278,59 @@
 
   // Sao lưu
   $("#btnExport").onclick = () => TN.download(`ghi-chu-${TN.today()}.json`, { v: 2, notes });
+  /** Đọc mọi đối tượng JSON cấp ngoài cùng trong văn bản: mảng, {notes:[…]}, hoặc nhiều {…} nối tiếp
+      (phím tắt iPhone ghép từng ghi chú thành văn bản nên không chắc ra một mảng JSON chuẩn). */
+  function parseObjects(text) {
+    const s = text.replace(/^﻿/, "").trim();
+    try { const x = JSON.parse(s); return Array.isArray(x) ? x : Array.isArray(x.notes) ? x.notes : [x]; } catch { /* thử tách từng đối tượng */ }
+    const out = [];
+    let depth = 0, start = -1, str = false, escp = false;
+    for (let i = 0; i < s.length; i++) {
+      const c = s[i];
+      if (str) { if (escp) escp = false; else if (c === "\\") escp = true; else if (c === '"') str = false; continue; }
+      if (c === '"') str = true;
+      else if (c === "{") { if (!depth++) start = i; }
+      else if (c === "}" && depth && !--depth) out.push(JSON.parse(s.slice(start, i + 1)));
+    }
+    if (!out.length) throw new Error("không tìm thấy ghi chú nào trong file");
+    return out.flatMap((x) => (Array.isArray(x.notes) ? x.notes : [x]));
+  }
+  /** Mã cố định cho ghi chú từ iPhone (tiêu đề + ngày tạo) để nhập lại không bị trùng: UUID dạng v5 từ SHA-256. */
+  async function stableId(key) {
+    const h = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(key))).slice(0, 16);
+    h[6] = (h[6] & 0x0f) | 0x50; h[8] = (h[8] & 0x3f) | 0x80;
+    const x = [...h].map((b) => b.toString(16).padStart(2, "0")).join("");
+    return `${x.slice(0, 8)}-${x.slice(8, 12)}-${x.slice(12, 16)}-${x.slice(16, 20)}-${x.slice(20)}`;
+  }
+  const iso = (v) => { const d = new Date(v); return isNaN(d) ? null : d.toISOString(); };
+  /** Ghi chú từ phím tắt iPhone: {title, body, created, modified, folder} → ghi chú của app, gắn nhãn iPhone + thư mục. */
+  async function fromApple(a) {
+    const title = String(a.title ?? "").trim(), body = String(a.body ?? "").replace(/\r\n?/g, "\n");
+    const created = iso(a.created) || now(), modified = iso(a.modified) || created;
+    // Notes dùng dòng đầu làm tiêu đề: không có tiêu đề riêng thì lấy dòng đầu; dòng đầu trùng tiêu đề thì bỏ cho gọn
+    const lines = body.split("\n"), first = (lines[0] || "").replace(/^#+\s*/, "").trim();
+    const b = first && (!title || first === title) ? lines.slice(1).join("\n").replace(/^\n+/, "") : body;
+    const tags = ["iPhone", ...(a.folder ? [String(a.folder).trim()] : [])].filter(Boolean);
+    // mã cố định theo tiêu đề + ngày tạo gốc (chuỗi thô, để ngày không đọc được vẫn ra cùng mã khi nhập lại)
+    return norm({ id: await stableId(`apple-notes|${title || first}|${a.created ?? ""}`), title: title || first || "(Không tiêu đề)", body: b, created_at: created, updated_at: modified, tags });
+  }
+
   $("#fileImport").onchange = async (e) => {
     const file = e.target.files[0];
     e.target.value = "";
     if (!file) return;
     try {
-      const x = JSON.parse(await file.text()), arr = Array.isArray(x) ? x : x.notes;
-      const ok = (n) => n && typeof n.id === "string" && typeof n.title === "string" && typeof n.body === "string" && n.created_at && n.updated_at;
-      if (!Array.isArray(arr) || !arr.every(ok)) throw new Error("file không đúng định dạng sao lưu ghi chú");
-      const fresh = arr.filter((n) => !byId(n.id)).map(norm);
-      if (!fresh.length) { alert("Không có ghi chú mới (mọi ghi chú trong file đã có)."); return; }
-      if (!confirm(`Nhập ${fresh.length} ghi chú mới? Ghi chú đã có không bị thay đổi.`)) return;
+      const arr = parseObjects(await file.text());
+      const backup = (n) => n && typeof n.id === "string" && typeof n.title === "string" && typeof n.body === "string" && n.created_at && n.updated_at;
+      const apple = (n) => n && !n.id && ("title" in n || "body" in n);
+      let items, src;
+      if (arr.every(backup)) { items = arr.map(norm); src = "sao lưu"; }
+      else if (arr.every(apple)) { items = await Promise.all(arr.map(fromApple)); src = "Ghi chú iPhone"; }
+      else throw new Error("file không đúng định dạng sao lưu ghi chú hoặc file xuất từ Ghi chú iPhone");
+      const fresh = items.filter((n, i) => !byId(n.id) && items.findIndex((m) => m.id === n.id) === i);
+      const skip = items.length - fresh.length;
+      if (!fresh.length) { alert(`Không có ghi chú mới (${items.length} ghi chú trong file đã có).`); return; }
+      if (!confirm(`Nhập ${fresh.length} ghi chú mới từ ${src}${skip ? ` (bỏ qua ${skip} ghi chú đã có)` : ""}? Ghi chú đã có không bị thay đổi.`)) return;
       notes.push(...fresh);
       for (const n of fresh) await store.put(n);
       state(`Đã nhập ${fresh.length} ghi chú ✓`);
@@ -293,7 +338,28 @@
     } catch (err) { alert("Không nhập được: " + err.message); }
   };
 
-  addEventListener("hashchange", route);
+  /** Nhận 1 ghi chú gửi từ phím tắt iPhone qua địa chỉ: …/notes/#import&title=…&body=… (title tùy chọn; body là Markdown).
+      Hash không được gửi lên máy chủ. Gửi lại cùng nội dung thì báo đã có, không tạo bản trùng. */
+  async function takeImport(hash) {
+    const q = new URLSearchParams(hash.replace(/^#import[?&]?/, ""));
+    const body = q.get("body") || q.get("text") || "";
+    if (!body.trim() && !(q.get("title") || "").trim()) { history.replaceState(null, "", location.pathname); return false; }
+    const n = await fromApple({ title: q.get("title") || "", body, folder: q.get("folder") || "" });
+    n.id = await stableId(`apple-share|${n.title}|${n.body}`);
+    const have = byId(n.id);
+    if (have) { alert("Ghi chú này đã được nhập trước đó."); location.replace("#" + have.id); return true; }
+    if (!confirm(`Thêm ghi chú từ iPhone: "${n.title}"?`)) { history.replaceState(null, "", location.pathname); return false; }
+    notes.push(n);
+    try { await store.put(n); state("Đã nhập từ iPhone ✓"); } catch (e) { notes.pop(); alert("Không lưu được: " + e.message); return false; }
+    ui.view = "all"; saveUi();
+    location.replace("#" + n.id);
+    return true;
+  }
+  let pend = location.hash.startsWith("#import") ? location.hash : null;
+  try { pend ||= sessionStorage.getItem(PENDING); sessionStorage.removeItem(PENDING); } catch { /* bỏ qua */ }
+  if (pend) await takeImport(pend);
+
+  addEventListener("hashchange", () => (location.hash.startsWith("#import") ? takeImport(location.hash) : route()));
   addEventListener("visibilitychange", () => document.hidden && flush());
   addEventListener("beforeunload", (e) => { if (pending) { flush(); e.preventDefault(); } });
   route();

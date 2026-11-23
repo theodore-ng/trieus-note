@@ -2,6 +2,11 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.6.0 – 23/11/2026
+
+- Ghi chú: **lấy ghi chú từ app Ghi chú (Notes) trên iPhone**. Phím tắt "Gửi tới Trieu's Note" (hướng dẫn tạo ngay trong trang Ghi chú) gửi ghi chú đang mở qua Bảng chia sẻ: chuyển sang Markdown, mở `…/notes/#import&body=…` (nội dung nằm sau dấu #, không gửi lên máy chủ); app hỏi xác nhận, dòng đầu thành tiêu đề, gắn nhãn #iPhone; gửi lại cùng ghi chú không bị trùng. Chưa đăng nhập thì giữ ghi chú chờ, đăng nhập xong nhận tiếp.
+- Nhập sao lưu nhận thêm file xuất hàng loạt từ phím tắt iPhone (`{title, body, created, modified, folder}`, mảng JSON hoặc nhiều đối tượng nối tiếp; file .json/.txt), gắn nhãn #iPhone + tên thư mục, mã cố định theo tiêu đề + ngày tạo nên nhập lại không trùng.
+
 ## 2.5.3 – 23/11/2026
 
 - Điều chỉnh chiến thuật: nút **Xuất cho run.py** tải `webapp_plan.json` (tỷ trọng SAA, mục tiêu đã gồm TAA đang áp dụng, mức nghiêng thực tế sau ràng buộc, số vàng giữ lại, quy tắc bán vàng). Lưu file vào thư mục dự án (ngoài repo) để báo cáo `run.py` dùng cùng mục tiêu và lịch bán với web app.

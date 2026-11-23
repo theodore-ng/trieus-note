@@ -35,7 +35,8 @@ create policy "profile_select_own" on public.profiles for select using (auth.uid
 -- select id, '<ten>', 'admin' from auth.users where email = '<ten>@quyvang.app'
 -- on conflict (id) do update set role = 'admin', username = excluded.username;
 
--- ===== Trieu's Note › Ghi chú (thêm 11/2026, chạy được nhiều lần) =====
+-- ===== Trieu's Note › Ghi chú (thêm 11/2026; cập nhật 2.3.0: lưu trữ, thùng rác, nhãn). Chạy được nhiều lần,
+-- dùng được cả khi bảng chưa có lẫn khi đã tạo từ bản 2.0.0 (thêm cột còn thiếu). =====
 create table if not exists public.notes (
   id uuid primary key,
   user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
@@ -45,6 +46,9 @@ create table if not exists public.notes (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+alter table public.notes add column if not exists archived boolean not null default false;
+alter table public.notes add column if not exists deleted_at timestamptz;          -- khác null = trong thùng rác
+alter table public.notes add column if not exists tags text[] not null default '{}';
 create index if not exists notes_user_updated on public.notes (user_id, updated_at desc);
 alter table public.notes enable row level security;
 

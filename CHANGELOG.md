@@ -2,6 +2,11 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.3.0 – 23/11/2026
+
+- **Ghi chú** thành app ghi chú đầy đủ: thư mục Ghi chú / Lưu trữ / Thùng rác (kèm số lượng; thùng rác tự xóa hẳn sau 30 ngày, khôi phục hoặc xóa vĩnh viễn được), nhãn (gắn nhiều nhãn, lọc theo nhãn, gợi ý nhãn đã có), Markdown với chế độ Viết / Xem (tiêu đề, đậm, danh sách, bảng, link mở tab mới; HTML được lọc an toàn bằng DOMPurify), checklist `- [ ]` tick được ngay trong chế độ Xem, nhập sao lưu (chỉ thêm ghi chú chưa có).
+- Supabase: bảng `notes` thêm cột `archived`, `deleted_at`, `tags`; SQL trong `supabase/schema.sql` chạy được cả khi chưa có bảng lẫn khi đã có.
+
 ## 2.2.0 – 23/11/2026
 
 - Mục mới **PAD Classification** (`pad/`): phân loại bệnh động mạch chi dưới theo Fontaine, Rutherford, WIfI; chuyển từ repo riêng `pad-classification` (PyScript) sang JavaScript nên mở tức thì, giao diện tiếng Anh theo theme Trieu's Note, kết quả cập nhật ngay khi nhập. Logic khớp 100% bản Python gốc (24.487 ca kiểm, `scripts/pad/parity.py`); bản Python và 47 test gốc giữ ở `scripts/pad/`.

@@ -6,7 +6,7 @@ App cá nhân gồm nhiều mục con, mở từ trang chủ dạng thẻ, dùng
 
 | Mục | Đường dẫn | Nội dung |
 |---|---|---|
-| **Ghi chú** | `notes/` | Ghi chép cá nhân: tạo, sửa (tự lưu), tìm kiếm không dấu, ghim, xuất sao lưu JSON |
+| **Ghi chú** | `notes/` | Ghi chép cá nhân: tạo, sửa (tự lưu), Markdown Viết/Xem, checklist tick được, nhãn, ghim, lưu trữ, thùng rác (tự xóa sau 30 ngày), tìm kiếm không dấu, xuất/nhập sao lưu JSON |
 | **Quản lý tài chính** | `finance/` | Mô tả chi tiết bên dưới |
 | **Danh mục kỹ thuật** | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (QĐ 4442/4883) kèm quy trình kỹ thuật khoa Phẫu thuật mạch máu; dữ liệu nằm sẵn trong trang, không cần đăng nhập |
 | **PAD Classification** | `pad/` | Phân loại bệnh động mạch chi dưới: Fontaine, Rutherford, WIfI (giao diện tiếng Anh, tính trên trình duyệt, không cần đăng nhập) |

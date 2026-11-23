@@ -7,20 +7,20 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f2ede2">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="../logo.svg?v=2.2.0" type="image/svg+xml">
-<link rel="icon" href="../favicon-32.png?v=2.2.0" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.2.0">
+<link rel="icon" href="../logo.svg?v=2.3.0" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png?v=2.3.0" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.3.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
-<link rel="stylesheet" href="../style.css?v=2.2.0">
+<link rel="stylesheet" href="../style.css?v=2.3.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="../config.js?v=2.2.0"></script>
+<script src="../config.js?v=2.3.0"></script>
 </head>
 <body>
 <header>
   <div class="headin">
-    <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.2.0" alt="Trieu's Note"></a>Ghi chú</h1>
+    <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.3.0" alt="Trieu's Note"></a>Ghi chú</h1>
     <span id="saveState" class="muted small"></span>
   </div>
 </header>
@@ -30,13 +30,21 @@
   <div id="notes" class="notes" hidden>
     <aside class="card nlist">
       <div class="row gap">
-        <input id="q" type="search" placeholder="Tìm ghi chú…" aria-label="Tìm ghi chú">
+        <input id="q" type="search" placeholder="Tìm ghi chú, nhãn…" aria-label="Tìm ghi chú">
         <button type="button" id="btnNew">Mới</button>
       </div>
+      <nav id="views" class="nviews" aria-label="Thư mục">
+        <button type="button" data-v="all">Ghi chú <span></span></button>
+        <button type="button" data-v="archive">Lưu trữ <span></span></button>
+        <button type="button" data-v="trash">Thùng rác <span></span></button>
+      </nav>
+      <div id="tagbar" class="ntags" aria-label="Lọc theo nhãn"></div>
+      <p id="trashNote" class="muted small" hidden>Ghi chú trong thùng rác tự xóa hẳn sau 30 ngày.</p>
       <ul id="list"></ul>
       <div class="row wrap gap small">
         <span id="count" class="muted"></span>
         <button type="button" class="ghost" id="btnExport">Xuất sao lưu</button>
+        <label class="ghost filebtn small">Nhập sao lưu<input type="file" accept="application/json" id="fileImport" hidden></label>
       </div>
     </aside>
 
@@ -47,18 +55,34 @@
           <a class="back ghostlink" href="#">‹ Danh sách</a>
           <input name="title" class="ntitle" placeholder="Tiêu đề" aria-label="Tiêu đề">
         </div>
-        <textarea name="body" placeholder="Viết ghi chú…" aria-label="Nội dung"></textarea>
-        <div class="row wrap gap small">
-          <span id="meta" class="muted"></span>
-          <label class="check"><input type="checkbox" name="pinned"> Ghim</label>
-          <button type="button" class="danger" id="btnDel">Xóa</button>
+        <div class="ntoolbar">
+          <div class="seg" role="group" aria-label="Chế độ">
+            <button type="button" data-mode="edit">Viết</button>
+            <button type="button" data-mode="view">Xem</button>
+          </div>
+          <span class="sp"></span>
+          <button type="button" class="ghost" id="btnPin" aria-pressed="false">Ghim</button>
+          <button type="button" class="ghost" id="btnArchive">Lưu trữ</button>
+          <button type="button" class="ghost danger" id="btnDel">Xóa</button>
+          <button type="button" class="ghost" id="btnRestore" hidden>Khôi phục</button>
+          <button type="button" class="ghost danger" id="btnPurge" hidden>Xóa vĩnh viễn</button>
         </div>
+        <div class="ntagedit" id="tagEdit">
+          <span id="noteTags"></span>
+          <input id="tagIn" list="tagList" placeholder="+ nhãn" aria-label="Thêm nhãn" enterkeyhint="done">
+          <datalist id="tagList"></datalist>
+        </div>
+        <textarea name="body" placeholder="Viết ghi chú… Hỗ trợ Markdown: # tiêu đề, **đậm**, - danh sách, - [ ] việc cần làm, [link](https://…), bảng" aria-label="Nội dung"></textarea>
+        <div id="preview" class="md" hidden></div>
+        <p id="meta" class="muted small"></p>
       </form>
     </section>
   </div>
 </main>
 
-<script src="../core.js?v=2.2.0"></script>
-<script src="notes.js?v=2.2.0"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
+<script src="../core.js?v=2.3.0"></script>
+<script src="notes.js?v=2.3.0"></script>
 </body>
 </html>

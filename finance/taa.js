@@ -137,12 +137,43 @@ function renderTAA(st) {
     <div class="row wrap gap">
       <button type="button" id="taaApply"${TAA_KEYS.every((k) => !r.tilt[k]) || same ? " disabled" : ""}>Áp dụng điều chỉnh</button>
       <button type="button" class="ghost" id="taaClear"${applied ? "" : " hidden"}>Bỏ điều chỉnh, về SAA</button>
+      <button type="button" class="ghost" id="taaExport" title="Tải webapp_plan.json, lưu vào thư mục dự án để run.py dùng cùng mục tiêu và quy tắc bán vàng">Xuất cho run.py</button>
       <span class="muted small">${taaAt ? `Phân tích lúc ${taaAt.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })} với dữ liệu mới nhất.` : ""}</span>
     </div>
     <h3 class="sub">Tín hiệu theo lớp tài sản</h3>${sigList}
     <p class="muted small">Mỗi tín hiệu +1 (thuận) / −1 (nghịch) / 0; đủ nửa số tín hiệu của một lớp cùng chiều thì nghiêng tối đa ±${TAA_BAND} điểm %. Tổng mức nghiêng bằng 0 (lớp này tăng thì lớp khác giảm), phần dư vào tiền mặt + tiết kiệm; vẫn giữ ràng buộc vàng ${r.p.goldMin}–${r.p.goldMax}%, cổ phiếu ≤ ${r.p.eqMax}%, quỹ khẩn cấp ${money(r.p.emergency)}. Vệ tinh không nghiêng (CFA giả định alpha = 0). VN-Index/MA200 và rủi ro suy thoái đã nằm trong CME của SAA nên không tính lại cho cổ phiếu. TAA là điều chỉnh ngắn hạn (thường 3–6 tháng) dựa trên quy tắc, không phải dự báo; xem lại khi tín hiệu đổi chiều.</p>`;
   $("#taaApply").onclick = () => { S.settings.tilt = { at: today(), profile: r.p.profile, t: r.tilt }; save(); render(); };
   $("#taaClear").onclick = () => { delete S.settings.tilt; save(); render(); };
+  $("#taaExport").onclick = () => exportRunPlan(st);
+}
+
+/** Xuất mục tiêu (SAA + TAA đang áp dụng), số vàng giữ lại và quy tắc bán cho run.py (file webapp_plan.json ở gốc dự án).
+    Lớp của run.py: cash = tiền mặt + tiết kiệm, equity = cổ phiếu lõi + vệ tinh. Tỷ trọng dạng phần (0–1). */
+function exportRunPlan(st) {
+  const p = planCfg(), cur = currentMix(st), total = Object.values(cur).reduce((a, b) => a + b, 0);
+  const saa = optimal(p.profile, total).w, tgt = targetMix(total), t = activeTilt(p.profile), gs = S.settings;
+  const r4 = (x) => Math.round(x * 1e4) / 1e4;
+  const w = total ? { cash: r4((tgt.cash + tgt.dep) / total), bond: r4(tgt.bond / total), equity: r4((tgt.equity + tgt.sat) / total), gold: r4(tgt.gold / total) } : null;
+  const s = { cash: r4(saa.liquid / 100), bond: r4(saa.bond / 100), equity: r4((saa.equity + saa.sat) / 100), gold: r4(saa.gold / 100) };
+  const plan = {
+    _note: "Xuất từ Trieu's Note › Quản lý tài chính › Chiến lược › Điều chỉnh chiến thuật. run.py dùng file này thay cho target_weights và glide_path trong config.json. Không đưa vào repo.",
+    as_of: today(),
+    profile: PROFILES[p.profile].name,
+    saa_weights: s,
+    target_weights: w,
+    // mức nghiêng thực tế sau ràng buộc IPS (mục tiêu − SAA, điểm %); có thể nhỏ hơn mức tín hiệu đề xuất
+    tactical: t && w ? { applied_at: S.settings.tilt.at, tilt_points: Object.fromEntries(Object.keys(s).map((k) => [k, Math.round((w[k] - s[k]) * 100)])) } : null,
+    glide_path: {
+      keep_luong: goldKeep(st).keep, tranche_luong: gs.tranche, extra_tranche_luong: gs.extra,
+      premium_high: gs.premHigh / 100, premium_low: gs.premLow / 100,
+      world_usd_levels: { confirm_bottom: gs.xauConfirm, support: gs.xauSupport },
+    },
+  };
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(plan, null, 2)], { type: "application/json" }));
+  a.download = "webapp_plan.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 /** Nút "Phân tích lại toàn bộ": tải lại giá vàng, vĩ mô, quỹ (máy chủ cập nhật 4 lần/ngày; SJC trực tiếp), tính lại mọi phân tích và TAA. */

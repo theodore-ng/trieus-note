@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.5.3 – 23/11/2026
+
+- Điều chỉnh chiến thuật: nút **Xuất cho run.py** tải `webapp_plan.json` (tỷ trọng SAA, mục tiêu đã gồm TAA đang áp dụng, mức nghiêng thực tế sau ràng buộc, số vàng giữ lại, quy tắc bán vàng). Lưu file vào thư mục dự án (ngoài repo) để báo cáo `run.py` dùng cùng mục tiêu và lịch bán với web app.
+
 ## 2.5.2 – 23/11/2026
 
 - Heparin › Safety notes: ngưỡng ngưng truyền 1 giờ lấy theo bảng chỉnh liều của chỉ định đang chọn (VTE: aPTT > 120 giây; STEMI/NSTEMI: > 90 giây). Bản gốc ghi "> mức trên của đích" (> 100 / > 70 giây), lệch với bảng.

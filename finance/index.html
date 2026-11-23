@@ -7,21 +7,21 @@
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f2ede2">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="../logo.svg?v=2.5.0" type="image/svg+xml">
-<link rel="icon" href="../favicon-32.png?v=2.5.0" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.5.0">
+<link rel="icon" href="../logo.svg?v=2.5.1" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png?v=2.5.1" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.5.1">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
-<link rel="stylesheet" href="../style.css?v=2.5.0">
+<link rel="stylesheet" href="../style.css?v=2.5.1">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="../config.js?v=2.5.0"></script>
+<script src="../config.js?v=2.5.1"></script>
 </head>
 <body>
 <header>
   <div class="headin">
-    <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.5.0" alt="Trieu's Note"></a>Quản lý tài chính</h1>
+    <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.5.1" alt="Trieu's Note"></a>Quản lý tài chính</h1>
     <div class="row wrap gap">
       <div id="priceStamp"><span class="muted small">Đang tải giá…</span></div>
       <span id="saveState" class="muted small"></span>
@@ -361,7 +361,6 @@
     <div class="panel" data-tab="execution" hidden>
       <div class="subnav" role="tablist">
         <button type="button" data-sub="actions">Việc cần làm</button>
-        <button type="button" data-sub="gold-plan">Giảm tỷ trọng vàng</button>
         <button type="button" data-sub="deploy">Giải ngân</button>
       </div>
 
@@ -372,19 +371,8 @@
           <ul class="todo" id="todoList"></ul>
         </section>
 
-        <section class="card">
-          <div class="row between">
-            <h2>Rà soát danh mục</h2>
-            <button type="button" id="btnAnalyze">Rà soát danh mục</button>
-          </div>
-          <div id="analysisBox"><p class="muted small">Bấm "Rà soát danh mục" để tổng hợp tài sản hiện có, so với phân bổ chiến lược đang chọn và bối cảnh vĩ mô: lớp nào cần tăng/giảm, bao nhiêu mỗi tháng, mốc 3/6/12 tháng. Tính ngay trên trình duyệt, không gửi dữ liệu đi đâu.</p></div>
-        </section>
-      </div>
-
-      <!-- Giảm tỷ trọng vàng -->
-      <div class="subpage" data-sub="gold-plan" hidden>
-        <section class="card" id="glide">
-          <h2>Kế hoạch giảm tỷ trọng vàng</h2>
+        <details class="card acc" id="glide" data-k="glide">
+          <summary><span>Giảm tỷ trọng vàng</span><b id="glideSum"></b></summary>
           <div class="progress"><div id="glideBar"></div></div>
           <p id="glideProgress"></p>
           <p id="glideHead" class="small"></p>
@@ -404,6 +392,14 @@
               <button type="submit">Lưu quy tắc</button>
             </form>
           </details>
+        </details>
+
+        <section class="card">
+          <div class="row between">
+            <h2>Rà soát danh mục</h2>
+            <button type="button" id="btnAnalyze">Rà soát danh mục</button>
+          </div>
+          <div id="analysisBox"><p class="muted small">Bấm "Rà soát danh mục" để tổng hợp tài sản hiện có, so với phân bổ chiến lược đang chọn và bối cảnh vĩ mô: lớp nào cần tăng/giảm, bao nhiêu mỗi tháng, mốc 3/6/12 tháng. Tính ngay trên trình duyệt, không gửi dữ liệu đi đâu.</p></div>
         </section>
       </div>
 
@@ -501,11 +497,11 @@
     </div>
   </div>
 </main>
-<script src="plan.js?v=2.5.0"></script>
-<script src="taa.js?v=2.5.0"></script>
-<script src="macro.js?v=2.5.0"></script>
-<script src="invest.js?v=2.5.0"></script>
-<script src="app.js?v=2.5.0"></script>
-<script src="tabs.js?v=2.5.0"></script>
+<script src="plan.js?v=2.5.1"></script>
+<script src="taa.js?v=2.5.1"></script>
+<script src="macro.js?v=2.5.1"></script>
+<script src="invest.js?v=2.5.1"></script>
+<script src="app.js?v=2.5.1"></script>
+<script src="tabs.js?v=2.5.1"></script>
 </body>
 </html>

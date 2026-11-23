@@ -330,6 +330,8 @@ function render() {
   else if (g.left === 0) adv = `✅ Tháng này đã bán ${nf(g.soldThisMonth, 2)} lượng, đủ đợt đề xuất (${nf(g.qty, 2)}). Đợt tiếp theo: tháng sau.`;
   else adv = `Đợt tháng này: <b>${nf(g.left, 2)} lượng</b> (≈ ${money(g.left * L.sjc_buy)})${g.soldThisMonth ? `, đã bán ${nf(g.soldThisMonth, 2)}` : ""}. Lý do: ${esc(g.why)}.`;
   $("#glideAdvice").innerHTML = adv;
+  $("#glideSum").textContent = `Đã bán ${nf(g.sold, g.sold % 1 ? 1 : 0)}/${nf(plan, plan % 1 ? 1 : 0)} lượng · ` + (g.remaining <= 0 ? "hoàn tất"
+    : g.qty === 0 ? "tháng này: tạm dừng" : g.left === 0 ? "tháng này: đã đủ đợt" : `tháng này: bán ${nf(g.left, g.left % 1 ? 1 : 0)} lượng`);
   $("#glideHead").innerHTML = `Khẩu vị rủi ro đang áp dụng: <b>${esc(PROFILES[planCfg().profile]?.name || "")}</b> → giữ <b>${nf(g.gk.keep, 0)} lượng</b>, cần bán <b>${nf(g.remaining, 2)} lượng</b>. Đổi khẩu vị rủi ro ở <a href="#strategy" data-focus="profileCards">Chiến lược › Phân bổ chiến lược</a>.`;
 
   // Lịch bán dự kiến: tháng này theo tín hiệu hiện tại, các tháng sau theo nhịp cơ bản

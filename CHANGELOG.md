@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.5.1 – 23/11/2026
+
+- Quản lý tài chính › Thực thi: gộp mục con "Giảm tỷ trọng vàng" vào **Việc cần làm** thành khối thu gọn (dòng tiêu đề tóm tắt "Đã bán x/y lượng · tháng này: …", mở ra là tiến độ, lịch bán, chỉnh quy tắc); tab Thực thi còn Việc cần làm · Giải ngân.
+
 ## 2.5.0 – 23/11/2026
 
 - Mục mới **Heparin IV Calc.** (`heparin/`): liều heparin truyền tĩnh mạch theo cân nặng và chỉnh liều theo aPTT cho VTE, STEMI (rt-PA liều đầy đủ / phối hợp), NSTEMI/UA; PCI (theo dõi ACT) chỉ hiện khoảng liều bolus. Dung dịch pha tùy chọn (IU trong túi + mL dung môi), giới hạn liều tối đa, ngưng truyền 1 giờ khi aPTT quá cao, nút Copy Orders, bảng hướng dẫn và 12 tài liệu tham khảo (Dager 2018, ASHP). Chuyển từ repo riêng `heparin-web-app` (React/TypeScript) sang JavaScript, giao diện tiếng Anh theo theme Trieu's Note; logic khớp 100% bản TypeScript gốc (14.644 ca kiểm, `scripts/heparin/parity.py`).

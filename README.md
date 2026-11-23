@@ -112,8 +112,7 @@ Cấu trúc theo quy trình quản lý danh mục (CFA): lập kế hoạch → 
 | **Chiến lược** | Phân bổ chiến lược | Giả định kỳ vọng thị trường (CME); so sánh hiện trạng với 3 phân bổ tối ưu theo khẩu vị rủi ro (Thận trọng / Cân bằng / Tăng trưởng) |
 | | Dự phóng | Monte Carlo 2.000 kịch bản (1/3/5/10 năm): danh mục mục tiêu so với hiện trạng, kịch bản xấu/tốt, sụt giảm tối đa, thu nhập thụ động, điểm hòa giá vàng |
 | | Điều chỉnh chiến thuật | Nút **Phân tích lại toàn bộ**: tải dữ liệu mới, chấm điểm tín hiệu vàng, vĩ mô, lãi suất, dòng tiền cho từng lớp tài sản, đề xuất nghiêng tỷ trọng ±5 điểm % quanh SAA (TAA), so sánh trước–sau; bấm Áp dụng mới đổi mục tiêu (`taa.js`) |
-| **Thực thi** | Việc cần làm | Việc cần làm trong ngày, rà soát danh mục (tính trên trình duyệt) |
-| | Giảm tỷ trọng vàng | Số lượng giữ lại, lịch bán theo tháng; mỗi đợt tăng/giảm/tạm dừng theo premium SJC và giá vàng thế giới |
+| **Thực thi** | Việc cần làm | Việc cần làm trong ngày; khối thu gọn Giảm tỷ trọng vàng (số lượng giữ lại, lịch bán theo tháng; mỗi đợt tăng/giảm/tạm dừng theo premium SJC và giá vàng thế giới); rà soát danh mục (tính trên trình duyệt) |
 | | Giải ngân | Số tiền và số chứng chỉ quỹ ETF mua mỗi tháng (DCA), quỹ mở, cổ phiếu đáng quan tâm kèm chỉ số tài chính và cảnh báo rủi ro |
 | **Tài khoản** | | Đăng nhập Supabase, đồng bộ giữa các thiết bị, xuất/nhập sao lưu JSON; giới thiệu |
 

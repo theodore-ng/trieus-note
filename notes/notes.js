@@ -17,8 +17,8 @@
   const fold = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/gi, "d").toLowerCase();
   const fmt = (iso) => {
     const d = new Date(iso), tz = { timeZone: "Asia/Ho_Chi_Minh" };
-    return d.toLocaleDateString("vi-VN", { ...tz, day: "2-digit", month: "2-digit", year: "numeric" })
-      + " " + d.toLocaleTimeString("vi-VN", { ...tz, hour: "2-digit", minute: "2-digit" });
+    return d.toLocaleDateString("en-GB", { ...tz, day: "numeric", month: "short", year: "numeric" })
+      + ", " + d.toLocaleTimeString("en-GB", { ...tz, hour: "2-digit", minute: "2-digit" });
   };
   const now = () => new Date().toISOString();
   const norm = (n) => ({ pinned: false, archived: false, deleted_at: null, ...n, tags: Array.isArray(n.tags) ? n.tags : [] });
@@ -44,13 +44,13 @@
     const n = pending;
     if (!n) return;
     pending = null;
-    try { await store.put(n); state("Đã lưu ✓"); } catch (e) { pending ||= n; state("Lỗi lưu: " + e.message, true); }
+    try { await store.put(n); state("Saved ✓"); } catch (e) { pending ||= n; state("Save failed: " + e.message, true); }
   }
   /** Đánh dấu ghi chú đã đổi; `soon` = lưu ngay (thao tác nút), không thì chờ 600 ms (đang gõ). */
   function changed(n, soon) {
     n.updated_at = now();
     pending = n;
-    state("Đang lưu…");
+    state("Saving…");
     clearTimeout(timer);
     timer = setTimeout(flush, soon ? 0 : 600);
     renderSide();
@@ -75,7 +75,7 @@
     }).join("\n");
   }
   function renderPreview() {
-    pv.innerHTML = cur.body.trim() ? md(cur.body) : '<p class="muted">Ghi chú trống. Bấm <b>Viết</b> để soạn.</p>';
+    pv.innerHTML = cur.body.trim() ? md(cur.body) : '<p class="muted">Empty note. Tap <b>Edit</b> to write.</p>';
     pv.querySelectorAll('input[type="checkbox"]').forEach((cb, i) => { cb.disabled = !!cur.deleted_at; cb.dataset.i = i; });
   }
   pv.addEventListener("change", (e) => {
@@ -96,6 +96,7 @@
       b.querySelector("span").textContent = counts[b.dataset.v] || "";
     });
     $("#trashNote").hidden = ui.view !== "trash";
+    $("#btnEmptyTrash").hidden = !counts.trash;
 
     const tagCount = new Map();
     inView().forEach((n) => n.tags.forEach((t) => tagCount.set(t, (tagCount.get(t) || 0) + 1)));
@@ -108,7 +109,7 @@
     const shown = inView()
       .filter((n) => (!ui.tag || n.tags.includes(ui.tag)) && (!q || fold(`${n.title} ${n.body} ${n.tags.join(" ")}`).includes(q)))
       .sort((a, b) => (ui.view === "all" ? b.pinned - a.pinned : 0) || b.updated_at.localeCompare(a.updated_at));
-    const empty = { all: "Chưa có ghi chú.", archive: "Chưa có ghi chú lưu trữ.", trash: "Thùng rác trống." }[ui.view];
+    const empty = { all: "No notes yet.", archive: "No archived notes.", trash: "Trash is empty." }[ui.view];
     $("#list").innerHTML = shown.map((n) => {
       const snip = n.body
         .replace(/^\s*\|?[\s:|-]*-{3,}[\s:|-]*\|?\s*$/gm, "")            // dòng kẻ bảng
@@ -116,22 +117,22 @@
         .replace(/!?\[([^\]]*)\]\([^)]*\)/g, "$1").replace(/[#>*_`~|]/g, " ")
         .replace(/\s+/g, " ").trim().slice(0, 90);
       return `<li><a href="#${n.id}" class="${n === cur ? "on" : ""}">
-        <b>${n.pinned && !n.deleted_at ? "📌 " : ""}${esc(n.title.trim() || "(Không tiêu đề)")}</b>
+        <b>${n.pinned && !n.deleted_at ? "📌 " : ""}${esc(n.title.trim() || "(Untitled)")}</b>
         <span class="muted small">${esc(snip)}</span>
         ${n.tags.length ? `<span class="ltags">${n.tags.map((t) => `<i>#${esc(t)}</i>`).join("")}</span>` : ""}
-        <span class="muted small">${n.deleted_at ? `Xóa ${fmt(n.deleted_at)} · còn ${daysLeft(n)} ngày` : fmt(n.updated_at)}</span></a></li>`;
-    }).join("") || `<li class="muted small">${q || ui.tag ? "Không có ghi chú khớp." : empty}</li>`;
-    $("#count").textContent = `${shown.length} ghi chú`;
+        <span class="muted small">${n.deleted_at ? `Deleted ${fmt(n.deleted_at)} · ${daysLeft(n)} days left` : fmt(n.updated_at)}</span></a></li>`;
+    }).join("") || `<li class="muted small">${q || ui.tag ? "No matching notes." : empty}</li>`;
+    $("#count").textContent = `${shown.length} note${shown.length === 1 ? "" : "s"}`;
   }
 
   /* ---------- trình soạn ---------- */
   function renderMeta() {
     if (!cur) return;
-    $("#meta").textContent = `Tạo ${fmt(cur.created_at)} · Sửa ${fmt(cur.updated_at)}`
-      + (cur.deleted_at ? ` · Trong thùng rác, tự xóa sau ${daysLeft(cur)} ngày` : cur.archived ? " · Đã lưu trữ" : "");
+    $("#meta").textContent = `Created ${fmt(cur.created_at)} · Edited ${fmt(cur.updated_at)}`
+      + (cur.deleted_at ? ` · In Trash, deleted permanently in ${daysLeft(cur)} days` : cur.archived ? " · Archived" : "");
   }
   function renderTags() {
-    $("#noteTags").innerHTML = cur.tags.map((t, i) => `<span class="tag">#${esc(t)}${cur.deleted_at ? "" : `<button type="button" data-rm="${i}" aria-label="Bỏ nhãn ${esc(t)}">×</button>`}</span>`).join("");
+    $("#noteTags").innerHTML = cur.tags.map((t, i) => `<span class="tag">#${esc(t)}${cur.deleted_at ? "" : `<button type="button" data-rm="${i}" aria-label="Remove tag ${esc(t)}">×</button>`}</span>`).join("");
   }
   function setMode(mode) {
     ui.mode = cur?.deleted_at ? "view" : mode;
@@ -149,8 +150,8 @@
     f.title.readOnly = trash;
     $("#tagIn").hidden = trash;
     $("#btnPin").setAttribute("aria-pressed", cur.pinned);
-    $("#btnPin").textContent = cur.pinned ? "Bỏ ghim" : "Ghim";
-    $("#btnArchive").textContent = cur.archived ? "Bỏ lưu trữ" : "Lưu trữ";
+    $("#btnPin").textContent = cur.pinned ? "Unpin" : "Pin";
+    $("#btnArchive").textContent = cur.archived ? "Unarchive" : "Archive";
     for (const id of ["btnPin", "btnArchive", "btnDel"]) $("#" + id).hidden = trash;
     for (const id of ["btnRestore", "btnPurge"]) $("#" + id).hidden = !trash;
     f.querySelector(".seg").hidden = trash;
@@ -196,8 +197,8 @@
   try { notes = (await store.all()).map(norm); } catch (e) {
     const box = $("#loadErr");
     box.hidden = false;
-    box.textContent = "Không tải được ghi chú: " + e.message
-      + (sb ? " — cần chạy phần notes trong supabase/schema.sql trên Supabase (tạo bảng hoặc thêm cột mới)." : "");
+    box.textContent = "Could not load notes: " + e.message
+      + (sb ? " — run the notes section of supabase/schema.sql in Supabase (creates the table or adds new columns)." : "");
     return; // không ghi đè dữ liệu khi đọc lỗi
   }
   // Dọn thùng rác quá hạn
@@ -207,7 +208,7 @@
     for (const n of expired) { try { await store.del(n.id); } catch { /* thử lại lần sau */ } }
   }
   $("#notes").hidden = false;
-  if (!sb) state("Chế độ cục bộ");
+  if (!sb) state("Local mode");
 
   /* ---------- sự kiện ---------- */
   f.addEventListener("input", (e) => {
@@ -232,10 +233,10 @@
   };
   $("#btnRestore").onclick = () => { cur.deleted_at = null; ui.view = viewOf(cur); saveUi(); renderEditor(); changed(cur, true); };
   $("#btnPurge").onclick = async () => {
-    if (!confirm(`Xóa vĩnh viễn "${cur.title.trim() || "(Không tiêu đề)"}"? Không khôi phục được.`)) return;
+    if (!confirm(`Delete "${cur.title.trim() || "(Untitled)"}" forever? This cannot be undone.`)) return;
     const n = cur;
     clearTimeout(timer); pending = null;
-    try { notes = notes.filter((x) => x !== n); await store.del(n.id); } catch (e) { notes.push(n); alert("Không xóa được: " + e.message); return; }
+    try { notes = notes.filter((x) => x !== n); await store.del(n.id); } catch (e) { notes.push(n); alert("Could not delete: " + e.message); return; }
     cur = null;
     location.hash = "";
   };
@@ -278,23 +279,6 @@
 
   // Sao lưu
   $("#btnExport").onclick = () => TN.download(`ghi-chu-${TN.today()}.json`, { v: 2, notes });
-  /** Đọc mọi đối tượng JSON cấp ngoài cùng trong văn bản: mảng, {notes:[…]}, hoặc nhiều {…} nối tiếp
-      (phím tắt iPhone ghép từng ghi chú thành văn bản nên không chắc ra một mảng JSON chuẩn). */
-  function parseObjects(text) {
-    const s = text.replace(/^﻿/, "").trim();
-    try { const x = JSON.parse(s); return Array.isArray(x) ? x : Array.isArray(x.notes) ? x.notes : [x]; } catch { /* thử tách từng đối tượng */ }
-    const out = [];
-    let depth = 0, start = -1, str = false, escp = false;
-    for (let i = 0; i < s.length; i++) {
-      const c = s[i];
-      if (str) { if (escp) escp = false; else if (c === "\\") escp = true; else if (c === '"') str = false; continue; }
-      if (c === '"') str = true;
-      else if (c === "{") { if (!depth++) start = i; }
-      else if (c === "}" && depth && !--depth) out.push(JSON.parse(s.slice(start, i + 1)));
-    }
-    if (!out.length) throw new Error("không tìm thấy ghi chú nào trong file");
-    return out.flatMap((x) => (Array.isArray(x.notes) ? x.notes : [x]));
-  }
   /** Mã cố định cho ghi chú từ iPhone (tiêu đề + ngày tạo) để nhập lại không bị trùng: UUID dạng v5 từ SHA-256. */
   async function stableId(key) {
     const h = new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(key))).slice(0, 16);
@@ -312,58 +296,18 @@
     const b = first && (!title || first === title) ? lines.slice(1).join("\n").replace(/^\n+/, "") : body;
     const tags = ["iPhone", ...(a.folder ? [String(a.folder).trim()] : [])].filter(Boolean);
     // mã cố định theo tiêu đề + ngày tạo gốc (chuỗi thô, để ngày không đọc được vẫn ra cùng mã khi nhập lại)
-    return norm({ id: await stableId(`apple-notes|${title || first}|${a.created ?? ""}`), title: title || first || "(Không tiêu đề)", body: b, created_at: created, updated_at: modified, tags });
+    return norm({ id: await stableId(`apple-notes|${title || first}|${a.created ?? ""}`), title: title || first || "(Untitled)", body: b, created_at: created, updated_at: modified, tags });
   }
-
-  /** Một file Markdown (vd Notes trên iPhone › Export as Markdown) = một ghi chú: tiêu đề = dòng đầu, không có thì tên file;
-      ngày tạo/sửa = ngày của file; mã theo tiêu đề + nội dung (giống nút Dán) nên nhập lại không trùng. */
-  async function fromMarkdown(file) {
-    const text = (await file.text()).replace(/^﻿/, "");
-    const name = file.name.replace(/\.(md|markdown|txt)$/i, "");
-    const first = text.trimStart().split("\n")[0].replace(/^#+\s*/, "").trim();
-    const n = await fromApple({ title: first ? "" : name, body: text.trimStart(), created: file.lastModified, modified: file.lastModified });
-    n.id = await stableId(`apple-share|${n.title}|${n.body}`);
-    return n;
-  }
-  const isMd = (f) => /\.(md|markdown)$/i.test(f.name) || f.type === "text/markdown";
-
-  // Nhập file: nhiều file .md (mỗi file 1 ghi chú) hoặc file sao lưu / file xuất hàng loạt (.json, .txt)
-  $("#fileImport").onchange = async (e) => {
-    const files = [...e.target.files];
-    e.target.value = "";
-    if (!files.length) return;
-    try {
-      const backup = (n) => n && typeof n.id === "string" && typeof n.title === "string" && typeof n.body === "string" && n.created_at && n.updated_at;
-      const apple = (n) => n && !n.id && ("title" in n || "body" in n);
-      const items = [], srcs = new Set();
-      for (const file of files) {
-        if (isMd(file)) { items.push(await fromMarkdown(file)); srcs.add("Markdown"); continue; }
-        const arr = parseObjects(await file.text());
-        if (arr.every(backup)) { items.push(...arr.map(norm)); srcs.add("sao lưu"); }
-        else if (arr.every(apple)) { items.push(...(await Promise.all(arr.map(fromApple)))); srcs.add("Ghi chú iPhone"); }
-        else throw new Error(`${file.name}: không đúng định dạng (cần .md, file sao lưu hoặc file xuất từ Ghi chú iPhone)`);
-      }
-      const src = [...srcs].join(", ");
-      const fresh = items.filter((n, i) => !byId(n.id) && items.findIndex((m) => m.id === n.id) === i);
-      const skip = items.length - fresh.length;
-      if (!fresh.length) { alert(`Không có ghi chú mới (${items.length} ghi chú đã có).`); return; }
-      if (!confirm(`Nhập ${fresh.length} ghi chú mới (${src})${skip ? `, bỏ qua ${skip} ghi chú đã có` : ""}? Ghi chú đã có không bị thay đổi.`)) return;
-      notes.push(...fresh);
-      for (const n of fresh) await store.put(n);
-      state(`Đã nhập ${fresh.length} ghi chú ✓`);
-      renderSide();
-    } catch (err) { alert("Không nhập được: " + err.message); }
-  };
 
   /** Tạo ghi chú từ chữ gửi sang (phím tắt hoặc nút Dán): dòng đầu = tiêu đề, nhãn #iPhone; cùng nội dung thì không tạo lại. */
   async function addShared({ title = "", body = "", folder = "" }, ask) {
     const n = await fromApple({ title, body, folder });
     n.id = await stableId(`apple-share|${n.title}|${n.body}`);
     const have = byId(n.id);
-    if (have) { alert("Ghi chú này đã được nhập trước đó."); location.replace("#" + have.id); return true; }
-    if (ask && !confirm(`Thêm ghi chú từ iPhone: "${n.title}"?`)) return false;
+    if (have) { alert("This note was already imported."); location.replace("#" + have.id); return true; }
+    if (ask && !confirm(`Add note from iPhone: "${n.title}"?`)) return false;
     notes.push(n);
-    try { await store.put(n); state("Đã nhập từ iPhone ✓"); } catch (e) { notes.pop(); alert("Không lưu được: " + e.message); return false; }
+    try { await store.put(n); state("Imported from iPhone ✓"); } catch (e) { notes.pop(); alert("Could not save: " + e.message); return false; }
     ui.view = "all"; saveUi();
     location.replace("#" + n.id);
     return true;
@@ -383,12 +327,51 @@
     let text = "";
     try { text = await navigator.clipboard.readText(); } catch { /* trình duyệt chặn đọc bộ nhớ tạm */ }
     if (!text.trim()) {
-      alert("Không đọc được nội dung vừa sao chép. Bấm Mới rồi nhấn giữ trong ô nội dung › Paste.");
+      alert("Could not read the clipboard. Tap New, then long-press in the content box › Paste.");
       return;
     }
     await addShared({ body: text }, false);
   };
-  let pend = location.hash.startsWith("#import") ? location.hash : null;
+
+  // + GitHub: dán link repo → ghi chú Tóm tắt + Review (github.js). Đã có thì cập nhật số liệu, giữ phần "Ghi chú của tôi".
+  $("#btnGithub").onclick = async () => {
+    const url = prompt("Paste a GitHub repo link (e.g. https://github.com/owner/repo):");
+    if (!url) return;
+    const p = GH.parse(url);
+    if (!p) { alert("That is not a GitHub repo link (github.com/owner/repo)."); return; }
+    const id = await stableId(`github|${p.owner}/${p.repo}`.toLowerCase());
+    const have = byId(id);
+    if (have && !confirm(`A note for "${have.title}" already exists. Refresh it with the latest data? Your "My notes" section is kept.`)) { location.hash = id; return; }
+    const b = $("#btnGithub");
+    b.disabled = true; state("Fetching from GitHub…");
+    try {
+      const g = GH.build(await GH.fetchRepo(p.owner, p.repo));
+      const mine = have ? (have.body.split(GH.MINE)[1] ?? "").replace(/^\n+/, "") : "";
+      const t = now();
+      const n = have || norm({ id, created_at: t, title: "", body: "", tags: [] });
+      Object.assign(n, { title: g.title, body: g.body + mine, updated_at: t, tags: [...new Set([...g.tags, ...(have?.tags || [])])], deleted_at: null });
+      if (!have) notes.push(n);
+      await store.put(n);
+      state(`GitHub note ${have ? "updated" : "created"} ✓`);
+      ui.view = viewOf(n); ui.mode = "view"; saveUi();
+      if (location.hash === "#" + id) { cur = null; await show(id); } else location.hash = id;
+    } catch (e) { state(e.message, true); alert("Could not fetch from GitHub: " + e.message); }
+    b.disabled = false;
+  };
+
+  // Dọn sạch thùng rác (xóa vĩnh viễn mọi ghi chú trong thùng rác)
+  $("#btnEmptyTrash").onclick = async () => {
+    const trash = notes.filter((n) => n.deleted_at);
+    if (!trash.length || !confirm(`Permanently delete ${trash.length} note${trash.length === 1 ? "" : "s"} in Trash? This cannot be undone.`)) return;
+    if (cur?.deleted_at) { cur = null; history.replaceState(null, "", location.pathname); show(""); }
+    notes = notes.filter((n) => !n.deleted_at);
+    let fail = 0;
+    for (const n of trash) { try { await store.del(n.id); } catch { fail++; } }
+    if (fail) { alert(`Could not delete ${fail} note${fail === 1 ? "" : "s"}, try again later.`); notes = (await store.all()).map(norm); }
+    state(fail ? "Emptying Trash failed" : `Deleted ${trash.length} note${trash.length === 1 ? "" : "s"} ✓`, !!fail);
+    renderSide();
+  };
+  let pend =location.hash.startsWith("#import") ? location.hash : null;
   try { pend ||= sessionStorage.getItem(PENDING); sessionStorage.removeItem(PENDING); } catch { /* bỏ qua */ }
   if (pend) await takeImport(pend);
 

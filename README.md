@@ -6,7 +6,7 @@ App cá nhân gồm nhiều mục con, mở từ trang chủ dạng thẻ, dùng
 
 | Mục | Đường dẫn | Nội dung |
 |---|---|---|
-| **Ghi chú** | `notes/` | Ghi chép cá nhân: tạo, sửa (tự lưu), Markdown Viết/Xem, checklist tick được, nhãn, ghim, lưu trữ, thùng rác (tự xóa sau 30 ngày), tìm kiếm không dấu, xuất/nhập sao lưu JSON, lấy ghi chú từ app Ghi chú iPhone qua phím tắt |
+| **Notes** (Ghi chú) | `notes/` | Giao diện tiếng Anh. Ghi chép Markdown Edit/View, checklist tick được, tag, ghim, Archive, Trash (tự xóa sau 30 ngày, Empty Trash), tìm kiếm không dấu, Export backup, Paste từ bộ nhớ tạm, **+ GitHub** tạo ghi chú tóm tắt + review repo |
 | **Quản lý tài chính** | `finance/` | Mô tả chi tiết bên dưới |
 | **Danh mục kỹ thuật** | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (QĐ 4442/4883) kèm quy trình kỹ thuật khoa Phẫu thuật mạch máu; dữ liệu nằm sẵn trong trang, không cần đăng nhập |
 | **PAD Classification** | `pad/` | Phân loại bệnh động mạch chi dưới: Fontaine, Rutherford, WIfI (giao diện tiếng Anh, tính trên trình duyệt, không cần đăng nhập) |
@@ -18,13 +18,16 @@ Dữ liệu cá nhân chỉ nằm ở Supabase (khi đăng nhập, bảo vệ b�
 
 ---
 
-# Ghi chú › Lấy ghi chú từ iPhone
+# Notes › + GitHub
 
-- **Export as Markdown → Nhập file (đề xuất):** trong Notes, mở ghi chú › ⋯ › Export as Markdown › Save to Files; trong Trieu's Note bấm **Nhập file**, chọn một hoặc nhiều file `.md`. Mỗi file một ghi chú (dòng đầu = tiêu đề, không có thì tên file; ngày theo file; nhãn `iPhone`).
-- **Copy → Dán:** chọn hết chữ trong ghi chú › Copy; trong Trieu's Note bấm **Dán** (Safari hỏi Paste).
-- **Phím tắt (nâng cao, không còn hướng dẫn trong trang):** mở `https://theodore-ng.github.io/trieus-note/notes/#import&body=<URL Encoded Text>` (tham số tùy chọn `title`, `folder`); app hỏi xác nhận.
-- **Hàng loạt dạng JSON:** file .json/.txt chứa các đối tượng `{"title", "body", "created", "modified", "folder"}` (mảng, `{"notes": [...]}` hoặc nhiều đối tượng nối tiếp), ngày ISO 8601.
-- Mã ghi chú cố định theo nội dung (hoặc tiêu đề + ngày tạo với JSON) nên nhập lại hay dán lại không trùng. Chỉ nhập một chiều. Ảnh đính kèm trong file Markdown không được nhập.
+Bấm **+ GitHub**, dán link repo (`github.com/owner/repo`, kèm đường dẫn con cũng được). App gọi GitHub REST API công khai (không cần đăng nhập GitHub, giới hạn 60 lần/giờ/IP; repo riêng tư không đọc được) và tạo ghi chú:
+
+- **Info:** tác giả, ngôn ngữ (≥ 1%), giấy phép, sao/fork, issue + PR đang mở, bản phát hành mới nhất, ngày tạo / lần push gần nhất, chủ đề.
+- **Summary:** mô tả repo + đoạn văn mở đầu README (trước mục đầu tiên) + danh sách các mục của README.
+- **Review** theo quy tắc (`github.js → review()`): phổ biến (sao), độ hoạt động (ngày từ lần push, archived), giấy phép (không có / dễ dùng lại / copyleft), tài liệu (README có cài đặt + cách dùng), phát hành, fork → điểm → *Worth trying* (≥ 3) / *Usable, check further* (≥ 1) / *Use with caution*. Không đánh giá chất lượng mã, không dùng AI.
+- **My notes:** phần tự ghi. Dán lại cùng repo thì cập nhật số liệu, giữ nguyên phần này (mã ghi chú cố định theo owner/repo).
+
+Lấy ghi chú từ iPhone: chọn chữ trong Notes › Copy, rồi bấm **Paste**. (Địa chỉ `notes/#import&body=…` cho phím tắt iOS vẫn hoạt động.)
 
 ---
 

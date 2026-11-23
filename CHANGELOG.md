@@ -2,6 +2,13 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.7.0 – 23/11/2026
+
+- **Notes** (mục Ghi chú) và **trang chủ** chuyển sang tiếng Anh (nút, thư mục Notes / Archive / Trash, thông báo, ngày giờ, thẻ các mục). Quản lý tài chính, Danh mục kỹ thuật giữ tiếng Việt.
+- **+ GitHub**: dán link repo GitHub → ghi chú gồm Info (tác giả, ngôn ngữ, giấy phép, sao/fork, issue, bản phát hành, ngày), Summary (mô tả + đoạn mở đầu README, các mục README) và Review theo quy tắc (phổ biến, độ hoạt động, giấy phép, tài liệu, phát hành → Worth trying / Usable, check further / Use with caution), cuối có mục "My notes". Dán lại cùng repo thì cập nhật số liệu, giữ nguyên "My notes". Lấy dữ liệu công khai qua GitHub API (60 lần/giờ), không dùng AI.
+- **Empty Trash**: nút xóa vĩnh viễn mọi ghi chú trong thùng rác (hỏi xác nhận).
+- Bỏ nút **Nhập file** (nhập .md / sao lưu .json) cho gọn; còn nút Paste và Export backup.
+
 ## 2.6.2 – 23/11/2026
 
 - Ghi chú: thêm cách lấy ghi chú từ iPhone không cần phím tắt:

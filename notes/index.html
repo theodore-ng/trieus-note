@@ -1,26 +1,26 @@
 <!doctype html>
-<html lang="vi">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Ghi chú · Trieu's Note</title>
+<title>Notes · Trieu's Note</title>
 <meta name="robots" content="noindex">
 <meta name="theme-color" content="#f2ede2">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="../logo.svg?v=2.6.2" type="image/svg+xml">
-<link rel="icon" href="../favicon-32.png?v=2.6.2" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.6.2">
+<link rel="icon" href="../logo.svg?v=2.7.0" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png?v=2.7.0" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.7.0">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap">
-<link rel="stylesheet" href="../style.css?v=2.6.2">
+<link rel="stylesheet" href="../style.css?v=2.7.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="../config.js?v=2.6.2"></script>
+<script src="../config.js?v=2.7.0"></script>
 </head>
 <body>
 <header>
   <div class="headin">
-    <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.6.2" alt="Trieu's Note"></a>Ghi chú</h1>
+    <h1><a class="home" href="../" aria-label="Back to Trieu's Note home" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.7.0" alt="Trieu's Note"></a>Notes</h1>
     <span id="saveState" class="muted small"></span>
   </div>
 </header>
@@ -30,50 +30,52 @@
   <div id="notes" class="notes" hidden>
     <aside class="card nlist">
       <div class="row gap">
-        <input id="q" type="search" placeholder="Tìm ghi chú, nhãn…" aria-label="Tìm ghi chú">
-        <button type="button" id="btnNew">Mới</button>
-        <button type="button" class="ghost" id="btnPaste" title="Tạo ghi chú từ chữ vừa sao chép (vd từ app Notes trên iPhone)">Dán</button>
+        <input id="q" type="search" placeholder="Search notes, tags…" aria-label="Search notes">
+        <button type="button" id="btnNew">New</button>
       </div>
-      <nav id="views" class="nviews" aria-label="Thư mục">
-        <button type="button" data-v="all">Ghi chú <span></span></button>
-        <button type="button" data-v="archive">Lưu trữ <span></span></button>
-        <button type="button" data-v="trash">Thùng rác <span></span></button>
+      <div class="nadd">
+        <button type="button" class="ghost" id="btnPaste" title="Create a note from copied text (e.g. from iPhone Notes)">Paste</button>
+        <button type="button" class="ghost" id="btnGithub" title="Paste a GitHub repo link: creates a summary and review note">+ GitHub</button>
+      </div>
+      <nav id="views" class="nviews" aria-label="Folders">
+        <button type="button" data-v="all">Notes <span></span></button>
+        <button type="button" data-v="archive">Archive <span></span></button>
+        <button type="button" data-v="trash">Trash <span></span></button>
       </nav>
-      <div id="tagbar" class="ntags" aria-label="Lọc theo nhãn"></div>
-      <p id="trashNote" class="muted small" hidden>Ghi chú trong thùng rác tự xóa hẳn sau 30 ngày.</p>
+      <div id="tagbar" class="ntags" aria-label="Filter by tag"></div>
+      <div id="trashNote" class="row wrap gap small" hidden><span class="muted">Notes in Trash are deleted permanently after 30 days.</span><button type="button" class="ghost danger" id="btnEmptyTrash">Empty Trash</button></div>
       <ul id="list"></ul>
       <div class="row wrap gap small">
         <span id="count" class="muted"></span>
-        <button type="button" class="ghost" id="btnExport">Xuất sao lưu</button>
-        <label class="ghost filebtn small" title="File Markdown (.md, chọn được nhiều file, vd Notes › Export as Markdown) hoặc file sao lưu (.json)">Nhập file<input type="file" multiple accept=".md,.markdown,text/markdown,.json,.txt,.jsonl,application/json,text/plain" id="fileImport" hidden></label>
+        <button type="button" class="ghost" id="btnExport">Export backup</button>
       </div>
     </aside>
 
     <section class="card neditor" id="editor">
-      <p id="empty" class="muted center">Chọn một ghi chú hoặc bấm <b>Mới</b>.</p>
+      <p id="empty" class="muted center">Select a note or tap <b>New</b>.</p>
       <form id="noteForm" hidden autocomplete="off" onsubmit="return false">
         <div class="row gap">
-          <a class="back ghostlink" href="#">‹ Danh sách</a>
-          <input name="title" class="ntitle" placeholder="Tiêu đề" aria-label="Tiêu đề">
+          <a class="back ghostlink" href="#">‹ All notes</a>
+          <input name="title" class="ntitle" placeholder="Title" aria-label="Title">
         </div>
         <div class="ntoolbar">
-          <div class="seg" role="group" aria-label="Chế độ">
-            <button type="button" data-mode="edit">Viết</button>
-            <button type="button" data-mode="view">Xem</button>
+          <div class="seg" role="group" aria-label="Mode">
+            <button type="button" data-mode="edit">Edit</button>
+            <button type="button" data-mode="view">View</button>
           </div>
           <span class="sp"></span>
-          <button type="button" class="ghost" id="btnPin" aria-pressed="false">Ghim</button>
-          <button type="button" class="ghost" id="btnArchive">Lưu trữ</button>
-          <button type="button" class="ghost danger" id="btnDel">Xóa</button>
-          <button type="button" class="ghost" id="btnRestore" hidden>Khôi phục</button>
-          <button type="button" class="ghost danger" id="btnPurge" hidden>Xóa vĩnh viễn</button>
+          <button type="button" class="ghost" id="btnPin" aria-pressed="false">Pin</button>
+          <button type="button" class="ghost" id="btnArchive">Archive</button>
+          <button type="button" class="ghost danger" id="btnDel">Delete</button>
+          <button type="button" class="ghost" id="btnRestore" hidden>Restore</button>
+          <button type="button" class="ghost danger" id="btnPurge" hidden>Delete forever</button>
         </div>
         <div class="ntagedit" id="tagEdit">
           <span id="noteTags"></span>
-          <input id="tagIn" list="tagList" placeholder="+ nhãn" aria-label="Thêm nhãn" enterkeyhint="done">
+          <input id="tagIn" list="tagList" placeholder="+ tag" aria-label="Add tag" enterkeyhint="done">
           <datalist id="tagList"></datalist>
         </div>
-        <textarea name="body" placeholder="Viết ghi chú… Hỗ trợ Markdown: # tiêu đề, **đậm**, - danh sách, - [ ] việc cần làm, [link](https://…), bảng" aria-label="Nội dung"></textarea>
+        <textarea name="body" placeholder="Write a note… Markdown supported: # heading, **bold**, - list, - [ ] to-do, [link](https://…), tables" aria-label="Content"></textarea>
         <div id="preview" class="md" hidden></div>
         <p id="meta" class="muted small"></p>
       </form>
@@ -83,7 +85,8 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.6/purify.min.js"></script>
-<script src="../core.js?v=2.6.2"></script>
-<script src="notes.js?v=2.6.2"></script>
+<script src="../core.js?v=2.7.0"></script>
+<script src="github.js?v=2.7.0"></script>
+<script src="notes.js?v=2.7.0"></script>
 </body>
 </html>

@@ -394,4 +394,7 @@ table.hepband tr.hi td { background: color-mix(in srgb, var(--down) 9%, var(--ca
 .heprefs a { color: var(--accent); }
 @media (max-width: 900px) { .hepcols { grid-template-columns: 1fr; } .hepside { position: static; } }
 @media (max-width: 520px) { .hepgrid { grid-template-columns: 1fr; } }
-.nlist #btnPaste { padding: 9px 12px; font-size: 14px; font-weight: 600; color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+.nadd { display: flex; gap: 6px; }
+.nadd button { flex: 1; padding: 6px 10px; font-size: 13px; font-weight: 600; color: var(--accent); border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); }
+#trashNote[hidden], .nadd button[hidden] { display: none; }
+#trashNote .danger { margin-left: auto; padding: 3px 8px; font-size: 12.5px; }

@@ -2,6 +2,13 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.8.2 – 27/11/2026
+
+- Procedure Catalog: bố cục tab dễ đọc hơn.
+  - **Giá**: hai giá chính hiện to (Có BHYT · TT13, Không BHYT · TT37/2018); ghi chú thanh toán chia mục có vạch màu (điều kiện / tính riêng / đã gồm); giá cũ (TT39, TT15, TTLT 37/2015) gom thành một dòng "để đối chiếu".
+  - **Mã & quyết định**: nhóm Mã (3 ô mã, nút Chép mã) · Quyết định · Phân nhóm & số thứ tự (gộp STT thành một dòng); nhãn chữ thường thay chữ in hoa.
+  - **Ghi chú**: gộp các ghi chú trùng nhau giữa TT13, TT39, TT15, TT37/2018, mỗi ghi chú có thẻ văn bản nguồn.
+
 ## 2.8.1 – 27/11/2026
 
 - Procedure Catalog: **phạm vi BHYT chi trả** trên từng kỹ thuật. Nhãn trên thẻ: **BHYT** (có giá BHYT TT13) hoặc **BHYT có điều kiện** (64 kỹ thuật có ghi chú "không thanh toán…", "chỉ áp dụng với người bệnh ngoại trú"…). Đầu tab Giá có khối BHYT tách ghi chú TT13 (thiếu thì lấy TT39) thành: điều kiện thanh toán / cách tính; **chưa gồm trong giá, tính riêng** (thuốc, vật tư… BHYT trả nếu thuộc danh mục quỹ thanh toán); đã gồm trong giá.

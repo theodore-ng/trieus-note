@@ -6,9 +6,9 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#f2ede2">
 <meta name="color-scheme" content="light">
-<link rel="icon" href="../logo.svg?v=2.8.1" type="image/svg+xml">
-<link rel="icon" href="../favicon-32.png?v=2.8.1" type="image/png" sizes="32x32">
-<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.8.1">
+<link rel="icon" href="../logo.svg?v=2.8.2" type="image/svg+xml">
+<link rel="icon" href="../favicon-32.png?v=2.8.2" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png?v=2.8.2">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Danh mục kỹ thuật · Trieu's Note</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,8 +79,6 @@ main .wrap { padding-block: 14px 40px; display: grid; gap: 10px; }
 .eq { font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
 .eq span { color: var(--ink); }
 mark { background: var(--mark); color: var(--mark-ink); border-radius: 3px; padding: 0 1px; }
-.prices { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin-top: 2px; }
-@media (max-width: 720px) { .prices { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .ctabs { display: flex; gap: 2px; margin: 4px -14px 0; padding: 0 14px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
 .ctabs::-webkit-scrollbar { display: none; }
 .ctabs button { flex: none; font: 700 11.5px var(--sans); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); background: transparent; border: 1px solid transparent; border-bottom: 0; border-radius: 6px 6px 0 0; padding: 6px 10px 5px; margin-bottom: -1px; cursor: pointer; }
@@ -89,9 +87,39 @@ mark { background: var(--mark); color: var(--mark-ink); border-radius: 3px; padd
 .cpane { padding-top: 6px; display: grid; gap: 8px; }
 .cpane[hidden] { display: none; }
 .cpane dl { margin: 0; gap: 0; }
-.cpane dt, .cpane dd { padding: 6px 0; border-top: 1px solid var(--line); }
-.cpane dt { font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
-.cpane dl > :nth-child(-n+2) { border-top: 0; }
+.cpane { gap: 12px; padding-top: 10px; }
+.sec { display: grid; gap: 6px; min-width: 0; }
+.sec h5 { margin: 0; font: 700 11px var(--sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.cpane dl.kv { margin: 0; grid-template-columns: minmax(120px, 34%) minmax(0, 1fr); gap: 0 12px; }
+.kv dt, .kv dd { padding: 5px 0; border-top: 1px dashed var(--line); }
+.kv dt { color: var(--muted); }
+.kv > :nth-child(-n+2) { border-top: 0; }
+.hero { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.hero .pr { padding: 8px 10px; }
+.hero .pr small { text-transform: none; letter-spacing: 0; font-size: 12px; }
+.hero .pr strong { font-size: 19px; }
+.hero .pr.main { background: var(--ok-soft); }
+.hero .pr.main small { color: var(--ok); }
+.hero .pr.none { background: var(--warn-soft); }
+.old { display: flex; flex-wrap: wrap; gap: 6px; font-size: 13px; }
+.old span { background: var(--bg); border-radius: 6px; padding: 3px 8px; }
+.old span b { font-weight: 700; font-variant-numeric: tabular-nums; margin-left: 4px; }
+.pn { font-size: 13.5px; line-height: 1.5; border-left: 3px solid var(--line); padding: 2px 0 2px 10px; overflow-wrap: anywhere; }
+.pn b { display: block; font-size: 12px; letter-spacing: 0.02em; }
+.pn small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.pn.cond { border-left-color: var(--warn); } .pn.cond b { color: var(--warn); }
+.pn.excl { border-left-color: var(--accent); } .pn.excl b { color: var(--accent); }
+.pn.incl { border-left-color: var(--ok); } .pn.incl b { color: var(--ok); }
+.codes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.codes .pr strong { font: 600 13px var(--mono); }
+.codes .pr small { text-transform: none; letter-spacing: 0; font-size: 12px; }
+.codes .copy { margin: 4px 0 0; display: block; }
+.nt { display: grid; gap: 3px; padding: 7px 0; border-top: 1px dashed var(--line); font-size: 13.5px; line-height: 1.5; overflow-wrap: anywhere; }
+.nt:first-of-type { border-top: 0; padding-top: 0; }
+.nt .tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.nt .tags span { font: 700 10.5px var(--sans); color: var(--t); background: var(--t-soft); border-radius: 5px; padding: 1px 6px; }
+@media (max-width: 520px) { .codes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 420px) { .cpane dl.kv { grid-template-columns: minmax(0, 1fr); } .kv dd { border-top: 0; padding-top: 0; } .hero .pr strong { font-size: 17px; } }
 .cpane p { margin: 0; }
 .qtrow { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 6px 0; border-top: 1px solid var(--line); font-size: 14px; }
 .qtrow:first-child { border-top: 0; }
@@ -129,7 +157,7 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
 .refs li:first-child { border-top: 0; }
 .refs .d { font-size: 12.5px; color: var(--muted); margin-left: 6px; white-space: nowrap; }
 .refs p { margin: 2px 0 0; font-size: 13.5px; color: var(--muted); line-height: 1.5; }
-@media (max-width: 420px) { .prices { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; } .pr { padding: 5px 6px; } .pr strong { font-size: 13px; } dl { grid-template-columns: minmax(0, 1fr); gap: 0; } dd { margin-bottom: 6px; } }
+@media (max-width: 420px) { .pr { padding: 5px 6px; } .pr strong { font-size: 13px; } dl { grid-template-columns: minmax(0, 1fr); gap: 0; } dd { margin-bottom: 6px; } }
 .b-qt { background: var(--accent); color: var(--surface); }
 .chip.qt[aria-pressed="false"] { color: var(--accent); border-color: var(--accent); }
 .openqt { justify-self: start; font: 600 13.5px var(--sans); color: var(--surface); background: var(--accent); border: 0; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
@@ -183,7 +211,7 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
 <header>
   <div class="wrap">
     <div class="brand">
-      <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.8.1" alt="Trieu's Note"></a>Tra cứu danh mục kỹ thuật tương đương</h1>
+      <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=2.8.2" alt="Trieu's Note"></a>Tra cứu danh mục kỹ thuật tương đương</h1>
       <span class="src">QĐ 7603 · TT13</span>
     </div>
     <div class="search">
@@ -385,14 +413,23 @@ function bh(r) {
   BH_CACHE.set(r, o);
   return o;
 }
-function bhBox(r) {
-  const b = bh(r), ul = (title, xs, note) => xs.length ? `<li><b>${title}</b>${note ? `<small>${note}</small>` : ''}${xs.map(x => esc(x.charAt(0).toUpperCase() + x.slice(1))).join('; ')}.</li>` : '';
-  if (!b.has) return `<div class="bh no"><p><b>BHYT</b>: không có giá trong danh mục giá BHYT (TT39/TT13) của file nguồn; hỏi cơ sở trước khi làm.</p></div>`;
-  return `<div class="bh"><p><b>BHYT chi trả</b>: có. Dịch vụ có giá BHYT ${money(r[F.g13])} đ (TT13); quỹ trả theo mức hưởng của thẻ${b.strict ? ', <b>kèm điều kiện bên dưới</b>' : ''}.</p><ul>
-    ${ul(b.strict ? 'Điều kiện thanh toán: ' : 'Cách tính: ', b.cond)}
-    ${ul('Chưa gồm trong giá, tính riêng: ', b.excl, 'Thanh toán theo thực tế sử dụng; BHYT chỉ trả phần thuốc, vật tư thuộc danh mục quỹ thanh toán (có thể theo tỷ lệ, điều kiện).')}
-    ${ul('Đã gồm trong giá: ', b.incl)}
-  </ul></div>`;
+const cap = x => esc(x.charAt(0).toUpperCase() + x.slice(1));
+function payNotes(r) {
+  const b = bh(r), blk = (cls, title, xs, hint) => xs.length ? `<div class="pn ${cls}"><b>${title}</b>${xs.map(cap).join('. ')}.${hint ? `<small>${hint}</small>` : ''}</div>` : '';
+  const out = blk(b.strict ? 'cond' : '', b.strict ? 'Điều kiện thanh toán BHYT' : 'Cách tính', b.cond)
+    + blk('excl', 'Chưa gồm trong giá, tính riêng', b.excl, 'Tính theo thực tế sử dụng; BHYT trả phần thuốc, vật tư thuộc danh mục quỹ thanh toán (có thể theo tỷ lệ, điều kiện).')
+    + blk('incl', 'Đã gồm trong giá', b.incl);
+  return out ? `<div class="sec"><h5>Ghi chú thanh toán</h5>${out}</div>` : '';
+}
+function uniqNotes(r) {
+  const m = new Map();
+  [['TT13', F.gc13], ['PL4 TT13', F.pl4_13], ['TT39', F.gc39], ['PL4 TT39', F.pl4_39], ['TT15', F.gc15], ['TT37/2018', F.gc37]].forEach(([lab, f]) => {
+    const v = r[f]; if (!v) return;
+    const key = v.normalize('NFC').toLowerCase().replace(/[\s.;,:]+/g, ' ').trim();
+    if (!m.has(key)) m.set(key, { v, labs: [] });
+    m.get(key).labs.push(lab);
+  });
+  return [...m.values()].map(n => `<div class="nt"><div class="tags">${n.labs.map(l => `<span>${l}</span>`).join('')}</div><div>${esc(n.v)}</div></div>`).join('');
 }
 function card(i) {
   const r = R[i], t = st.terms, k = kindOf(r[F.loai]);
@@ -401,38 +438,33 @@ function card(i) {
   const badges = (B.has ? `<span class="b ${B.strict ? 'b-bhc' : 'b-bh'}" title="Phạm vi BHYT (xem tab Giá)">${B.strict ? 'BHYT có điều kiện' : 'BHYT'}</span>` : '<span class="b b-bhc">Ngoài giá BHYT</span>')
     + (r[F.tuyen] ? `<span class="b b-tuyen" title="Phân tuyến">Tuyến ${esc(r[F.tuyen])}</span>` : '')
     + (r[F.loai] ? `<span class="b b-${k === 'P' ? 'P' : 'T'}" title="Phân loại">${esc(loaiLabel(r[F.loai]))}</span>` : '');
-  const dl = (rows) => rows.join('');
-  const codes = dl([
-    row('Mã tương đương', `${hl(r[F.ma], t)}<button class="copy" type="button" data-copy="${esc(r[F.ma])}">Chép</button>`, 'mono'),
-    row('Mã TT43/50/21', hl(r[F.ma43], t), 'mono'),
-    row('Mã giá liên thông BHYT', hl(r[F.bhyt], t), 'mono'),
-    row('Chuyên khoa TT39', esc(D.cks[r[F.ck]])),
-    row('QĐ phê duyệt', esc(r[F.qd])),
-    row('QĐ tương đương cũ', esc(r[F.qdcu] + (r[F.ngaycu] ? ' · ' + r[F.ngaycu] : ''))),
-    row('QĐ tương đương cũ (theo TT37)', esc(r[F.qd37] + (r[F.ngay37] ? ' · ' + r[F.ngay37] : ''))),
-    row('STT TT39 / TT15 / TT37', esc([r[F.s39], r[F.s15], r[F.s37]].join(' / '))),
-    row('STT trong phụ lục', esc(r[F.stt])),
-  ]);
-  const notes = dl([
-    row('Ghi chú TT13', esc(r[F.gc13])),
-    row('Ghi chú (PL4 TT13)', esc(r[F.pl4_13])),
-    row('Ghi chú TT39', esc(r[F.gc39])),
-    row('PL4 TT39 / lý do sửa đổi', esc(r[F.pl4_39])),
-    row('Ghi chú TT15', esc(r[F.gc15])),
-    row('Ghi chú TT37/2018', esc(r[F.gc37])),
-  ]);
-  const changed = [r[F.tdg] ? 'giá' : '', r[F.tdgc] ? 'ghi chú' : ''].filter(Boolean).join(', ');
+  const kv = rows => { const h = rows.join(''); return h ? `<dl class="kv">${h}</dl>` : ''; };
+  const sec = (title, body) => body ? `<div class="sec"><h5>${title}</h5>${body}</div>` : '';
+  const tile = (label, v, extra = '') => v ? `<div class="pr"><small>${label}</small><strong>${hl(v, t)}</strong>${extra}</div>` : '';
+  const codes = sec('Mã', `<div class="codes">${tile('Mã tương đương', r[F.ma], `<button class="copy" type="button" data-copy="${esc(r[F.ma])}">Chép mã</button>`)}${tile('Mã TT43/50/21', r[F.ma43])}${tile('Mã giá liên thông BHYT', r[F.bhyt])}</div>`)
+    + sec('Quyết định', kv([
+      row('QĐ phê duyệt', esc(r[F.qd])),
+      row('QĐ tương đương cũ', esc(r[F.qdcu] + (r[F.ngaycu] ? ' · ' + r[F.ngaycu] : ''))),
+      row('QĐ cũ theo TT37', esc(r[F.qd37] + (r[F.ngay37] ? ' · ' + r[F.ngay37] : ''))),
+    ]))
+    + sec('Phân nhóm & số thứ tự', kv([
+      row('Chuyên khoa TT39', esc(D.cks[r[F.ck]])),
+      row('Số thứ tự', esc([['Phụ lục', r[F.stt]], ['TT39', r[F.s39]], ['TT15', r[F.s15]], ['TT37', r[F.s37]]].filter(x => x[1]).map(x => x.join(' ')).join(' · '))),
+    ]));
+  const notes = uniqNotes(r);
+  const changed = [r[F.tdg] ? 'giá' : '', r[F.tdgc] ? 'ghi chú' : ''].filter(Boolean).join(' và ');
+  const old = [['TT39', r[F.g39]], ['TT15', r[F.g15]], ['TTLT 37/2015', r[F.g37c]]].filter(x => x[1] !== '');
   const tabs = [
-    ['price', 'Giá', `${bhBox(r)}${r[F.ten39] ? `<p class="eq">Tên trong danh mục giá: <span>${hl(r[F.ten39], t)}</span></p>` : ''}
-      <div class="prices">
-        <div class="pr"><small>Giá TT13 (BHYT 2019)</small><strong>${money(r[F.g13])}</strong></div>
-        <div class="pr"><small>Giá TT39 (BHYT)</small><strong>${money(r[F.g39])}</strong></div>
-        <div class="pr"><small>Giá TT15 (BHYT 2018)</small><strong>${money(r[F.g15])}</strong></div>
-        <div class="pr"><small>TTLT 37/2015 có lương</small><strong>${money(r[F.g37c])}</strong></div>
-        <div class="pr"><small>TT37/2018 (không BHYT)</small><strong>${money(r[F.g37])}</strong></div>
-      </div>${changed ? `<p class="eq">Thay đổi so với danh mục cũ: ${changed}.</p>` : ''}`],
-    ['code', 'Mã & quyết định', `<dl>${codes}</dl>`],
-    ...(notes ? [['note', 'Ghi chú', `<dl>${notes}</dl>`]] : []),
+    ['price', 'Giá', `<div class="hero">
+        <div class="pr ${B.has ? 'main' : 'none'}"><small>Có BHYT · TT13</small><strong>${money(r[F.g13])}</strong></div>
+        <div class="pr"><small>Không BHYT · TT37/2018</small><strong>${money(r[F.g37])}</strong></div>
+      </div>
+      ${r[F.ten39] ? `<p class="eq">Tên trong danh mục giá: <span>${hl(r[F.ten39], t)}</span></p>` : ''}
+      ${payNotes(r)}
+      ${old.length ? sec('Giá cũ để đối chiếu', `<div class="old">${old.map(([l, v]) => `<span>${l}<b>${money(v)}</b></span>`).join('')}</div>`) : ''}
+      ${changed ? `<p class="eq">Có thay đổi ${changed} so với danh mục trước.</p>` : ''}`],
+    ['code', 'Mã & quyết định', codes],
+    ...(notes ? [['note', 'Ghi chú', notes]] : []),
     ['why', 'Giải thích', `<div class="why">${why(r)}</div>`],
     ...(qt.length ? [['qt', 'Quy trình', qt.map(k => `<div class="qtrow"><span>${esc(sentence(P[k].t))}</span><button class="openqt" type="button" data-qt="${k}">Xem</button></div>`).join('')]] : []),
   ];

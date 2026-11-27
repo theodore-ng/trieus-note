@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.9.5 – 27/11/2026
+
+- Procedure Catalog: giá hiện hành ghi theo **TP Đà Nẵng** (cơ sở công lập thuộc thành phố, vd BV Đà Nẵng: NQ 96/2026/NQ-HĐND ngày 31/7/2026; trước đó NQ 68/2024, NQ 22/2024), bệnh viện thuộc Bộ (vd Chợ Rẫy) chỉ còn là ví dụ phụ. 41 quy trình PT mạch máu ghi rõ là tài liệu tham khảo chuyên môn của BV Chợ Rẫy.
+
 ## 2.9.4 – 27/11/2026
 
 - Procedure Catalog: cột QĐ phê duyệt (QĐ 466, 24, 130, 423, 1035, 1410, 473) ghi rõ là quyết định của Sở Y tế Đà Nẵng (tab Mã & QĐ và Văn bản tham chiếu).

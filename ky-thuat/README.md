@@ -6,7 +6,7 @@ Mục `ky-thuat/` của [Trieu's Note](../README.md). Giao diện tiếng Việt
 
 🔗 https://theodore-ng.github.io/trieus-note/ky-thuat/
 
-Trang tra cứu phụ lục **danh mục kỹ thuật tương đương** (theo bộ mã QĐ 7603, giá TT39/TT13 – 9.190 kỹ thuật, 28 chương; từ 2.8.0, trước đó là QĐ 4442/4883) kèm **41 quy trình kỹ thuật** của khoa Phẫu thuật mạch máu. Dữ liệu nằm sẵn trong trang, không cần đăng nhập, không gửi dữ liệu đi đâu.
+Trang tra cứu phụ lục **danh mục kỹ thuật tương đương** (theo bộ mã QĐ 7603, giá TT39/TT13 – 9.190 kỹ thuật, 28 chương; từ 2.8.0, trước đó là QĐ 4442/4883) kèm **41 quy trình kỹ thuật** Phẫu thuật mạch máu (tài liệu tham khảo chuyên môn của BV Chợ Rẫy, 2023). Dữ liệu nằm sẵn trong trang, không cần đăng nhập, không gửi dữ liệu đi đâu.
 
 ## Tính năng
 
@@ -33,7 +33,7 @@ Tóm tắt văn bản chỉ để tham khảo nhanh; khi dùng chính thức c�
 
 ## Điểm chưa làm rõ
 
-- **Giá BHYT hiện hành:** từ 01/01/2025 không còn bảng giá chung toàn quốc; theo TT21/2024, Bộ Y tế ban hành quyết định giá riêng cho từng bệnh viện trực thuộc, HĐND tỉnh cho cơ sở địa phương. BV Chợ Rẫy: QĐ 3222/QĐ-BYT (01/11/2024) rồi **QĐ 3024/QĐ-BYT** (thanh toán từ 01/10/2026, hơn 5.700 dịch vụ kỹ thuật, xét nghiệm; theo báo chí, chưa đọc nguyên văn). Giá trong trang (TT13/2019…) chỉ để đối chiếu; đưa bảng giá QĐ 3024 vào trang cần file phụ lục giá.
+- **Giá BHYT hiện hành:** từ 01/01/2025 không còn bảng giá chung toàn quốc (TT21/2024): HĐND tỉnh/thành phố quy định giá cho cơ sở công lập địa phương, Bộ Y tế cho bệnh viện trực thuộc Bộ. Cơ sở công lập thuộc **TP Đà Nẵng** (vd BV Đà Nẵng): **NQ 96/2026/NQ-HĐND** ngày 31/7/2026 (trước đó NQ 68/2024 giá BHYT, NQ 22/2024 giá không BHYT); thông báo của Sở Y tế không ghi ngày hiệu lực, chưa đọc nguyên văn. Giá trong trang (TT13/2019…) chỉ để đối chiếu.
 - **Số hiệu Thông tư sửa đổi năm 2026** (sửa TT23/2024, TT32/2023, TT01/2013, TT42/2025; Điều 3 hiệu lực 01/07/2026): bản PDF trên chinhphu.vn để trống số; trang tra cứu ghi 25/2026/TT-BYT. Trong trang ghi là "Thông tư sửa đổi năm 2026".
 - **TT21/2023/TT-BYT** (khung giá không BHYT): chưa đọc được nguyên văn; việc TT21/2023 thay TT37/2018 và TT14/2019 mới thấy ở trang tra cứu văn bản.
 - **Cột "Số QĐ tương đương cũ"** trong file mới phần lớn ghi "hiệu lực cùng TT39 TT37" (không phải số QĐ); trang hiển thị nguyên văn.

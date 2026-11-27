@@ -33,7 +33,7 @@ Tóm tắt văn bản chỉ để tham khảo nhanh; khi dùng chính thức c�
 
 ## Điểm chưa làm rõ
 
-- **Giá BHYT hiện hành:** chưa xác định được bảng giá áp dụng chung toàn quốc sau 01/01/2025. Theo TT21/2024, HĐND cấp tỉnh quy định giá cụ thể thuộc thẩm quyền, không vượt giá cao nhất do Bộ trưởng Bộ Y tế quy định; giá thực tế cần tra tại cơ sở hoặc văn bản giá của tỉnh.
+- **Giá BHYT hiện hành:** từ 01/01/2025 không còn bảng giá chung toàn quốc; theo TT21/2024, Bộ Y tế ban hành quyết định giá riêng cho từng bệnh viện trực thuộc, HĐND tỉnh cho cơ sở địa phương. BV Chợ Rẫy: QĐ 3222/QĐ-BYT (01/11/2024) rồi **QĐ 3024/QĐ-BYT** (thanh toán từ 01/10/2026, hơn 5.700 dịch vụ kỹ thuật, xét nghiệm; theo báo chí, chưa đọc nguyên văn). Giá trong trang (TT13/2019…) chỉ để đối chiếu; đưa bảng giá QĐ 3024 vào trang cần file phụ lục giá.
 - **Số hiệu Thông tư sửa đổi năm 2026** (sửa TT23/2024, TT32/2023, TT01/2013, TT42/2025; Điều 3 hiệu lực 01/07/2026): bản PDF trên chinhphu.vn để trống số; trang tra cứu ghi 25/2026/TT-BYT. Trong trang ghi là "Thông tư sửa đổi năm 2026".
 - **TT21/2023/TT-BYT** (khung giá không BHYT): chưa đọc được nguyên văn; việc TT21/2023 thay TT37/2018 và TT14/2019 mới thấy ở trang tra cứu văn bản.
 - **Các QĐ phê duyệt trong file mới** (QĐ 466, 24, 130, 423, 1035, 1410, 473): file chỉ ghi số, chưa đối chiếu năm và nội dung từng quyết định.

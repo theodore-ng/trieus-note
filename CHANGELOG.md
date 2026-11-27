@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.9.3 – 27/11/2026
+
+- Procedure Catalog: ghi rõ **giá hiện hành theo từng bệnh viện** (từ 2025 không còn bảng giá BHYT chung; theo TT21/2024 Bộ Y tế ra quyết định giá riêng cho bệnh viện trực thuộc). Ví dụ BV Chợ Rẫy: QĐ 3222/QĐ-BYT (01/11/2024), rồi QĐ 3024/QĐ-BYT (thanh toán từ 01/10/2026). Cập nhật ở phần Giải thích của từng kỹ thuật và Văn bản tham chiếu (mục TT15/2018), có link nguồn.
+
 ## 2.9.2 – 27/11/2026
 
 - Procedure Catalog: dòng thống kê ở trang đầu chỉ còn tổng số kỹ thuật và số chuyên khoa.

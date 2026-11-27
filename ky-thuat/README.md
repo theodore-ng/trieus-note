@@ -21,7 +21,7 @@ Trang tra cứu phụ lục **danh mục kỹ thuật tương đương** (theo b
 
 | Nội dung trong trang | Văn bản gốc | Tình trạng |
 |---|---|---|
-| Danh mục tương đương, mã dùng chung | QĐ 7603/QĐ-BYT (25/12/2018, sửa bởi QĐ 4905/2019); cột QĐ phê duyệt: QĐ 466, 24, 130, 423, 1035, 1410, 473 (file không ghi năm) | Dữ liệu từ 2.8.0. QĐ 4442/4883 (bản cũ đến 2.7.1) đã bị QĐ 7435 thay từ 15/12/2018 |
+| Danh mục tương đương, mã dùng chung | QĐ 7603/QĐ-BYT (25/12/2018, sửa bởi QĐ 4905/2019); cột QĐ phê duyệt: QĐ 466, 24, 130, 423, 1035, 1410, 473 của Sở Y tế Đà Nẵng (file không ghi năm) | Dữ liệu từ 2.8.0. QĐ 4442/4883 (bản cũ đến 2.7.1) đã bị QĐ 7435 thay từ 15/12/2018 |
 | Mã kỹ thuật, tuyến A–D | TT43/2013, TT21/2017 | Hết hiệu lực từ 18/10/2024 (TT23/2024). Mã theo chương **vẫn là mã kỹ thuật** ở Phụ lục 01 TT23/2024, dùng **đến hết 31/12/2027** (Thông tư sửa đổi 2026); Phụ lục 02 áp dụng từ 01/01/2028 |
 | Phân loại PĐB–P3, TĐB–T3 | TT50/2014 | Còn áp dụng; TT23/2024 giữ nguyên mức phân loại cho kỹ thuật Phụ lục 01 |
 | Giá TT13, TT39 (BHYT) | TT39/2018 sửa bởi TT13/2019 | Giá năm 2019. Đã thay bằng TT22/2023 (hết hiệu lực 01/01/2025 theo TT21/2024) |
@@ -36,9 +36,8 @@ Tóm tắt văn bản chỉ để tham khảo nhanh; khi dùng chính thức c�
 - **Giá BHYT hiện hành:** từ 01/01/2025 không còn bảng giá chung toàn quốc; theo TT21/2024, Bộ Y tế ban hành quyết định giá riêng cho từng bệnh viện trực thuộc, HĐND tỉnh cho cơ sở địa phương. BV Chợ Rẫy: QĐ 3222/QĐ-BYT (01/11/2024) rồi **QĐ 3024/QĐ-BYT** (thanh toán từ 01/10/2026, hơn 5.700 dịch vụ kỹ thuật, xét nghiệm; theo báo chí, chưa đọc nguyên văn). Giá trong trang (TT13/2019…) chỉ để đối chiếu; đưa bảng giá QĐ 3024 vào trang cần file phụ lục giá.
 - **Số hiệu Thông tư sửa đổi năm 2026** (sửa TT23/2024, TT32/2023, TT01/2013, TT42/2025; Điều 3 hiệu lực 01/07/2026): bản PDF trên chinhphu.vn để trống số; trang tra cứu ghi 25/2026/TT-BYT. Trong trang ghi là "Thông tư sửa đổi năm 2026".
 - **TT21/2023/TT-BYT** (khung giá không BHYT): chưa đọc được nguyên văn; việc TT21/2023 thay TT37/2018 và TT14/2019 mới thấy ở trang tra cứu văn bản.
-- **Các QĐ phê duyệt trong file mới** (QĐ 466, 24, 130, 423, 1035, 1410, 473): file chỉ ghi số, chưa đối chiếu năm và nội dung từng quyết định.
 - **Cột "Số QĐ tương đương cũ"** trong file mới phần lớn ghi "hiệu lực cùng TT39 TT37" (không phải số QĐ); trang hiển thị nguyên văn.
-- **Kỹ thuật ngoài danh mục tương đương:** 7/41 quy trình của khoa chưa ghép được dịch vụ cùng tên (vd nội soi lấy tĩnh mạch hiển, Muller, nông hóa đường dò).
+- **Kỹ thuật ngoài danh mục tương đương:** 7/41 quy trình của khoa không có dịch vụ cùng tên (vd nội soi lấy tĩnh mạch hiển, Muller, nông hóa đường dò); người dùng quyết định để vậy, không ghép tay.
 - **Định mức nhân lực TT50 Phụ lục 1:** lấy từ bản đăng lại (caselaw.vn) vì không mở được file gốc; mỗi ô đã cộng kiểm tra. Các ô nguồn ghi lệch hoặc không tách được loại để trống, trang hiện "xem Phụ lục 1 TT50/2014": phẫu thuật Điện quang, Vi phẫu, Tạo hình thẩm mỹ loại III; thủ thuật Lao, Tâm thần, Y học cổ truyền, Giải phẫu bệnh, Tai Mũi Họng loại đặc biệt, Y học hạt nhân loại II–III. Các chương Hóa sinh, Vi sinh và phẫu thuật Gây mê hồi sức không có bảng. Nên đối chiếu file gốc trước khi dùng chính thức.
 
 ## Cập nhật dữ liệu

@@ -142,12 +142,6 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
 .legend { font-size: 12.5px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 12px; margin: 4px 0 0; }
 .intro { display: grid; gap: 14px; }
 .intro h2, .rbody h3.sub { margin: 10px 0 0; font-size: 13px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
-.lead { margin: 4px 0 0; font: 500 19px/1.45 var(--serif); text-wrap: pretty; }
-.lead b { color: var(--accent); font-variant-numeric: tabular-nums; }
-.try { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.try span { font-size: 13px; color: var(--muted); margin-right: 2px; }
-.try button { font: 500 13.5px var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 0 12px; height: 34px; cursor: pointer; }
-.try button:hover { border-color: var(--accent); color: var(--accent); }
 .facts { margin: 0; font-size: 13.5px; color: var(--muted); }
 .facts b { color: var(--ink); font-variant-numeric: tabular-nums; }
 .links { display: grid; gap: 8px; }
@@ -245,8 +239,6 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
     <div id="list" style="display:grid;gap:10px" aria-live="polite"></div>
     <button class="more" id="more" type="button" hidden>Xem thêm</button>
     <section id="intro" class="intro">
-      <p class="lead" id="lead"></p>
-      <div class="try" id="try"><span>Thử:</span></div>
       <p class="facts" id="stats"></p>
       <h2>Tham khảo</h2>
       <div class="links">
@@ -366,8 +358,6 @@ const chapLabel = c => { const m = c.match(/^([IVXL]+)\.\s*(.*)$/); if (!m) retu
   const nP = R.filter(r => kindOf(r[F.loai]) === 'P').length, nT = R.filter(r => kindOf(r[F.loai]) === 'T').length;
   const nQ = P.filter(p => p.rows.length).length, vn = n => n.toLocaleString('vi-VN');
   const nC = D.chaps.filter(c => /^[IVXL]+\./.test(c)).length;
-  document.getElementById('lead').innerHTML = `Tra cứu giá, mã, phân tuyến, phân loại và phạm vi BHYT của <b>${vn(R.length)}</b> kỹ thuật. Gõ không dấu cũng được: “dat catheter” ra “Đặt catheter”.`;
-  document.getElementById('try').insertAdjacentHTML('beforeend', ['catheter', 'stent', 'suy tĩnh mạch', 'ABI', 'lọc máu', '01.0009'].map(x => `<button type="button" data-q="${esc(x)}">${esc(x)}</button>`).join(''));
   document.getElementById('stats').innerHTML = `<b>${vn(nP)}</b> phẫu thuật · <b>${vn(nT)}</b> thủ thuật · <b>${vn(R.length - nP - nT)}</b> chưa phân loại · <b>${nC}</b> chuyên khoa`;
   document.getElementById('lkqt').textContent = `${P.length} quy trình của khoa PT mạch máu · ${nQ} đã ghép dịch vụ`;
   const nRef = document.getElementById('refsTpl').content.querySelectorAll('.refs > li').length;
@@ -525,7 +515,6 @@ const $chap = document.getElementById('chap');
 $chap.addEventListener('change', () => { st.chap = $chap.value; $chap.classList.toggle('on', !!$chap.value); search(); });
 $intro.addEventListener('click', e => {
   const g = e.target.closest('[data-go]'); if (g) { go(g.dataset.go); return; }
-  const x = e.target.closest('[data-q]'); if (x) { $q.value = x.dataset.q; $clear.hidden = false; st.q = x.dataset.q; search(); }
 });
 document.addEventListener('keydown', e => {
   if (e.key === '/' && !e.ctrlKey && !e.metaKey && $reader.hidden && !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)) { e.preventDefault(); $q.focus(); $q.select(); }

@@ -11,7 +11,7 @@ Trang tra cứu phụ lục **danh mục kỹ thuật tương đương** (QĐ 44
 ## Tính năng
 
 - **Tìm kiếm** theo tên hoặc mã, không phân biệt dấu ("dat catheter" ra "Đặt catheter"); lọc **Tất cả / Phẫu thuật / Thủ thuật**.
-- **Thẻ kết quả** gọn: tên, mã, lĩnh vực (chương), tuyến, phân loại; bấm **Chi tiết** để xem tên tương đương TT15, giá TT15 / TT37 / TT02, mã BHYT, ghi chú, quyết định, nút mở quy trình kỹ thuật của khoa.
+- **Thẻ kết quả** gọn: tên, mã, lĩnh vực (chương), tuyến, phân loại; dưới là **thanh tab nhỏ**: *Giá* (tương đương TT15, giá TT15 / TT37 có lương / không lương / TT02), *Mã & quyết định*, *Ghi chú* (khi có), *Giải thích* (theo văn bản), *Quy trình* (khi có quy trình của khoa). Mặc định thu gọn, bấm tab để mở, bấm lại để đóng.
 - **Giải thích theo văn bản** trong Chi tiết từng kỹ thuật, tính cho chính dòng đó: ý nghĩa tuyến (TT43/2013) và mã kỹ thuật còn dùng đến khi nào (TT23/2024 sửa đổi 2026); phân loại và định mức nhân lực tối đa mỗi ca theo chuyên khoa (TT50/2014 Phụ lục 1); giá nào áp dụng khi có / không có BHYT; tỷ lệ thanh toán khi làm kèm trong cùng lần phẫu thuật.
 - **Văn bản tham chiếu** ở trang đầu: mỗi văn bản có **Chi tiết** gồm tóm tắt, ngày ký/hiệu lực, hiệu lực hiện nay, **văn bản thay thế, sửa đổi** và link nguồn.
 - **Danh sách quy trình khoa** chia Phẫu thuật / Can thiệp mạch / Thủ thuật; mỗi quy trình mở thành trang đọc, nút Back của điện thoại quay lại.

@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.7.1 – 27/11/2026
+
+- Procedure Catalog: thẻ kết quả có **thanh tab nhỏ** thay cho nút "Chi tiết" (cảm hứng từ trang Pokédex): **Giá** (tương đương TT15, giá TT15 / TT37 có lương / TT37 không lương / TT02) · **Mã & quyết định** · **Ghi chú** (chỉ khi có) · **Giải thích** (theo văn bản) · **Quy trình** (chỉ khi có quy trình của khoa). Mặc định thu gọn; bấm tab để mở, bấm lại để đóng.
+
 ## 2.7.0 – 23/11/2026
 
 - **Notes** (mục Ghi chú) và **trang chủ** chuyển sang tiếng Anh (nút, thư mục Notes / Archive / Trash, thông báo, ngày giờ, thẻ các mục). Quản lý tài chính, Danh mục kỹ thuật giữ tiếng Việt.

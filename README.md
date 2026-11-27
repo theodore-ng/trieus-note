@@ -12,7 +12,7 @@ Web app cá nhân gồm nhiều mục, mở từ một trang chủ dạng thẻ 
 |---|---|---|---|
 | [**Notes**](notes/README.md) | `notes/` | Ghi chú Markdown: checklist, tag, ghim, Archive / Trash, tìm kiếm không dấu, Paste, **+ GitHub** (tóm tắt + review repo) | English |
 | [**Finance**](finance/README.md) | `finance/` | Quản lý danh mục vàng, tiền mặt, tiết kiệm, chứng khoán; phân bổ tối ưu theo CFA (SAA), điều chỉnh chiến thuật (TAA), lộ trình giảm tỷ trọng vàng, dữ liệu thị trường VN và thế giới | Tiếng Việt |
-| [**Procedure Catalog**](ky-thuat/README.md) | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (QĐ 4442/4883) và quy trình kỹ thuật khoa Phẫu thuật mạch máu, kèm giải thích theo văn bản | Tiếng Việt |
+| [**Procedure Catalog**](ky-thuat/README.md) | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (bộ mã QĐ 7603, giá TT39/TT13) và quy trình kỹ thuật khoa Phẫu thuật mạch máu, kèm giải thích theo văn bản | Tiếng Việt |
 | [**PAD Classification**](pad/README.md) | `pad/` | Phân loại bệnh động mạch chi dưới: Fontaine, Rutherford, WIfI | English |
 | [**Heparin IV Calc.**](heparin/README.md) | `heparin/` | Liều heparin IV theo cân nặng, chỉnh liều theo aPTT (Dager 2018) | English |
 

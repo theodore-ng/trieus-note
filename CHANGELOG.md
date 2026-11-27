@@ -2,6 +2,15 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.8.0 – 27/11/2026
+
+- Procedure Catalog chuyển sang **danh mục tương đương mới** (bộ mã QĐ 7603/QĐ-BYT, giá TT39/2018 sửa bởi TT13/2019): 9.190 kỹ thuật (trước 8.924), không còn dòng "đã hủy".
+  - Tab **Giá**: tên trong danh mục giá; giá TT13 (BHYT 2019), TT39, TT15 (2018), TTLT 37/2015 có lương, TT37/2018 (không BHYT). Bỏ giá TT02/2017.
+  - Tab **Mã & quyết định**: QĐ phê duyệt (QĐ 466, 24, 130, 423, 1035, 1410, 473), chuyên khoa TT39, QĐ tương đương cũ, STT TT39/TT15/TT37. Tab **Ghi chú**: TT13, PL4 TT13, TT39, PL4 TT39/lý do sửa đổi, TT15, TT37/2018.
+  - **Giải thích** và **Văn bản tham chiếu**: thêm QĐ 7603, TT39/2018 + TT13/2019, TTLT 37/2015; bỏ mục TT02.
+- **Sửa lỗi ghi nhãn**: từ 2.1.1 hai cột "TT37 có lương / không lương" được ghi là TT37/2018; thực ra là hai mức giá BHYT của TTLT 37/2015. TT37/2018 (khung giá không BHYT) nay là cột riêng.
+- `build.py` đọc cột theo tên tiêu đề thay vì vị trí.
+
 ## 2.7.1 – 27/11/2026
 
 - Procedure Catalog: thẻ kết quả có **thanh tab nhỏ** thay cho nút "Chi tiết" (cảm hứng từ trang Pokédex): **Giá** (tương đương TT15, giá TT15 / TT37 có lương / TT37 không lương / TT02) · **Mã & quyết định** · **Ghi chú** (chỉ khi có) · **Giải thích** (theo văn bản) · **Quy trình** (chỉ khi có quy trình của khoa). Mặc định thu gọn; bấm tab để mở, bấm lại để đóng.

@@ -15,7 +15,7 @@ Trang tra cứu phụ lục **danh mục kỹ thuật tương đương** (theo b
 - **Phạm vi BHYT** (từ 2.8.1): nhãn BHYT / BHYT có điều kiện trên thẻ; đầu tab Giá tách ghi chú TT13 (hoặc TT39) thành điều kiện thanh toán, phần chưa gồm trong giá (tính riêng) và phần đã gồm. Tách theo từ khóa ("chưa bao gồm/kèm/tính", "đã bao gồm", "không thanh toán", "chỉ áp dụng"…) nên nên đọc lại ghi chú gốc ở tab Ghi chú khi cần chắc chắn.
 - **Giải thích theo văn bản** trong Chi tiết từng kỹ thuật, tính cho chính dòng đó: ý nghĩa tuyến (TT43/2013) và mã kỹ thuật còn dùng đến khi nào (TT23/2024 sửa đổi 2026); phân loại và định mức nhân lực tối đa mỗi ca theo chuyên khoa (TT50/2014 Phụ lục 1); giá nào áp dụng khi có / không có BHYT; tỷ lệ thanh toán khi làm kèm trong cùng lần phẫu thuật.
 - **Văn bản tham chiếu** ở trang đầu: mỗi văn bản có **Chi tiết** gồm tóm tắt, ngày ký/hiệu lực, hiệu lực hiện nay, **văn bản thay thế, sửa đổi** và link nguồn.
-- **Danh sách quy trình khoa** chia Phẫu thuật / Can thiệp mạch / Thủ thuật; mỗi quy trình mở thành trang đọc, nút Back của điện thoại quay lại.
+- **Danh sách quy trình** (từ 2.10.0: 62 quy trình) chia Phẫu thuật / Can thiệp mạch / Thủ thuật, mỗi mục có nhãn nguồn. **Ưu tiên bản Bộ Y tế**: quy trình có trong *Hướng dẫn QTKT về Tuần hoàn* Tập 1.1/2.1 (QĐ 3675, 3676/QĐ-BYT, 2025) hiện bản Bộ Y tế, bản BV Chợ Rẫy (2023) là tab "BV Chợ Rẫy (bổ sung)"; 2 quy trình chỉ có bản Bộ Y tế *liên quan* (stent ĐM cảnh, tiêu sợi huyết tại chỗ) giữ Chợ Rẫy làm chính; 21 quy trình mạch máu chỉ có ở Bộ Y tế được thêm vào; 28 quy trình (chủ yếu phẫu thuật, điện quang can thiệp) chưa có bản Bộ Y tế, dùng bản Chợ Rẫy. Trang đọc có mục lục nhảy tới từng phần; nút Back của điện thoại quay lại.
 
 ## Hiệu lực của dữ liệu (kiểm tra 20/11/2026, cập nhật 27/11/2026)
 
@@ -46,8 +46,11 @@ Tóm tắt văn bản chỉ để tham khảo nhanh; khi dùng chính thức c�
 
 ```sh
 python scripts/ky_thuat/docx2procs.py "QUY TRINH KT KHOA PTMM.docx" procs.json
-python scripts/ky_thuat/build.py "Danh muc tuong duong.7603. co QĐ.473_TT13.chot.xlsx" scripts/ky_thuat/template.html page.html procs.json
+python scripts/ky_thuat/byt2procs.py scripts/ky_thuat/byt_map.json "<thư mục nguồn>/BYT" byt.json
+python scripts/ky_thuat/build.py "Danh muc tuong duong.7603. co QĐ.473_TT13.chot.xlsx" scripts/ky_thuat/template.html page.html procs.json byt.json
 python scripts/ky_thuat/make_index.py page.html ky-thuat/index.html
 ```
 
 `build.py` đọc cột theo **tên tiêu đề** (dòng có ô "Mã tương đương"), bỏ dòng không có mã; thiếu cột thì báo lỗi. Sửa giao diện ở `scripts/ky_thuat/template.html` rồi build lại; `make_index.py` lấy số phiên bản theo `index.html` gốc nên chạy sau khi tăng `?v=`.
+
+**Quy trình Bộ Y tế** (`byt2procs.py`): PDF đặt ở thư mục con `BYT/` của thư mục nguồn (không đưa vào repo); `byt_map.json` khai báo từng tập (tên file, số QĐ, link) và từng quy trình: `cr` = số thứ tự quy trình Chợ Rẫy tương ứng (bản Bộ Y tế thành bản chính), `rel: true` = chỉ là quy trình liên quan, không có `cr` = thêm vào danh sách với nhóm `g`. Thêm bộ mới (vd hướng dẫn Ngoại khoa Tim mạch – Lồng ngực, Điện quang can thiệp QĐ 2776/2025) = thêm tập vào `vols` + các mục vào `items` rồi build lại; PDF phải có lớp chữ (bản scan cần OCR trước). Chữ trích tự động: đoạn văn nối theo dấu câu, bảng biểu có thể lệch dòng.

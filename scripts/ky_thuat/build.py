@@ -1,5 +1,6 @@
 """Build trang Danh mục kỹ thuật từ file Excel danh mục tương đương (bản QĐ 7603, giá TT39/TT13; sheet đầu tiên).
-Dùng: python build.py <file danh mục>.xlsx template.html page.html procs.json
+Dùng: python build.py <file danh mục>.xlsx template.html page.html procs.json [byt.json]
+byt.json (tùy chọn, từ byt2procs.py): quy trình Bộ Y tế, ưu tiên hiển thị; bản Chợ Rẫy thành tab bổ sung.
 Đọc cột theo TÊN tiêu đề (dòng có ô "Mã tương đương"), không theo vị trí; bỏ dòng không có mã (dòng tổng cuối bảng).
 Thứ tự trường mỗi dòng phải khớp const F trong template.html."""
 import datetime, json, re, sys, unicodedata
@@ -81,6 +82,14 @@ def key(t):
     return t
 
 procs = json.load(open(procs_path, encoding="utf-8"))
+# Quy trình Bộ Y tế (byt2procs.py): gắn vào quy trình Chợ Rẫy tương ứng (cr) hoặc thêm mới
+if len(sys.argv) > 5:
+    for b in json.load(open(sys.argv[5], encoding="utf-8")):
+        v = {k: b[k] for k in ("t", "h", "ref", "url")}
+        if "cr" in b:
+            procs[b["cr"] - 1]["byt"] = {**v, "rel": bool(b.get("rel"))}
+        else:
+            procs.append({**v, "src": "byt", "g": b.get("g", 1)})
 rk = [key(r[4]) for r in data]
 for pr in procs:
     k = key(pr["t"])

@@ -1,0 +1,44 @@
+{
+  "_note": "Ghép quy trình Bộ Y tế (Hướng dẫn QTKT về Tuần hoàn 2025) với 41 quy trình BV Chợ Rẫy. cr = số thứ tự quy trình Chợ Rẫy (1-based, theo procs.json); rel = true: chỉ là quy trình liên quan (Chợ Rẫy vẫn là bản chính); không có cr = quy trình Bộ Y tế thêm vào danh sách, g = nhóm (0 Phẫu thuật, 1 Can thiệp mạch, 2 Thủ thuật). Đối chiếu 27/11/2026.",
+  "vols": {
+    "1.1": {"file": "QTKT Tuan hoan Tap 1.1 (QD 3675-BYT 2025).pdf", "qd": "QĐ 3675/QĐ-BYT (2025)", "name": "Hướng dẫn quy trình kỹ thuật về Tuần hoàn – Tập 1.1", "url": "https://dongnaicdc.vn/UserFiles/Docs/Nam2025/vanbanBYT/huong%20dan%20chuyen%20mon%201.1.pdf"},
+    "2.1": {"file": "QTKT Tuan hoan Tap 2.1 (QD 3676-BYT 2025).pdf", "qd": "QĐ 3676/QĐ-BYT (2025)", "name": "Hướng dẫn quy trình kỹ thuật về Tuần hoàn – Tập 2.1", "url": "https://bvdkcamau.vn/uploads/news/2026_01/huong_dan_quy_trinh_ky_thuat_ve_tuan_hoan_tap_2_1.pdf"}
+  },
+  "items": [
+    {"vol": "1.1", "n": 11, "cr": 1},
+    {"vol": "1.1", "n": 23, "cr": 5},
+    {"vol": "1.1", "n": 10, "cr": 6},
+    {"vol": "1.1", "n": 5, "cr": 10, "rel": true},
+    {"vol": "1.1", "n": 60, "cr": 12},
+    {"vol": "1.1", "n": 26, "cr": 16},
+    {"vol": "1.1", "n": 101, "cr": 17},
+    {"vol": "1.1", "n": 52, "cr": 20},
+    {"vol": "1.1", "n": 53, "cr": 21, "rel": true},
+    {"vol": "1.1", "n": 28, "cr": 26},
+    {"vol": "1.1", "n": 62, "cr": 27},
+    {"vol": "1.1", "n": 59, "cr": 31},
+    {"vol": "2.1", "n": 27, "cr": 32},
+
+    {"vol": "1.1", "n": 13, "g": 1},
+    {"vol": "1.1", "n": 14, "g": 1},
+    {"vol": "1.1", "n": 100, "g": 1},
+    {"vol": "1.1", "n": 61, "g": 1},
+    {"vol": "1.1", "n": 27, "g": 1},
+    {"vol": "1.1", "n": 54, "g": 1},
+    {"vol": "1.1", "n": 97, "g": 1},
+    {"vol": "2.1", "n": 26, "g": 1},
+    {"vol": "2.1", "n": 40, "g": 1},
+    {"vol": "2.1", "n": 41, "g": 1},
+    {"vol": "2.1", "n": 90, "g": 1},
+    {"vol": "2.1", "n": 84, "g": 1},
+    {"vol": "2.1", "n": 31, "g": 1},
+    {"vol": "2.1", "n": 99, "g": 1},
+    {"vol": "2.1", "n": 100, "g": 1},
+    {"vol": "1.1", "n": 84, "g": 2},
+    {"vol": "1.1", "n": 4, "g": 2},
+    {"vol": "2.1", "n": 82, "g": 2},
+    {"vol": "2.1", "n": 80, "g": 2},
+    {"vol": "2.1", "n": 81, "g": 2},
+    {"vol": "2.1", "n": 30, "g": 2}
+  ]
+}

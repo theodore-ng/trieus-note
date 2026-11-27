@@ -2,6 +2,15 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.10.0 – 27/11/2026
+
+- Procedure Catalog: **quy trình Bộ Y tế 2025 là bản chính.** Lấy từ *Hướng dẫn quy trình kỹ thuật về Tuần hoàn* Tập 1.1 (QĐ 3675/QĐ-BYT) và Tập 2.1 (QĐ 3676/QĐ-BYT):
+  - 11 quy trình Chợ Rẫy có bản Bộ Y tế tương đương (stent eo ĐMC, stent graft, stent ĐM thận, nong/stent ĐM chi, ABI, laser, sóng RF, lưới lọc TM chủ, nong TM ngoại biên): hiện bản Bộ Y tế, bản Chợ Rẫy thành tab **"BV Chợ Rẫy (bổ sung)"**.
+  - 2 quy trình chỉ có bản Bộ Y tế liên quan (stent ĐM cảnh, tiêu sợi huyết tại chỗ): giữ Chợ Rẫy, thêm tab "Bộ Y tế (liên quan)".
+  - Thêm 21 quy trình mạch máu chỉ có ở Bộ Y tế (chụp ĐMC/ĐM chi, stent mạch ngoại vi, dù bảo vệ, triệt đốt giao cảm ĐM thận, can thiệp đường vào chạy thận, các kỹ thuật hỗ trợ stent graft, phá mảng vôi bằng sóng xung kích, keo sinh học, siêu âm Doppler mạch, PWV, TBI, PPG, thông số huyết động TM, bơm hơi dẫn lưu phù bạch huyết).
+  - 28 quy trình chưa có bản Bộ Y tế đọc được (phẫu thuật, điện quang can thiệp) vẫn dùng bản Chợ Rẫy.
+- Danh sách quy trình (62 mục) có nhãn nguồn; trang đọc có dòng nguồn kèm link PDF; Văn bản tham chiếu thêm mục QĐ 3675/3676.
+
 ## 2.9.5 – 27/11/2026
 
 - Procedure Catalog: giá hiện hành ghi theo **TP Đà Nẵng** (cơ sở công lập thuộc thành phố, vd BV Đà Nẵng: NQ 96/2026/NQ-HĐND ngày 31/7/2026; trước đó NQ 68/2024, NQ 22/2024), bệnh viện thuộc Bộ (vd Chợ Rẫy) chỉ còn là ví dụ phụ. 41 quy trình PT mạch máu ghi rõ là tài liệu tham khảo chuyên môn của BV Chợ Rẫy.

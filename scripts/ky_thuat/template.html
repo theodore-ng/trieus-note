@@ -193,6 +193,14 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
 .toc button small { font: 500 12px var(--mono); color: var(--accent); }
 .toc button small.no { font-family: var(--sans); color: var(--warn); }
 .jump { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.vtabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.vtabs button { font: 600 13px var(--sans); color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 0 14px; height: 36px; cursor: pointer; }
+.vtabs button[aria-selected="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
+.vsrc { margin: 0 0 12px; font-size: 13px; line-height: 1.5; color: var(--muted); overflow-wrap: anywhere; }
+.vsrc a { color: var(--accent); }
+.vsrc b { color: var(--ink); font-weight: 600; }
+.stag { justify-self: start; font: 700 11px var(--sans); border-radius: 5px; padding: 1px 6px; background: var(--accent-soft); color: var(--accent); }
+.stag.byt { background: var(--ok-soft); color: var(--ok); }
 .jump button { font: 600 13px var(--sans); color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
 .grp { margin: 20px 0 8px; font: 600 18px var(--serif); display: flex; align-items: baseline; gap: 8px; scroll-margin-top: 72px; }
 .grp span { font-size: 12.5px; font-weight: 500; color: var(--muted); }
@@ -261,6 +269,7 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
         <li><b>Thông tư 37/2018/TT-BYT</b><p>Mức tối đa khung giá dịch vụ khám bệnh, chữa bệnh không thuộc phạm vi quỹ BHYT chi trả tại cơ sở nhà nước. Cột “Giá TT37/2018”, “Ghi chú TT37/2018”.</p><details class="refd"><summary>Chi tiết</summary><ul><li>Ký 30/11/2018 (Thứ trưởng Nguyễn Trường Sơn), hiệu lực 15/01/2019.</li><li>Mức tối đa khung giá dịch vụ khám chữa bệnh không thuộc phạm vi thanh toán của quỹ BHYT tại cơ sở nhà nước. HĐND tỉnh quyết định giá cụ thể trong khung; Bộ trưởng Bộ Y tế quyết định với bệnh viện hạng đặc biệt và hạng I thuộc Bộ.</li><li>Quy tắc áp giá tương tự TT15: lần khám thứ 2 tính 30%; can thiệp phát sinh trong cùng ca phẫu thuật 50% (cùng kíp) hoặc 80% (đổi kíp), thủ thuật 80%. Thay thế TT02/2017 và TT44/2017.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> hết hiệu lực từ 17/11/2023, thay bằng TT21/2023 (theo các trang tra cứu văn bản; chưa đọc được nguyên văn TT21/2023).</p><p class="st"><b>Văn bản thay thế, sửa đổi:</b></p><ul><li><b>TT14/2019/TT-BYT</b> (05/07/2019, hiệu lực 20/08/2019): thay toàn bộ các phụ lục giá của TT37/2018; chủ yếu điều chỉnh tiền lương trong giá, không đổi cấu trúc giá.</li><li><b>TT21/2023/TT-BYT</b> (17/11/2023): khung giá dịch vụ khám chữa bệnh của Nhà nước, thay TT37/2018 và TT14/2019.</li><li><b>TT21/2024/TT-BYT</b> (17/10/2024): TT21/2023 hết hiệu lực từ 01/01/2025; giá được xác định theo phương pháp định giá của TT21/2024 và quyết định của cấp có thẩm quyền (xem mục TT15/2018).</li></ul><p class="srcs">Nguồn: <a href="https://vanban.vcci.com.vn/thong-tu-372018tt-byt-quy-dinh-muc-toi-da-khung-gia-dich-vu-kham-benh-chua-benh-khong-thuoc-pham-vi-thanh-toan-cua-quy-bao-hiem-y-te" target="_blank" rel="noopener">VCCI (TT37/2018)</a> · <a href="https://thuvienphapluat.vn/van-ban/EN/Bao-hiem/Circular-14-2019-TT-BYT-amending-Circular-ceiling-of-price-range-of-medical-examination-services/427232/tieng-anh.aspx" target="_blank" rel="noopener">thuvienphapluat (TT14/2019)</a> · <a href="https://vcci.com.vn/legal-document/21-2024-tt-byt" target="_blank" rel="noopener">VCCI (TT21/2024)</a></p></details></li>
         <li><b>Thông tư liên tịch 37/2015/TTLT-BYT-BTC</b> <span class="d">29/10/2015</span><p>Giá dịch vụ khám chữa bệnh BHYT thống nhất giữa các bệnh viện cùng hạng, trước TT15/2018. Cột “TTLT 37/2015 có lương”.</p><details class="refd"><summary>Chi tiết</summary><ul><li>Liên tịch Bộ Y tế – Bộ Tài chính. Giá có hai mức: gồm chi phí trực tiếp và phụ cấp đặc thù; và gồm thêm tiền lương (áp dụng theo lộ trình). File nguồn chỉ có mức <b>có lương</b>.</li><li><b>Sửa lỗi ghi nhãn:</b> từ 2.1.1 đến 2.7.1 trang này ghi hai cột “TT37 có lương / không lương” là TT37/2018; thực ra đó là hai mức của TTLT 37/2015. TT37/2018 là khung giá không BHYT, nay ở cột riêng “TT37/2018”.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> hết hiệu lực từ 15/07/2018 (thay bằng TT15/2018).</p><p class="srcs">Nguồn: <a href="https://thuvienphapluat.vn/van-ban/Bao-hiem/joint-Circular-37-2015-TTLT-BYT-BTC-unifying-prices-medical-examination-treatment-services-medical-insurance-310847.aspx" target="_blank" rel="noopener">thuvienphapluat (TTLT 37/2015)</a></p></details></li>
         <li><b>Các QĐ tương đương trước đây</b> <span class="d">2016–2017</span><p>984, 803, 1016, 1724, 3025/QĐ-BYT (2016), 2099/QĐ-BYT (2017) và 4442/4883 (2018). Hiện trong tab “Mã &amp; quyết định” của từng kỹ thuật.</p></li>
+        <li><b>Hướng dẫn quy trình kỹ thuật về Tuần hoàn – Tập 1.1 và 2.1</b> <span class="d">Bộ Y tế, 2025</span><p>Nguồn chính của danh sách quy trình (từ bản 2.10.0): các quy trình can thiệp mạch, đo ABI/TBI, laser, sóng RF… lấy từ hai tập này; quy trình của BV Chợ Rẫy (nếu có) là tab bổ sung.</p><details class="refd"><summary>Chi tiết</summary><ul><li><b>QĐ 3675/QĐ-BYT</b>: Tập 1.1, 101 quy trình; <b>QĐ 3676/QĐ-BYT</b>: Tập 2.1, 109 quy trình; ban hành 28/11/2025 theo trang tra cứu (bản PDF đang dùng để trống số, ngày). Căn cứ Luật Khám bệnh, chữa bệnh 2023 và TT23/2024; thay QĐ 3983/QĐ-BYT (2014, nội khoa tim mạch).</li><li>Biên soạn: Viện Tim mạch BV Bạch Mai đầu mối, cùng BV Chợ Rẫy, BV Đại học Y Hà Nội, BV Trung ương Huế…</li><li>Khuôn mới: Chống chỉ định thường ghi “không có chống chỉ định tuyệt đối”, thêm mục <b>Thận trọng</b> (nhiều điều bản Chợ Rẫy xếp vào chống chỉ định); Chuẩn bị ghi cụ thể nhân lực, thuốc, thiết bị.</li><li>Chưa có bản Bộ Y tế đọc được cho các quy trình <b>phẫu thuật</b> mạch máu (hướng dẫn Ngoại khoa Tim mạch – Lồng ngực: QĐ 4423/2016, QĐ 5732/2017, QĐ 11/2022) và <b>điện quang can thiệp</b> (QĐ 2776/QĐ-BYT 2025, thay QĐ 25/2014): các quy trình đó vẫn dùng bản Chợ Rẫy.</li><li>Chữ trong trang được trích tự động từ PDF; bảng biểu có thể lệch dòng.</li></ul><p class="srcs">Nguồn: <a href="https://thuvienphapluat.vn/van-ban/The-thao-Y-te/Quyet-dinh-3675-QD-BYT-2025-Tai-lieu-Huong-dan-quy-trinh-ky-thuat-ve-Tuan-hoan-Tap-1-1-682612.aspx" target="_blank" rel="noopener">thuvienphapluat (QĐ 3675)</a> · <a href="https://dongnaicdc.vn/UserFiles/Docs/Nam2025/vanbanBYT/huong%20dan%20chuyen%20mon%201.1.pdf" target="_blank" rel="noopener">PDF Tập 1.1</a> · <a href="https://bvdkcamau.vn/uploads/news/2026_01/huong_dan_quy_trinh_ky_thuat_ve_tuan_hoan_tap_2_1.pdf" target="_blank" rel="noopener">PDF Tập 2.1</a> · <a href="https://luatvietnam.vn/y-te/quyet-dinh-2776-qd-byt-cua-bo-y-te-ve-viec-ban-hanh-tai-lieu-chuyen-mon-huong-dan-quy-trinh-ky-thuat-ve-dien-quang-can-thiep-thuoc-chuong-dien-quang-tap-1-410145-d1.html" target="_blank" rel="noopener">luatvietnam (QĐ 2776)</a></p></details></li>
         <li><b>Quy trình kỹ thuật chuyên ngành Phẫu thuật mạch máu</b> <span class="d">BV Chợ Rẫy, 2023 · tài liệu tham khảo chuyên môn</span><p id="qtnote">41 quy trình kỹ thuật của khoa, được ghép với dịch vụ có cùng tên trong phụ lục.</p></li>
       </ol>
       <p class="legend"><b>Ký hiệu:</b> Tuyến A – Trung ương · B – Tỉnh · C – Huyện · D – Xã. Tóm tắt văn bản, văn bản thay thế và hiệu lực được kiểm tra ngày 20/11/2026 (bổ sung QĐ 7603, TT39, TT13, TTLT 37/2015 ngày 27/11/2026) từ các trang tra cứu văn bản (link trong từng mục), chỉ để tham khảo nhanh; khi dùng chính thức hãy đối chiếu văn bản gốc. Dữ liệu giữ nguyên từ file Excel danh mục tương đương (QĐ 7603, giá TT13).</p>
@@ -359,7 +368,7 @@ const chapLabel = c => { const m = c.match(/^([IVXL]+)\.\s*(.*)$/); if (!m) retu
   const nQ = P.filter(p => p.rows.length).length, vn = n => n.toLocaleString('vi-VN');
   const nC = D.chaps.filter(c => /^[IVXL]+\./.test(c)).length;
   document.getElementById('stats').innerHTML = `<b>${vn(R.length)}</b> kỹ thuật · <b>${nC}</b> chuyên khoa`;
-  document.getElementById('lkqt').textContent = `${P.length} quy trình PT mạch máu (tham khảo BV Chợ Rẫy) · ${nQ} đã ghép dịch vụ`;
+  document.getElementById('lkqt').textContent = `${P.length} quy trình · ${P.filter(p => p.src === 'byt' || (p.byt && !p.byt.rel)).length} theo Bộ Y tế 2025, còn lại tham khảo BV Chợ Rẫy`;
   const nRef = document.getElementById('refsTpl').content.querySelectorAll('.refs > li').length;
   document.getElementById('lkvb').textContent = `${nRef} văn bản: QĐ 7603, TT43, TT50, TT39/TT13…`;
   const sel = document.getElementById('chap');
@@ -534,12 +543,27 @@ function svcButtons(p) {
   if (!p.rows.length) return '<div class="none">Chưa tìm thấy dịch vụ cùng tên trong danh mục tương đương.</div>';
   return p.rows.map(i => `<button type="button" data-code="${esc(R[i][F.ma])}">${esc(R[i][F.ma])} · ${esc(R[i][F.ten])}</button>`).join('');
 }
-function renderProc(k) {
+const CR_REF = 'Quy trình kỹ thuật chuyên ngành Phẫu thuật mạch máu – BV Chợ Rẫy (2023), tài liệu tham khảo chuyên môn';
+function versions(p) {
+  const cr = { id: 'cr', label: 'BV Chợ Rẫy', h: p.h, ref: CR_REF };
+  if (p.src === 'byt') return [{ id: 'byt', label: 'Bộ Y tế 2025', h: p.h, ref: p.ref, url: p.url }];
+  if (!p.byt) return [cr];
+  const b = { id: 'byt', label: p.byt.rel ? 'Bộ Y tế (liên quan)' : 'Bộ Y tế 2025', h: p.byt.h, ref: p.byt.ref, url: p.byt.url, t: p.byt.t, rel: p.byt.rel };
+  return p.byt.rel ? [cr, b] : [b, { ...cr, label: 'BV Chợ Rẫy (bổ sung)' }];
+}
+function srcTag(p) { return p.src === 'byt' ? ['byt', 'Bộ Y tế 2025'] : p.byt && !p.byt.rel ? ['byt', 'Bộ Y tế 2025 · Chợ Rẫy bổ sung'] : ['cr', p.byt ? 'BV Chợ Rẫy · có BYT liên quan' : 'BV Chợ Rẫy']; }
+function renderProc(k, vid) {
   const p = P[k]; if (!p) return renderToc();
-  showReader(`<h2 id="rtitle">${esc(sentence(p.t))}</h2><div class="svc">${svcButtons(p)}</div><div class="jump" id="secjump"></div><div class="doc">${p.h}</div>`, `${GROUPS[p.g]} · Quy trình ${k + 1}/${P.length}`);
+  const vs = versions(p), v = vs.find(x => x.id === vid) || vs[0];
+  const tabs = vs.length > 1 ? `<div class="vtabs" role="tablist" aria-label="Bản quy trình">${vs.map(x => `<button type="button" role="tab" data-ver="${x.id}" aria-selected="${x === v}">${x.label}</button>`).join('')}</div>` : '';
+  const sub = v.t && fold(v.t) !== fold(p.t) ? `<b>${esc(sentence(v.t))}</b>. ` : '';
+  const note = v.id === 'byt' ? (v.rel ? ' Quy trình Bộ Y tế có phạm vi khác hoặc rộng hơn, dùng để đối chiếu.' : '') + ' Chữ trích tự động từ bản PDF; bảng biểu có thể lệch dòng, đối chiếu bản gốc khi cần.' : '';
+  const src = `<p class="vsrc">${sub}Nguồn: ${v.url ? `<a href="${v.url}"${'' + ' target="_blank" rel="noopener"'}>${esc(v.ref)}</a>` : esc(v.ref)}.${note}</p>`;
+  showReader(`<h2 id="rtitle">${esc(sentence(p.t))}</h2><div class="svc">${svcButtons(p)}</div>${tabs}${src}<div class="jump" id="secjump"></div><div class="doc">${v.h}</div>`, `${GROUPS[p.g]} · Quy trình ${k + 1}/${P.length}`);
+  $reader.dataset.k = k;
   const hs = [...$rc.querySelectorAll('.doc p.h2')];
   hs.forEach((h, x) => { h.id = 'sec-' + x; });
-  const lab = h => { const s = h.textContent.replace(/^[IVX]+\.\s*/, '').trim().toLocaleLowerCase('vi'); return s.charAt(0).toLocaleUpperCase('vi') + s.slice(1); };
+  const lab = h => { const s = h.textContent.replace(/^([IVX]+|\d{1,2})\.\s*/, '').trim().toLocaleLowerCase('vi'); return s.charAt(0).toLocaleUpperCase('vi') + s.slice(1); };
   document.getElementById('secjump').innerHTML = hs.length > 2 ? hs.map((h, x) => `<button type="button" data-jump="sec-${x}">${esc(lab(h))}</button>`).join('') : '';
 }
 // procedure groups, decided with the department: classified by title
@@ -550,13 +574,14 @@ function groupOf(t) {
   if (/^(dat stent|chup|nong |dieu tri suy tinh mach|dieu tri u mau bang hoa chat)/.test(f)) return 1;
   return 0;
 }
-P.forEach(p => { p.g = groupOf(p.t); });
+P.forEach(p => { if (p.g === undefined) p.g = groupOf(p.t); });
 function renderToc() {
   const n = P.filter(p => p.rows.length).length;
-  const item = k => { const p = P[k]; return `<button type="button" data-qt="${k}">${esc(sentence(p.t))}<small class="${p.rows.length ? '' : 'no'}">${p.rows.length ? p.rows.map(i => esc(R[i][F.ma])).join(' · ') : 'Chưa ghép dịch vụ'}</small></button>`; };
+  const item = k => { const p = P[k], [c, l] = srcTag(p); return `<button type="button" data-qt="${k}">${esc(sentence(p.t))}<small class="${p.rows.length ? '' : 'no'}">${p.rows.length ? p.rows.map(i => esc(R[i][F.ma])).join(' · ') : 'Chưa ghép dịch vụ'}</small><span class="stag ${c}">${l}</span></button>`; };
+  const nB = P.filter(p => srcTag(p)[0] === 'byt').length;
   const secs = GROUPS.map((g, gi) => { const ks = P.map((p, k) => k).filter(k => P[k].g === gi); return { g, gi, ks }; });
-  showReader(`<h2 id="rtitle">Quy trình kỹ thuật – khoa Phẫu thuật mạch máu</h2>
-    <p class="rnote">${P.length} quy trình · ${n} đã ghép với dịch vụ trong phụ lục · ${P.length - n} chưa tìm thấy tên trùng</p>
+  showReader(`<h2 id="rtitle">Quy trình kỹ thuật mạch máu</h2>
+    <p class="rnote">${P.length} quy trình · ${nB} theo hướng dẫn Bộ Y tế 2025 (bản Chợ Rẫy, nếu có, là tab bổ sung) · ${P.length - nB} chỉ có bản BV Chợ Rẫy (tham khảo) · ${n} đã ghép với dịch vụ trong phụ lục</p>
     <div class="jump">${secs.map(s => `<button type="button" data-jump="grp-${s.gi}">${s.g} <b>${s.ks.length}</b></button>`).join('')}</div>
     ${secs.map(s => `<h3 class="grp" id="grp-${s.gi}">${s.g} <span>${s.ks.length} quy trình</span></h3><div class="toc">${s.ks.map(item).join('')}</div>`).join('')}`, 'Danh sách quy trình');
 }
@@ -565,7 +590,8 @@ function renderRefs() {
   showReader('<h2 id="rtitle">Văn bản tham chiếu</h2><p class="rnote">Tóm tắt, hiệu lực và văn bản thay thế của các văn bản dùng trong danh mục. Bấm “Chi tiết” ở từng mục.</p>', 'Văn bản tham chiếu');
   $rc.append(P_);
   const nQ = P.filter(p => p.rows.length).length, qn = document.getElementById('qtnote');
-  if (qn) qn.textContent = `${P.length} quy trình kỹ thuật của khoa. ${nQ} quy trình đã ghép với dịch vụ có cùng tên trong phụ lục, ${P.length - nQ} quy trình chưa tìm thấy tên trùng.`;
+  const cr = P.filter(p => !p.src), eq = cr.filter(p => p.byt && !p.byt.rel).length, rel = cr.filter(p => p.byt && p.byt.rel).length;
+  if (qn) qn.textContent = `${cr.length} quy trình của BV Chợ Rẫy: ${eq} đã có bản Bộ Y tế 2025 tương đương (bản Chợ Rẫy thành tab bổ sung), ${rel} có quy trình Bộ Y tế liên quan, còn lại chưa có bản Bộ Y tế để đối chiếu. ${nQ}/${P.length} quy trình trong danh sách đã ghép với dịch vụ có cùng tên trong phụ lục.`;
 }
 function route() {
   const h = location.hash.slice(1), m = h.match(/^qt-(\d+)$/);
@@ -579,6 +605,7 @@ document.getElementById('rback').addEventListener('click', () => {
 });
 window.addEventListener('hashchange', () => { $reader.dataset.pushed = '1'; });
 $rc.addEventListener('click', e => {
+  const vb = e.target.closest('[data-ver]'); if (vb) { renderProc(+$reader.dataset.k, vb.dataset.ver); return; }
   const j = e.target.closest('[data-jump]'); if (j) { document.getElementById(j.dataset.jump).scrollIntoView({ block: 'start' }); return; }
   const t = e.target.closest('[data-qt]'); if (t) { go('qt-' + (+t.dataset.qt + 1)); return; }
   const c = e.target.closest('[data-code]');

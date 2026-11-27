@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.9.2 – 27/11/2026
+
+- Procedure Catalog: dòng thống kê ở trang đầu chỉ còn tổng số kỹ thuật và số chuyên khoa.
+
 ## 2.9.1 – 27/11/2026
 
 - Procedure Catalog: bỏ câu giới thiệu và hàng gợi ý tìm nhanh ("Thử: …") ở trang đầu cho gọn; còn dòng thống kê và phần Tham khảo.

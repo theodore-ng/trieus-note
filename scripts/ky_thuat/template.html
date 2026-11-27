@@ -358,7 +358,7 @@ const chapLabel = c => { const m = c.match(/^([IVXL]+)\.\s*(.*)$/); if (!m) retu
   const nP = R.filter(r => kindOf(r[F.loai]) === 'P').length, nT = R.filter(r => kindOf(r[F.loai]) === 'T').length;
   const nQ = P.filter(p => p.rows.length).length, vn = n => n.toLocaleString('vi-VN');
   const nC = D.chaps.filter(c => /^[IVXL]+\./.test(c)).length;
-  document.getElementById('stats').innerHTML = `<b>${vn(nP)}</b> phẫu thuật · <b>${vn(nT)}</b> thủ thuật · <b>${vn(R.length - nP - nT)}</b> chưa phân loại · <b>${nC}</b> chuyên khoa`;
+  document.getElementById('stats').innerHTML = `<b>${vn(R.length)}</b> kỹ thuật · <b>${nC}</b> chuyên khoa`;
   document.getElementById('lkqt').textContent = `${P.length} quy trình của khoa PT mạch máu · ${nQ} đã ghép dịch vụ`;
   const nRef = document.getElementById('refsTpl').content.querySelectorAll('.refs > li').length;
   document.getElementById('lkvb').textContent = `${nRef} văn bản: QĐ 7603, TT43, TT50, TT39/TT13…`;

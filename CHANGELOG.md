@@ -2,6 +2,11 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.8.1 – 27/11/2026
+
+- Procedure Catalog: **phạm vi BHYT chi trả** trên từng kỹ thuật. Nhãn trên thẻ: **BHYT** (có giá BHYT TT13) hoặc **BHYT có điều kiện** (64 kỹ thuật có ghi chú "không thanh toán…", "chỉ áp dụng với người bệnh ngoại trú"…). Đầu tab Giá có khối BHYT tách ghi chú TT13 (thiếu thì lấy TT39) thành: điều kiện thanh toán / cách tính; **chưa gồm trong giá, tính riêng** (thuốc, vật tư… BHYT trả nếu thuộc danh mục quỹ thanh toán); đã gồm trong giá.
+- Cả 9.190 kỹ thuật trong file đều có giá BHYT; "chưa bao gồm" nghĩa là khoản đó tính riêng, không phải BHYT không trả.
+
 ## 2.8.0 – 27/11/2026
 
 - Procedure Catalog chuyển sang **danh mục tương đương mới** (bộ mã QĐ 7603/QĐ-BYT, giá TT39/2018 sửa bởi TT13/2019): 9.190 kỹ thuật (trước 8.924), không còn dòng "đã hủy".

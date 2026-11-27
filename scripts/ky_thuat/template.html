@@ -10,6 +10,7 @@
   --bg: #f2ede2; --surface: #fbf8f1; --ink: #2b2620; --muted: #7a7264; --line: #e0d8c7;
   --accent: #b5532c; --accent-soft: #f3e2d6; --mark: #f1d88f; --mark-ink: #2b2620;
   --warn: #b03a2e; --warn-soft: #f5e0dc;
+  --ok: #3d6e45; --ok-soft: #e0ebdc;
   --p: #7c5c8f; --p-soft: #ece4f0; --t: #3f6c8c; --t-soft: #e0e9ef;
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
   --sans: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -54,6 +55,14 @@ main .wrap { padding-block: 14px 40px; display: grid; gap: 10px; }
 .b-P { background: var(--p-soft); color: var(--p); }
 .b-T { background: var(--t-soft); color: var(--t); }
 .b-x { background: var(--warn-soft); color: var(--warn); }
+.b-bh { background: var(--ok-soft); color: var(--ok); }
+.b-bhc { background: var(--warn-soft); color: var(--warn); }
+.bh { font-size: 13.5px; line-height: 1.5; background: var(--bg); border-left: 3px solid var(--ok); border-radius: 0 8px 8px 0; padding: 8px 12px; overflow-wrap: anywhere; }
+.bh.no { border-left-color: var(--warn); }
+.bh p { margin: 0; }
+.bh ul { margin: 6px 0 0; padding-left: 18px; }
+.bh li { margin: 3px 0; }
+.bh li small { display: block; color: var(--muted); font-size: 12px; }
 .name { font-size: 16px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
 .eq { font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
 .eq span { color: var(--ink); }
@@ -331,10 +340,52 @@ function search() {
 }
 
 function row(label, val, cls) { return val === '' || val == null ? '' : `<dt>${label}</dt><dd${cls ? ` class="${cls}"` : ''}>${val}</dd>`; }
+// Phạm vi BHYT: có giá TT13 = thuộc danh mục giá BHYT; tách ghi chú thành phần tính riêng / điều kiện / đã gồm
+const BH_COND = /không thanh toán|chỉ thanh toán|chỉ áp dụng|không thu quá|áp dụng (với|đối với|cho) (người bệnh|bệnh nhân|bệnh|trường hợp)|đối với người bệnh/i;
+const BH_CACHE = new Map();
+function bh(r) {
+  if (BH_CACHE.has(r)) return BH_CACHE.get(r);
+  const src = [r[F.gc13] || r[F.gc39]];
+  if (r[F.pl4_13] && !src[0].includes(r[F.pl4_13])) src.push(r[F.pl4_13]);
+  const excl = [], cond = [], incl = [];
+  // tách câu theo . ; nhưng không cắt trong ngoặc; NFC để so khớp dấu tiếng Việt
+  const parts = []; let cur = '', depth = 0;
+  for (const ch of src.join(' ').normalize('NFC')) {
+    if (ch === '(') depth++; else if (ch === ')') depth = Math.max(0, depth - 1);
+    if ((ch === '.' || ch === ';') && !depth && !/\d$/.test(cur)) { parts.push(cur); cur = ''; } else cur += ch;
+  }
+  parts.push(cur);
+  for (const s of parts) {
+    const x = s.trim().replace(/[.;]$/, ''); if (!x) continue;
+    const m = x.match(/chưa (bao gồm|kèm|tính)\s*:?\s*/i);
+    if (m) {
+      const before = x.slice(0, m.index).replace(/^giá\s*/i, '').replace(/[,\s]+$/, '');
+      if (/bao gồm/i.test(before)) incl.push(before.replace(/^(đã )?bao gồm( cả)?\s*/i, ''));
+      excl.push(x.slice(m.index + m[0].length));
+    } else if (/^(đã )?bao gồm/i.test(x)) incl.push(x.replace(/^(đã )?bao gồm( cả)?\s*/i, ''));
+    else if (/thanh toán|áp dụng|không thu|tính theo|mỗi|lần/i.test(x)) cond.push(x);
+    else if (excl.length && /^[a-zà-ỹđ0-9]/.test(x)) excl[excl.length - 1] += '. ' + x; // phần tiếp của danh sách chưa bao gồm
+    else cond.push(x);
+  }
+  const o = { has: typeof r[F.g13] === 'number', excl, cond, incl, strict: cond.some(c => BH_COND.test(c)) };
+  BH_CACHE.set(r, o);
+  return o;
+}
+function bhBox(r) {
+  const b = bh(r), ul = (title, xs, note) => xs.length ? `<li><b>${title}</b>${note ? `<small>${note}</small>` : ''}${xs.map(x => esc(x.charAt(0).toUpperCase() + x.slice(1))).join('; ')}.</li>` : '';
+  if (!b.has) return `<div class="bh no"><p><b>BHYT</b>: không có giá trong danh mục giá BHYT (TT39/TT13) của file nguồn; hỏi cơ sở trước khi làm.</p></div>`;
+  return `<div class="bh"><p><b>BHYT chi trả</b>: có. Dịch vụ có giá BHYT ${money(r[F.g13])} đ (TT13); quỹ trả theo mức hưởng của thẻ${b.strict ? ', <b>kèm điều kiện bên dưới</b>' : ''}.</p><ul>
+    ${ul(b.strict ? 'Điều kiện thanh toán: ' : 'Cách tính: ', b.cond)}
+    ${ul('Chưa gồm trong giá, tính riêng: ', b.excl, 'Thanh toán theo thực tế sử dụng; BHYT chỉ trả phần thuốc, vật tư thuộc danh mục quỹ thanh toán (có thể theo tỷ lệ, điều kiện).')}
+    ${ul('Đã gồm trong giá: ', b.incl)}
+  </ul></div>`;
+}
 function card(i) {
   const r = R[i], t = st.terms, k = kindOf(r[F.loai]);
   const qt = ROWP.get(i) || [];
-  const badges = (r[F.tuyen] ? `<span class="b b-tuyen" title="Phân tuyến">Tuyến ${esc(r[F.tuyen])}</span>` : '')
+  const B = bh(r);
+  const badges = (B.has ? `<span class="b ${B.strict ? 'b-bhc' : 'b-bh'}" title="Phạm vi BHYT (xem tab Giá)">${B.strict ? 'BHYT có điều kiện' : 'BHYT'}</span>` : '<span class="b b-bhc">Ngoài giá BHYT</span>')
+    + (r[F.tuyen] ? `<span class="b b-tuyen" title="Phân tuyến">Tuyến ${esc(r[F.tuyen])}</span>` : '')
     + (r[F.loai] ? `<span class="b b-${k === 'P' ? 'P' : 'T'}" title="Phân loại">${esc(loaiLabel(r[F.loai]))}</span>` : '');
   const dl = (rows) => rows.join('');
   const codes = dl([
@@ -358,7 +409,7 @@ function card(i) {
   ]);
   const changed = [r[F.tdg] ? 'giá' : '', r[F.tdgc] ? 'ghi chú' : ''].filter(Boolean).join(', ');
   const tabs = [
-    ['price', 'Giá', `${r[F.ten39] ? `<p class="eq">Tên trong danh mục giá: <span>${hl(r[F.ten39], t)}</span></p>` : ''}
+    ['price', 'Giá', `${bhBox(r)}${r[F.ten39] ? `<p class="eq">Tên trong danh mục giá: <span>${hl(r[F.ten39], t)}</span></p>` : ''}
       <div class="prices">
         <div class="pr"><small>Giá TT13 (BHYT 2019)</small><strong>${money(r[F.g13])}</strong></div>
         <div class="pr"><small>Giá TT39 (BHYT)</small><strong>${money(r[F.g39])}</strong></div>

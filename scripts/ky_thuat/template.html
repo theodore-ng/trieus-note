@@ -20,12 +20,21 @@
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.5 var(--sans); }
 body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
-.wrap { max-width: 760px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.wrap { max-width: 820px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 
-header { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--ink); }
-header .wrap { padding-block: 12px 10px; display: grid; gap: 10px; }
+header .wrap { padding-block: 12px 2px; }
+.sbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-bottom: 1px solid var(--ink); }
+.sbar .wrap { padding-block: 8px 10px; display: grid; gap: 8px; }
+@media (max-width: 560px) {
+  .sbar .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-inline: -16px; padding-inline: 16px; }
+  .sbar .filters::-webkit-scrollbar { display: none; }
+  .sbar .chips { flex: none; flex-wrap: nowrap; }
+  .chip { flex: none; padding: 0 12px; }
+  .sbar select { flex: 0 0 180px; }
+}
+@media (max-width: 420px) { .ctabs button { padding: 0 9px; } .ctabs { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); } }
 .brand { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-h1 { margin: 0; font: 600 21px/1.25 var(--serif); letter-spacing: -0.01em; text-wrap: balance; display: flex; align-items: center; gap: 8px; }
+h1 { margin: 0; font: 600 22px/1.25 var(--serif); letter-spacing: -0.01em; text-wrap: balance; display: flex; align-items: center; gap: 8px; }
 h1 a.home { display: flex; flex: none; padding: 2px; margin-left: -2px; border-radius: 6px; }
 h1 a.home:hover { background: var(--surface); box-shadow: var(--shadow); }
 h1 .logo { width: 30px; height: 30px; image-rendering: pixelated; display: block; }
@@ -35,9 +44,10 @@ h1 .logo { width: 30px; height: 30px; image-rendering: pixelated; display: block
 .search input:focus { outline: none; border-color: var(--accent); background: var(--surface); }
 .search button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: 0; background: transparent; color: var(--muted); font-size: 20px; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
 .filters { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-select { font: 500 13px var(--sans); color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; max-width: 100%; min-width: 0; flex: 1 1 200px; }
+select { font: 600 13px var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 0 12px; height: 36px; max-width: 100%; min-width: 0; flex: 1 1 180px; cursor: pointer; }
+select.on { border-color: var(--ink); }
 .chips { display: flex; gap: 6px; flex-wrap: wrap; }
-.chip { font: 600 12.5px var(--sans); color: var(--muted); background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.chip { font: 600 13px var(--sans); color: var(--muted); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 0 14px; height: 36px; cursor: pointer; }
 .chip[aria-pressed="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
 button:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -46,8 +56,8 @@ main .wrap { padding-block: 14px 40px; display: grid; gap: 10px; }
 .count b { color: var(--ink); font-variant-numeric: tabular-nums; }
 
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 12px 14px; display: grid; gap: 6px; min-width: 0; }
-.top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-.meta { font-size: 11.5px; color: var(--muted); letter-spacing: 0.03em; text-transform: uppercase; min-width: 0; }
+.top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 4px 8px; }
+.meta { font-size: 13px; color: var(--muted); min-width: 0; }
 .code { font: 500 12.5px var(--mono); color: var(--accent); letter-spacing: 0; text-transform: none; }
 .badges { display: flex; gap: 4px; flex-shrink: 0; }
 .b { font: 700 11.5px var(--sans); border-radius: 6px; padding: 2px 7px; white-space: nowrap; }
@@ -63,13 +73,13 @@ main .wrap { padding-block: 14px 40px; display: grid; gap: 10px; }
 .bh ul { margin: 6px 0 0; padding-left: 18px; }
 .bh li { margin: 3px 0; }
 .bh li small { display: block; color: var(--muted); font-size: 12px; }
-.name { font-size: 16px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.name { flex: 1 1 240px; font-size: 16px; font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
 .eq { font-size: 13.5px; color: var(--muted); overflow-wrap: anywhere; }
 .eq span { color: var(--ink); }
 mark { background: var(--mark); color: var(--mark-ink); border-radius: 3px; padding: 0 1px; }
 .ctabs { display: flex; gap: 2px; margin: 4px -14px 0; padding: 0 14px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
 .ctabs::-webkit-scrollbar { display: none; }
-.ctabs button { flex: none; font: 700 11.5px var(--sans); letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); background: transparent; border: 1px solid transparent; border-bottom: 0; border-radius: 6px 6px 0 0; padding: 6px 10px 5px; margin-bottom: -1px; cursor: pointer; }
+.ctabs button { flex: none; font: 600 13px var(--sans); color: var(--muted); background: transparent; border: 1px solid transparent; border-bottom: 0; border-radius: 8px 8px 0 0; padding: 0 12px; min-height: 40px; margin-bottom: -1px; cursor: pointer; }
 .ctabs button:hover { color: var(--ink); background: var(--bg); }
 .ctabs button[aria-selected="true"] { color: var(--accent); background: var(--surface); border-color: var(--line); border-bottom: 1px solid var(--surface); }
 .cpane { padding-top: 6px; display: grid; gap: 8px; }
@@ -130,15 +140,25 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
 .more { justify-self: center; font: 600 14px var(--sans); color: var(--accent); background: var(--surface); border: 1.5px solid var(--accent); border-radius: 10px; padding: 10px 22px; cursor: pointer; }
 .empty { text-align: center; color: var(--muted); padding: 32px 8px; }
 .legend { font-size: 12.5px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--line); padding-top: 12px; margin: 4px 0 0; }
-.intro { display: grid; gap: 12px; }
-.intro h2 { margin: 6px 0 0; font-size: 13px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
-.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-@media (min-width: 600px) { .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 12px 14px; min-width: 0; }
-.stat strong { display: block; font: 600 26px var(--serif); font-variant-numeric: tabular-nums; line-height: 1.2; }
-.stat:first-child { grid-column: 1 / -1; }
-.stat:first-child strong { color: var(--accent); }
-.stat span { font-size: 12.5px; color: var(--muted); }
+.intro { display: grid; gap: 14px; }
+.intro h2, .rbody h3.sub { margin: 10px 0 0; font-size: 13px; color: var(--muted); letter-spacing: 0.06em; text-transform: uppercase; }
+.lead { margin: 4px 0 0; font: 500 19px/1.45 var(--serif); text-wrap: pretty; }
+.lead b { color: var(--accent); font-variant-numeric: tabular-nums; }
+.try { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.try span { font-size: 13px; color: var(--muted); margin-right: 2px; }
+.try button { font: 500 13.5px var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 0 12px; height: 34px; cursor: pointer; }
+.try button:hover { border-color: var(--accent); color: var(--accent); }
+.facts { margin: 0; font-size: 13.5px; color: var(--muted); }
+.facts b { color: var(--ink); font-variant-numeric: tabular-nums; }
+.links { display: grid; gap: 8px; }
+@media (min-width: 640px) { .links { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.lk { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2px 10px; text-align: left; font: 15px/1.4 var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 12px 14px; cursor: pointer; }
+.lk:hover { border-color: var(--accent); }
+.lk b { font-weight: 600; }
+.lk span { grid-column: 1; font-size: 13px; color: var(--muted); }
+.lk i { grid-row: 1 / span 2; grid-column: 2; font-style: normal; font-size: 20px; color: var(--accent); }
+.rnote { margin: 0 0 12px; color: var(--muted); font-size: 13.5px; }
+.kbd { font: 500 11px var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; color: var(--muted); }
 .hint { margin: 0; font-size: 14px; color: var(--muted); }
 .refs { margin: 0; padding: 0; list-style: none; display: grid; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); }
 .refs li { padding: 10px 14px; border-top: 1px solid var(--line); }
@@ -158,11 +178,11 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
 .rbody .wrap { padding-block: 16px calc(48px + env(safe-area-inset-bottom, 0px)); }
 .rbody h2 { margin: 0 0 10px; font: 600 22px var(--serif); line-height: 1.35; text-wrap: balance; }
 .svc { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-.svc button { font: 500 12.5px var(--mono); color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 6px; padding: 4px 8px; cursor: pointer; text-align: left; }
+.svc button { font: 500 12.5px var(--mono); color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 6px; padding: 6px 10px; cursor: pointer; text-align: left; max-width: 100%; overflow-wrap: anywhere; }
 .svc .none { font-size: 13px; color: var(--warn); background: var(--warn-soft); border-radius: 8px; padding: 8px 10px; }
 .doc { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); padding: 6px 16px 16px; font-size: 15px; line-height: 1.6; max-width: 72ch; }
 .doc p { margin: 6px 0; overflow-wrap: anywhere; }
-.doc p.h2 { margin-top: 18px; font-size: 15.5px; color: var(--accent); }
+.doc p.h2 { margin-top: 18px; font-size: 15.5px; color: var(--accent); scroll-margin-top: 64px; }
 .doc p.h3 { margin-top: 12px; }
 .doc p.li { display: flex; gap: 8px; }
 .doc p.li .mk { flex-shrink: 0; min-width: 1.2em; color: var(--muted); font-weight: 600; }
@@ -178,7 +198,7 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
 .toc button { display: grid; gap: 2px; text-align: left; font: 600 14.5px/1.4 var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
 .toc button small { font: 500 12px var(--mono); color: var(--accent); }
 .toc button small.no { font-family: var(--sans); color: var(--warn); }
-.jump { display: flex; flex-wrap: wrap; gap: 6px; }
+.jump { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
 .jump button { font: 600 13px var(--sans); color: var(--accent); background: var(--accent-soft); border: 0; border-radius: 999px; padding: 6px 12px; cursor: pointer; }
 .grp { margin: 20px 0 8px; font: 600 18px var(--serif); display: flex; align-items: baseline; gap: 8px; scroll-margin-top: 72px; }
 .grp span { font-size: 12.5px; font-weight: 500; color: var(--muted); }
@@ -197,11 +217,15 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
 <header>
   <div class="wrap">
     <div class="brand">
-      <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=__V__" alt="Trieu's Note"></a>Tra cứu danh mục kỹ thuật tương đương</h1>
+      <h1><a class="home" href="../" aria-label="Về trang chủ Trieu's Note" title="Trieu's Note"><img class="logo" src="../logo.svg?v=__V__" alt="Trieu's Note"></a>Danh mục kỹ thuật</h1>
       <span class="src">QĐ 7603 · TT13</span>
     </div>
+  </div>
+</header>
+<div class="sbar">
+  <div class="wrap">
     <div class="search">
-      <input id="q" type="search" placeholder="Tìm tên kỹ thuật hoặc mã, vd: catheter, 01.0007" autocomplete="off" enterkeyhint="search" aria-label="Từ khóa tìm kiếm">
+      <input id="q" type="search" placeholder="Tìm tên hoặc mã kỹ thuật" autocomplete="off" enterkeyhint="search" aria-label="Tìm tên hoặc mã kỹ thuật" aria-keyshortcuts="/">
       <button id="clear" type="button" aria-label="Xóa từ khóa" hidden>×</button>
     </div>
     <div class="filters">
@@ -210,20 +234,29 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
         <button class="chip" type="button" data-v="P" aria-pressed="false">Phẫu thuật</button>
         <button class="chip" type="button" data-v="T" aria-pressed="false">Thủ thuật</button>
       </div>
-      <button class="linkbtn" id="opentoc" type="button">Danh sách quy trình khoa</button>
+      <select id="chap" aria-label="Chuyên khoa"><option value="">Mọi chuyên khoa</option></select>
     </div>
   </div>
-</header>
+</div>
 
 <main>
   <div class="wrap">
     <div class="count" id="count"></div>
-    <div id="list" style="display:grid;gap:10px"></div>
+    <div id="list" style="display:grid;gap:10px" aria-live="polite"></div>
     <button class="more" id="more" type="button" hidden>Xem thêm</button>
     <section id="intro" class="intro">
-      <div class="stats" id="stats"></div>
-      <p class="hint">Gõ tên kỹ thuật hoặc mã vào ô tìm kiếm, hoặc chọn bộ lọc để xem kết quả. Tìm không phân biệt dấu: gõ “dat catheter” vẫn ra “Đặt catheter”.</p>
-      <h2>Văn bản tham chiếu</h2>
+      <p class="lead" id="lead"></p>
+      <div class="try" id="try"><span>Thử:</span></div>
+      <p class="facts" id="stats"></p>
+      <h2>Tham khảo</h2>
+      <div class="links">
+        <button class="lk" type="button" data-go="quy-trinh"><b>Quy trình kỹ thuật khoa</b><span id="lkqt"></span><i aria-hidden="true">›</i></button>
+        <button class="lk" type="button" data-go="van-ban"><b>Văn bản tham chiếu</b><span id="lkvb"></span><i aria-hidden="true">›</i></button>
+      </div>
+    </section>
+  </div>
+</main>
+<template id="refsTpl">
       <ol class="refs">
         <li><b>Danh mục tương đương theo QĐ 7603/QĐ-BYT, giá TT39/TT13</b> <span class="d">dữ liệu hiện tại</span><p>Nguồn của trang này (từ bản 2.8.0): mỗi kỹ thuật theo TT43/2013, TT50/2014, TT21/2017 được đối chiếu với tên dịch vụ, mã và giá trong TT39/2018 (sửa đổi bởi TT13/2019), kèm giá TT15/2018, TTLT 37/2015 và TT37/2018 để so sánh.</p><details class="refd"><summary>Chi tiết</summary><ul><li><b>QĐ 7603/QĐ-BYT</b> (25/12/2018): bộ mã danh mục dùng chung áp dụng trong quản lý khám chữa bệnh và thanh toán BHYT (phiên bản 6), gồm mã dịch vụ kỹ thuật dạng <i>chương.số TT43.mã giá</i> (vd 01.0009.0098, cột “Mã tương đương”); được sửa đổi, bổ sung bởi QĐ 4905/QĐ-BYT (2019).</li><li>Cột “QĐ phê duyệt” liệt kê các quyết định phê duyệt danh mục tương đương được đánh dấu trong file nguồn (QĐ 466, 24, 130, 423, 1035, 1410, 473). File không ghi năm ban hành của các quyết định này.</li><li>Cột “Thay đổi giá / ghi chú” đánh dấu dòng có giá hoặc ghi chú khác danh mục trước (hiện trong tab Giá).</li><li>So với bản 4442/4883 trước đây: không còn dòng “đã hủy”; thêm giá TT39, TT13, TT37/2018; bỏ cột TT02/2017.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> mã kỹ thuật TT43 vẫn dùng ở Phụ lục 01 TT23/2024 đến hết 31/12/2027; các bảng giá trong file đều đã được thay (xem TT39/2018).</p><p class="srcs">Nguồn: <a href="https://thuvienphapluat.vn/van-ban/Bao-hiem/Quyet-dinh-4905-QD-BYT-2019-sua-doi-Quyet-dinh-7603-QD-BYT-ma-danh-muc-dung-chung-426580.aspx" target="_blank" rel="noopener">thuvienphapluat (QĐ 4905 sửa đổi QĐ 7603)</a></p></details></li>
         <li><b>Quyết định 4442/QĐ-BYT</b> <span class="d">13/07/2018</span><p>Bộ Y tế phê duyệt danh mục kỹ thuật tương đương: đối chiếu từng kỹ thuật theo TT43, TT50, TT21 với tên dịch vụ và mức giá trong TT15/2018 để làm căn cứ thanh toán BHYT. Là nguồn chính của phụ lục.</p><details class="refd"><summary>Chi tiết</summary><ul><li>Tên đầy đủ: ban hành danh mục các dịch vụ kỹ thuật khám bệnh, chữa bệnh được xếp tương đương về kỹ thuật và chi phí thực hiện theo TT15/2018. Ký 13/07/2018 (Thứ trưởng Nguyễn Viết Tiến), hiệu lực từ ngày ký.</li><li>Là danh mục tương đương “đợt 4”: đối chiếu kỹ thuật theo TT43/2013, TT50/2014, TT21/2017 với dịch vụ đã có giá trong TT15/2018, làm cơ sở thanh toán chi phí khám chữa bệnh.</li><li>Phụ lục 01 thống nhất tên dịch vụ tương đương; Phụ lục 02 bổ sung mã giá mới để liên thông dữ liệu thanh toán BHYT (cột “Mã giá liên thông BHYT”).</li><li>Thay thế các QĐ tương đương năm 2016: 803, 984, 1016, 1724, 3025/QĐ-BYT.</li></ul><p class="st"><b>Hiệu lực hiện nay:</b> hết hiệu lực từ 15/12/2018. Trang này dùng bản 4442/4883 đến 2.7.1; từ 2.8.0 dùng danh mục QĐ 7603/TT13. Cột “QĐ tương đương cũ (theo TT37)” còn ghi 3025, 4442.</p><p class="st"><b>Văn bản thay thế, sửa đổi:</b></p><ul><li><b>QĐ 7435/QĐ-BYT</b> (ký 14/12/2018, Thứ trưởng Nguyễn Viết Tiến; hiệu lực 15/12/2018): thay thế QĐ 4442 và QĐ 4883 (Điều 3).</li><li>Danh mục tương đương giữa kỹ thuật theo TT43/2013, TT50/2014, TT21/2017 và danh mục giá theo <b>TT39/2018</b> (Phụ lục 1), kế thừa danh mục tương đương hiện hành và sửa đổi, bổ sung một số mã (Phụ lục 2).</li><li>Một số thay đổi: thống nhất tên dịch vụ (vd “đặt catheter động mạch” thành “đặt catheter động mạch theo dõi huyết áp liên tục”), hủy một số mã tương đương.</li><li>Chưa tìm thấy văn bản thay thế QĐ 7435.</li></ul><p class="srcs">Nguồn: <a href="https://luatvietnam.vn/y-te/quyet-dinh-4442-qd-byt-2018-danh-muc-cac-dich-vu-ky-thuat-kham-chua-benh-165218-d1.html" target="_blank" rel="noopener">luatvietnam (QĐ 4442)</a> · <a href="https://luatvietnam.vn/y-te/quyet-dinh-7435-qd-byt-229023-d1.html" target="_blank" rel="noopener">luatvietnam (QĐ 7435)</a></p></details></li>
@@ -239,9 +272,8 @@ dd.mono { font-family: var(--mono); font-size: 12.5px; }
         <li><b>Quy trình kỹ thuật chuyên ngành Phẫu thuật mạch máu</b> <span class="d">BV Chợ Rẫy, 2023</span><p id="qtnote">41 quy trình kỹ thuật của khoa, được ghép với dịch vụ có cùng tên trong phụ lục.</p></li>
       </ol>
       <p class="legend"><b>Ký hiệu:</b> Tuyến A – Trung ương · B – Tỉnh · C – Huyện · D – Xã. Tóm tắt văn bản, văn bản thay thế và hiệu lực được kiểm tra ngày 20/11/2026 (bổ sung QĐ 7603, TT39, TT13, TTLT 37/2015 ngày 27/11/2026) từ các trang tra cứu văn bản (link trong từng mục), chỉ để tham khảo nhanh; khi dùng chính thức hãy đối chiếu văn bản gốc. Dữ liệu giữ nguyên từ file Excel danh mục tương đương (QĐ 7603, giá TT13).</p>
-    </section>
-  </div>
-</main>
+</template>
+
 
 <div id="reader" hidden role="dialog" aria-modal="true" aria-labelledby="rtitle">
   <div class="rbar"><div class="wrap"><button id="rback" type="button">← Quay lại</button><span id="rcrumb"></span></div></div>
@@ -272,7 +304,7 @@ function sentence(t) { const s = t.toLocaleLowerCase('vi'); return (s.charAt(0).
 const IDX = R.map(r => fold([r[F.ten], r[F.ten39], r[F.ma], r[F.ma43], r[F.bhyt]].join(' | ')));
 
 
-const st = { q: '', kind: '', shown: 0, hits: [] };
+const st = { q: '', kind: '', chap: '', shown: 0, hits: [] };
 const PAGE = 40;
 const $q = document.getElementById('q'), $list = document.getElementById('list'), $more = document.getElementById('more'), $count = document.getElementById('count'), $clear = document.getElementById('clear');
 
@@ -328,16 +360,21 @@ function why(r) {
 }
 
 const $intro = document.getElementById('intro');
+const ROMAN = s => { const v = { I: 1, V: 5, X: 10, L: 50 }; let n = 0; for (let k = 0; k < s.length; k++) { const a = v[s[k]], b = v[s[k + 1]] || 0; n += a < b ? -a : a; } return n; };
+const chapLabel = c => { const m = c.match(/^([IVXL]+)\.\s*(.*)$/); if (!m) return c; const s = m[2].toLocaleLowerCase('vi'); return `${m[1]}. ${s.charAt(0).toLocaleUpperCase('vi')}${s.slice(1)}`; };
 (() => {
   const nP = R.filter(r => kindOf(r[F.loai]) === 'P').length, nT = R.filter(r => kindOf(r[F.loai]) === 'T').length;
   const nQ = P.filter(p => p.rows.length).length, vn = n => n.toLocaleString('vi-VN');
-  document.getElementById('stats').innerHTML = [
-    [vn(R.length), `kỹ thuật trong phụ lục, ${D.chaps.filter(c => /^[IVX]+\./.test(c)).length} chương`],
-    [vn(nP), 'phẫu thuật'], [vn(nT), 'thủ thuật'],
-    [vn(R.length - nP - nT), 'chưa phân loại'],
-    [P.length, `quy trình kỹ thuật khoa, ${nQ} đã ghép dịch vụ`],
-  ].map(([n, l]) => `<div class="stat"><strong>${n}</strong><span>${l}</span></div>`).join('');
-  document.getElementById('qtnote').textContent = `${P.length} quy trình kỹ thuật của khoa. ${nQ} quy trình đã ghép với dịch vụ có cùng tên trong phụ lục, ${P.length - nQ} quy trình chưa tìm thấy tên trùng.`;
+  const nC = D.chaps.filter(c => /^[IVXL]+\./.test(c)).length;
+  document.getElementById('lead').innerHTML = `Tra cứu giá, mã, phân tuyến, phân loại và phạm vi BHYT của <b>${vn(R.length)}</b> kỹ thuật. Gõ không dấu cũng được: “dat catheter” ra “Đặt catheter”.`;
+  document.getElementById('try').insertAdjacentHTML('beforeend', ['catheter', 'stent', 'suy tĩnh mạch', 'ABI', 'lọc máu', '01.0009'].map(x => `<button type="button" data-q="${esc(x)}">${esc(x)}</button>`).join(''));
+  document.getElementById('stats').innerHTML = `<b>${vn(nP)}</b> phẫu thuật · <b>${vn(nT)}</b> thủ thuật · <b>${vn(R.length - nP - nT)}</b> chưa phân loại · <b>${nC}</b> chuyên khoa`;
+  document.getElementById('lkqt').textContent = `${P.length} quy trình của khoa PT mạch máu · ${nQ} đã ghép dịch vụ`;
+  const nRef = document.getElementById('refsTpl').content.querySelectorAll('.refs > li').length;
+  document.getElementById('lkvb').textContent = `${nRef} văn bản: QĐ 7603, TT43, TT50, TT39/TT13…`;
+  const sel = document.getElementById('chap');
+  D.chaps.map((c, i) => [c, i]).filter(([c]) => c).sort((a, b) => ROMAN((a[0].match(/^[IVXL]+/) || [''])[0]) - ROMAN((b[0].match(/^[IVXL]+/) || [''])[0]))
+    .forEach(([c, i]) => sel.insertAdjacentHTML('beforeend', `<option value="${i}">${esc(chapLabel(c))}</option>`));
 })();
 function search() {
   const terms = fold(st.q.trim()).split(/\s+/).filter(Boolean);
@@ -345,6 +382,7 @@ function search() {
   for (let i = 0; i < R.length; i++) {
     const r = R[i];
     if (st.kind && kindOf(r[F.loai]) !== st.kind) continue;
+    if (st.chap !== '' && r[F.chap] !== +st.chap) continue;
     const s = IDX[i];
     let ok = true;
     for (const t of terms) if (s.indexOf(t) === -1) { ok = false; break; }
@@ -359,10 +397,10 @@ function search() {
   }
   st.hits = hits; st.terms = terms; st.shown = 0;
   $list.innerHTML = '';
-  const active = terms.length || st.kind;
+  const active = terms.length || st.kind || st.chap !== '';
   $intro.hidden = !!active; $count.hidden = !active;
   if (!active) { $more.hidden = true; return; }
-  $count.innerHTML = `<span><b>${hits.length.toLocaleString('vi-VN')}</b> kỹ thuật phù hợp</span><span>Chạm tab để xem giá, mã, ghi chú, giải thích</span>`;
+  $count.innerHTML = `<span><b>${hits.length.toLocaleString('vi-VN')}</b> kỹ thuật phù hợp</span>`;
   if (!hits.length) $list.innerHTML = '<div class="empty">Không tìm thấy kỹ thuật nào. Thử bớt từ khóa, gõ một phần của tên, hoặc chọn Tất cả.</div>';
   renderMore();
 }
@@ -427,7 +465,7 @@ function card(i) {
   const kv = rows => { const h = rows.join(''); return h ? `<dl class="kv">${h}</dl>` : ''; };
   const sec = (title, body) => body ? `<div class="sec"><h5>${title}</h5>${body}</div>` : '';
   const tile = (label, v, extra = '') => v ? `<div class="pr"><small>${label}</small><strong>${hl(v, t)}</strong>${extra}</div>` : '';
-  const codes = sec('Mã', `<div class="codes">${tile('Mã tương đương', r[F.ma], `<button class="copy" type="button" data-copy="${esc(r[F.ma])}">Chép mã</button>`)}${tile('Mã TT43/50/21', r[F.ma43])}${tile('Mã giá liên thông BHYT', r[F.bhyt])}</div>`)
+  const codes = sec('Mã', `<div class="codes">${tile('Mã tương đương', r[F.ma], `<button class="copy" type="button" data-copy="${esc(r[F.ma])}" data-label="Chép mã">Chép mã</button>`)}${tile('Mã TT43/50/21', r[F.ma43])}${tile('Mã giá liên thông BHYT', r[F.bhyt])}</div>`)
     + sec('Quyết định', kv([
       row('QĐ phê duyệt', esc(r[F.qd])),
       row('QĐ tương đương cũ', esc(r[F.qdcu] + (r[F.ngaycu] ? ' · ' + r[F.ngaycu] : ''))),
@@ -449,16 +487,16 @@ function card(i) {
       ${payNotes(r)}
       ${old.length ? sec('Giá cũ để đối chiếu', `<div class="old">${old.map(([l, v]) => `<span>${l}<b>${money(v)}</b></span>`).join('')}</div>`) : ''}
       ${changed ? `<p class="eq">Có thay đổi ${changed} so với danh mục trước.</p>` : ''}`],
-    ['code', 'Mã & quyết định', codes],
+    ['code', 'Mã & QĐ', codes],
     ...(notes ? [['note', 'Ghi chú', notes]] : []),
     ['why', 'Giải thích', `<div class="why">${why(r)}</div>`],
     ...(qt.length ? [['qt', 'Quy trình', qt.map(k => `<div class="qtrow"><span>${esc(sentence(P[k].t))}</span><button class="openqt" type="button" data-qt="${k}">Xem</button></div>`).join('')]] : []),
   ];
   return `<article class="card">
     <div class="top"><div class="name">${hl(r[F.ten], t)}</div><div class="badges">${badges}</div></div>
-    <div class="meta"><span class="code">${hl(r[F.ma], t)}</span> · ${esc(D.chaps[r[F.chap]])}</div>
-    <div class="ctabs" role="tablist">${tabs.map(([id, label]) => `<button type="button" role="tab" aria-selected="false" data-tab="${id}">${label}</button>`).join('')}</div>
-    ${tabs.map(([id, , html]) => `<div class="cpane" data-pane="${id}" hidden>${html}</div>`).join('')}
+    <div class="meta"><span class="code">${hl(r[F.ma], t)}</span> · ${esc(chapLabel(D.chaps[r[F.chap]]))}</div>
+    <div class="ctabs" role="tablist" aria-label="Thông tin kỹ thuật">${tabs.map(([id, label]) => `<button type="button" role="tab" id="t${i}-${id}" aria-controls="p${i}-${id}" aria-selected="false" tabindex="-1" data-tab="${id}">${label}</button>`).join('')}</div>
+    ${tabs.map(([id, , html]) => `<div class="cpane" role="tabpanel" id="p${i}-${id}" aria-labelledby="t${i}-${id}" data-pane="${id}" hidden>${html}</div>`).join('')}
   </article>`;
 }
 function renderMore() {
@@ -466,6 +504,7 @@ function renderMore() {
   let h = '';
   for (let j = st.shown; j < end; j++) h += card(st.hits[j]);
   $list.insertAdjacentHTML('beforeend', h);
+  $list.querySelectorAll('.ctabs [role=tab]:first-child').forEach(b => b.tabIndex = 0);
   st.shown = end;
   const left = st.hits.length - end;
   $more.hidden = left <= 0;
@@ -482,6 +521,15 @@ document.getElementById('kind').addEventListener('click', e => {
   st.kind = b.dataset.v; search();
 });
 $more.addEventListener('click', renderMore);
+const $chap = document.getElementById('chap');
+$chap.addEventListener('change', () => { st.chap = $chap.value; $chap.classList.toggle('on', !!$chap.value); search(); });
+$intro.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]'); if (g) { go(g.dataset.go); return; }
+  const x = e.target.closest('[data-q]'); if (x) { $q.value = x.dataset.q; $clear.hidden = false; st.q = x.dataset.q; search(); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === '/' && !e.ctrlKey && !e.metaKey && $reader.hidden && !/^(INPUT|SELECT|TEXTAREA)$/.test(document.activeElement.tagName)) { e.preventDefault(); $q.focus(); $q.select(); }
+});
 
 // ---- reader for procedures; routed on #qt-N and #quy-trinh so the phone's back button closes it
 const $reader = document.getElementById('reader'), $rc = document.getElementById('rcontent'), $crumb = document.getElementById('rcrumb');
@@ -499,7 +547,11 @@ function svcButtons(p) {
 }
 function renderProc(k) {
   const p = P[k]; if (!p) return renderToc();
-  showReader(`<h2 id="rtitle">${esc(sentence(p.t))}</h2><div class="svc">${svcButtons(p)}</div><div class="doc">${p.h}</div>`, `${GROUPS[p.g]} · Quy trình ${k + 1}/${P.length}`);
+  showReader(`<h2 id="rtitle">${esc(sentence(p.t))}</h2><div class="svc">${svcButtons(p)}</div><div class="jump" id="secjump"></div><div class="doc">${p.h}</div>`, `${GROUPS[p.g]} · Quy trình ${k + 1}/${P.length}`);
+  const hs = [...$rc.querySelectorAll('.doc p.h2')];
+  hs.forEach((h, x) => { h.id = 'sec-' + x; });
+  const lab = h => { const s = h.textContent.replace(/^[IVX]+\.\s*/, '').trim().toLocaleLowerCase('vi'); return s.charAt(0).toLocaleUpperCase('vi') + s.slice(1); };
+  document.getElementById('secjump').innerHTML = hs.length > 2 ? hs.map((h, x) => `<button type="button" data-jump="sec-${x}">${esc(lab(h))}</button>`).join('') : '';
 }
 // procedure groups, decided with the department: classified by title
 const GROUPS = ['Phẫu thuật', 'Can thiệp mạch', 'Thủ thuật'];
@@ -515,17 +567,23 @@ function renderToc() {
   const item = k => { const p = P[k]; return `<button type="button" data-qt="${k}">${esc(sentence(p.t))}<small class="${p.rows.length ? '' : 'no'}">${p.rows.length ? p.rows.map(i => esc(R[i][F.ma])).join(' · ') : 'Chưa ghép dịch vụ'}</small></button>`; };
   const secs = GROUPS.map((g, gi) => { const ks = P.map((p, k) => k).filter(k => P[k].g === gi); return { g, gi, ks }; });
   showReader(`<h2 id="rtitle">Quy trình kỹ thuật – khoa Phẫu thuật mạch máu</h2>
-    <p style="margin:0 0 12px;color:var(--muted);font-size:13.5px">${P.length} quy trình · ${n} đã ghép với dịch vụ trong phụ lục · ${P.length - n} chưa tìm thấy tên trùng</p>
+    <p class="rnote">${P.length} quy trình · ${n} đã ghép với dịch vụ trong phụ lục · ${P.length - n} chưa tìm thấy tên trùng</p>
     <div class="jump">${secs.map(s => `<button type="button" data-jump="grp-${s.gi}">${s.g} <b>${s.ks.length}</b></button>`).join('')}</div>
     ${secs.map(s => `<h3 class="grp" id="grp-${s.gi}">${s.g} <span>${s.ks.length} quy trình</span></h3><div class="toc">${s.ks.map(item).join('')}</div>`).join('')}`, 'Danh sách quy trình');
 }
+function renderRefs() {
+  const P_ = document.getElementById('refsTpl').content.cloneNode(true);
+  showReader('<h2 id="rtitle">Văn bản tham chiếu</h2><p class="rnote">Tóm tắt, hiệu lực và văn bản thay thế của các văn bản dùng trong danh mục. Bấm “Chi tiết” ở từng mục.</p>', 'Văn bản tham chiếu');
+  $rc.append(P_);
+  const nQ = P.filter(p => p.rows.length).length, qn = document.getElementById('qtnote');
+  if (qn) qn.textContent = `${P.length} quy trình kỹ thuật của khoa. ${nQ} quy trình đã ghép với dịch vụ có cùng tên trong phụ lục, ${P.length - nQ} quy trình chưa tìm thấy tên trùng.`;
+}
 function route() {
   const h = location.hash.slice(1), m = h.match(/^qt-(\d+)$/);
-  if (m) renderProc(+m[1] - 1); else if (h === 'quy-trinh') renderToc(); else hideReader();
+  if (m) renderProc(+m[1] - 1); else if (h === 'quy-trinh') renderToc(); else if (h === 'van-ban') renderRefs(); else hideReader();
 }
 function go(h) { if (location.hash === '#' + h) route(); else location.hash = h; }
 window.addEventListener('hashchange', route);
-document.getElementById('opentoc').addEventListener('click', () => go('quy-trinh'));
 document.getElementById('rback').addEventListener('click', () => {
   if (history.length > 1 && $reader.dataset.pushed) history.back();
   else { history.replaceState(null, '', location.pathname + location.search); hideReader(); }
@@ -552,8 +610,14 @@ $list.addEventListener('click', e => {
   }
   const q = e.target.closest('.openqt'); if (q) { go('qt-' + (+q.dataset.qt + 1)); return; }
   const b = e.target.closest('.copy'); if (!b) return;
-  const done = () => { b.textContent = 'Đã chép'; setTimeout(() => b.textContent = 'Chép', 1500); };
+  const done = () => { b.textContent = 'Đã chép'; setTimeout(() => b.textContent = b.dataset.label || 'Chép', 1500); };
   try { navigator.clipboard.writeText(b.dataset.copy).then(done, () => selectText(b)); } catch { selectText(b); }
+});
+$list.addEventListener('keydown', e => {
+  const tb = e.target.closest('.ctabs [role=tab]'); if (!tb || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+  const all = [...tb.parentNode.children], k = all.indexOf(tb);
+  const n = e.key === 'Home' ? 0 : e.key === 'End' ? all.length - 1 : (k + (e.key === 'ArrowRight' ? 1 : -1) + all.length) % all.length;
+  all.forEach((b, x) => b.tabIndex = x === n ? 0 : -1); all[n].focus(); e.preventDefault();
 });
 function selectText(b) { const r = document.createRange(); r.selectNodeContents(b.parentNode); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
 

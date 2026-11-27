@@ -10,7 +10,7 @@ Trang tra cứu phụ lục **danh mục kỹ thuật tương đương** (theo b
 
 ## Tính năng
 
-- **Tìm kiếm** theo tên hoặc mã, không phân biệt dấu ("dat catheter" ra "Đặt catheter"); lọc **Tất cả / Phẫu thuật / Thủ thuật**.
+- **Tìm kiếm** theo tên hoặc mã, không phân biệt dấu ("dat catheter" ra "Đặt catheter"); lọc **Tất cả / Phẫu thuật / Thủ thuật** và **Chuyên khoa**; phím `/` để nhảy vào ô tìm. Trang đầu có gợi ý tìm nhanh; Quy trình khoa và Văn bản tham chiếu là phần Tham khảo ở dưới (từ 2.9.0).
 - **Thẻ kết quả** gọn: tên, mã, lĩnh vực (chương), tuyến, phân loại; dưới là **thanh tab nhỏ**: *Giá* (giá có BHYT TT13 và không BHYT TT37/2018, ghi chú thanh toán, giá cũ TT39 / TT15 / TTLT 37/2015 để đối chiếu), *Mã & quyết định*, *Ghi chú* (khi có; ghi chú trùng giữa các thông tư được gộp, kèm thẻ nguồn), *Giải thích* (theo văn bản), *Quy trình* (khi có quy trình của khoa). Mặc định thu gọn, bấm tab để mở, bấm lại để đóng.
 - **Phạm vi BHYT** (từ 2.8.1): nhãn BHYT / BHYT có điều kiện trên thẻ; đầu tab Giá tách ghi chú TT13 (hoặc TT39) thành điều kiện thanh toán, phần chưa gồm trong giá (tính riêng) và phần đã gồm. Tách theo từ khóa ("chưa bao gồm/kèm/tính", "đã bao gồm", "không thanh toán", "chỉ áp dụng"…) nên nên đọc lại ghi chú gốc ở tab Ghi chú khi cần chắc chắn.
 - **Giải thích theo văn bản** trong Chi tiết từng kỹ thuật, tính cho chính dòng đó: ý nghĩa tuyến (TT43/2013) và mã kỹ thuật còn dùng đến khi nào (TT23/2024 sửa đổi 2026); phân loại và định mức nhân lực tối đa mỗi ca theo chuyên khoa (TT50/2014 Phụ lục 1); giá nào áp dụng khi có / không có BHYT; tỷ lệ thanh toán khi làm kèm trong cùng lần phẫu thuật.

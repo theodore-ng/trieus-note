@@ -2,6 +2,16 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.9.0 – 27/11/2026
+
+- Procedure Catalog **làm lại giao diện**, tra cứu là phần chính:
+  - Đầu trang gọn: tên ngắn "Danh mục kỹ thuật"; chỉ ô tìm kiếm + bộ lọc dính trên cùng (trước cả khối cao 168px); điện thoại: bộ lọc một hàng cuộn ngang.
+  - Bộ lọc mới **Chuyên khoa** (28 chương, xếp theo số La Mã), dùng cùng Tất cả / Phẫu thuật / Thủ thuật.
+  - Trang đầu: lời dẫn, gợi ý tìm nhanh (catheter, stent, suy tĩnh mạch…), thống kê một dòng; **Tham khảo** ở dưới gồm Quy trình kỹ thuật khoa và Văn bản tham chiếu (văn bản chuyển sang trang đọc riêng `#van-ban`).
+  - Thẻ kết quả: tab to hơn (cao 40px), chữ thường; tên tab "Mã & QĐ"; chuyên khoa viết thường; nhãn xuống dòng dưới tên khi hẹp; điện thoại mờ mép phải thanh tab khi còn tab bị khuất.
+  - Trang đọc quy trình có mục lục nhảy tới từng phần (Đại cương, Chỉ định, … Các bước tiến hành).
+  - Trợ năng: tab theo chuẩn ARIA (aria-controls, tabpanel, phím mũi tên / Home / End); phím `/` để nhảy vào ô tìm; nút "Chép mã" trả lại đúng chữ sau khi chép.
+
 ## 2.8.2 – 27/11/2026
 
 - Procedure Catalog: bố cục tab dễ đọc hơn.

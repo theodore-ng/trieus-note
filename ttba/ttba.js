@@ -17,7 +17,7 @@ const USD_VND = 26000; // chỉ để ước tính chi phí hiển thị
 
 // Mẫu chung: các mục tóm tắt bệnh án (ẩn danh) + chỉ số mạch máu
 const FIELDS = [
-  ['nguoi_benh', 'Người bệnh (ẩn danh)', 'Giới, tuổi, khoa/giường; không ghi họ tên, số hồ sơ'],
+  ['nguoi_benh', 'Người bệnh (ẩn danh)', 'Giới, tuổi, khoa/phòng; không ghi họ tên, số hồ sơ'],
   ['ngay_vao_vien', 'Ngày vào viện', ''],
   ['ly_do', 'Lý do vào viện', ''],
   ['benh_su', 'Bệnh sử', 'Quá trình bệnh lý và diễn biến lâm sàng'],
@@ -47,8 +47,9 @@ const SCHEMA = {
     ...Object.fromEntries(FKEYS.map(k => [k, { type: 'string' }])),
     can_kiem_tra: { type: 'array', items: { type: 'object', properties: { muc: { type: 'string', enum: FKEYS }, noi_dung: { type: 'string' }, ly_do: { type: 'string' } }, required: ['muc', 'noi_dung', 'ly_do'], additionalProperties: false } },
     chuan_hoa: { type: 'array', items: { type: 'object', properties: { goc: { type: 'string' }, chuan: { type: 'string' } }, required: ['goc', 'chuan'], additionalProperties: false } },
+    benh_nen: { type: 'object', properties: { dai_thao_duong: { type: 'boolean' }, bmv_can_thiep: { type: 'boolean' }, creatinin_umol_l: { type: 'string' } }, required: ['dai_thao_duong', 'bmv_can_thiep', 'creatinin_umol_l'], additionalProperties: false },
   },
-  required: [...FKEYS, 'can_kiem_tra', 'chuan_hoa'],
+  required: [...FKEYS, 'can_kiem_tra', 'chuan_hoa', 'benh_nen'],
   additionalProperties: false,
 };
 
@@ -60,9 +61,10 @@ Quy tắc:
 - Chuẩn hóa cách đọc thành cách viết chuẩn (vd "a bê i" → ABI, "huyết khối tĩnh mạch sâu" giữ tiếng Việt, đơn vị: mmHg, mg, mL, g/L, mmol/L…). Dùng từ điển cá nhân của bác sĩ nếu có. Ghi mỗi lần chuẩn hóa vào "chuan_hoa" (goc = cụm từ nghe được, chuan = cách viết).
 - Số liệu, liều thuốc, bên phải/trái, ngày tháng: giữ đúng như đọc; chỗ nào nghe có vẻ sai, mâu thuẫn hoặc thiếu đơn vị thì vẫn ghi vào mục nhưng thêm một mục "can_kiem_tra" (muc = khóa của mục, noi_dung = đoạn cần xem, ly_do = vì sao).
 - Chẩn đoán: ghi tên bệnh, kèm mã ICD-10 trong ngoặc nếu chắc chắn, dạng "(ICD-10: I70.2 – gợi ý)"; luôn thêm một mục can_kiem_tra nhắc bác sĩ xác nhận mã ICD-10.
-- Ẩn danh: không ghi họ tên, số điện thoại, số căn cước, số hồ sơ, địa chỉ chi tiết; nếu đoạn đọc có thì thay bằng [ẩn]. Mục "nguoi_benh" chỉ gồm giới, tuổi, khoa/giường nếu có.
+- Ẩn danh: không ghi họ tên, số điện thoại, số căn cước, số hồ sơ, địa chỉ chi tiết; nếu đoạn đọc có thì thay bằng [ẩn]. Mục "nguoi_benh" chỉ gồm giới, tuổi, khoa/phòng nếu có (dùng "phòng", không dùng "giường").
 - "mach_mau": gom chỉ số ABI/TBI hai bên, kết quả Doppler, phân độ (Rutherford, Fontaine, WIfI, CEAP) nếu được nói tới; không tự phân độ khi bác sĩ không nói.
 - Nếu có "bản hiện tại": đó là bản bác sĩ đã duyệt/sửa — giữ nguyên nội dung đó, chỉ bổ sung hoặc sửa theo đoạn đọc mới.
+- "benh_nen" (để app gắn thẻ): dai_thao_duong = true nếu có đái tháo đường; bmv_can_thiep = true nếu có bệnh mạch vành mạn đã can thiệp (đặt stent / PCI hoặc mổ bắc cầu CABG); creatinin_umol_l = giá trị creatinin máu gần nhất đổi ra µmol/L, chỉ ghi số (vd "160"), "" nếu không có.
 - Viết từng mục thành câu/gạch đầu dòng ngắn, mỗi ý một dòng (dùng "- " đầu dòng khi liệt kê).`;
 
 // ---------- lưu trữ ----------
@@ -231,7 +233,10 @@ function buildPrompt(c) {
   const segs = c.segs.filter(s => s.text.trim()).map((s, i) => `[Đoạn ${i + 1}${s.topic ? ' · chủ đề: ' + TOPIC_NAME[s.topic] : ''}]\n${s.text.trim()}`).join('\n\n');
   const g = glossaryText();
   const cur = c.form ? JSON.stringify(Object.fromEntries(FKEYS.map(k => [k, c.form[k] || ''])), null, 1) : '';
-  return (g ? `Từ điển cá nhân của bác sĩ (cách đọc = cách viết):\n${g}\n\n` : '')
+  const b = bnOf(c), e = egfr(b);
+  const info = [b.gioi && (b.gioi === 'nu' ? 'nữ' : 'nam'), b.tuoi && b.tuoi + ' tuổi', b.phong && 'phòng ' + b.phong, b.can_nang && b.can_nang + ' kg',
+    b.dtd && 'đái tháo đường', b.bmv && 'bệnh mạch vành mạn đã can thiệp', b.creat && `creatinin ${b.creat} µmol/L`, e != null && `eGFR ${Math.round(e)} (${ckdG(e)})`].filter(Boolean).join(', ');
+  return (info ? `Thông tin bác sĩ đã nhập (không gồm họ tên): ${info}\n\n` : '') + (g ? `Từ điển cá nhân của bác sĩ (cách đọc = cách viết):\n${g}\n\n` : '')
     + (cur ? `Bản hiện tại (bác sĩ đã duyệt/sửa, giữ nguyên và bổ sung):\n${cur}\n\n` : '')
     + `Các đoạn bác sĩ đọc:\n${segs}`;
 }
@@ -275,6 +280,8 @@ function apiError(e) {
 function idRisks(c) {
   const txt = c.segs.map(s => s.text).join('\n'), hits = [];
   if (/(họ tên|họ và tên|tên là|tên bệnh nhân|bệnh nhân tên)/i.test(txt)) hits.push('có nhắc tên người bệnh');
+  const ten = bnOf(c).ten.trim().toLowerCase();
+  if (ten.length > 3 && txt.toLowerCase().includes(ten)) hits.push('có đọc họ tên người bệnh');
   if (/(?<!\d)(0\d{9}|\d{12})(?!\d)/.test(txt.replace(/[\s.]/g, ''))) hits.push('có dãy số giống số điện thoại / căn cước');
   if (/(số hồ sơ|mã bệnh án|mã y tế|số vào viện|số căn cước|cccd)/i.test(txt)) hits.push('có nhắc số hồ sơ / căn cước');
   return hits;
@@ -288,7 +295,7 @@ function route() {
   document.querySelector('.dock')?.remove();
   const h = location.hash.slice(1);
   if (h === 'cai-dat') return renderSettings();
-  const m = h.match(/^c\/([^/]+)(?:\/(ghi|duyet|xuat))?$/);
+  const m = h.match(/^c\/([^/]+)(?:\/(ghi|duyet|hep|xuat))?$/);
   if (m && caseById(m[1])) return renderCase(caseById(m[1]), m[2] || (caseById(m[1]).form ? 'duyet' : 'ghi'));
   renderList();
 }
@@ -299,25 +306,27 @@ const go = h => { if (location.hash === '#' + h) route(); else location.hash = h
 function demoCase() {
   const t = Date.now(), seg = (topic, text, dur, ago) => ({ id: uid(), at: t - ago * 60000, topic, text, dur });
   return {
-    id: uid(), label: 'Ca mẫu · Giường 12 · Nam 68t', created: t, updated: t, status: 'review', demo: true,
+    id: uid(), label: 'Ca mẫu', created: t, updated: t, status: 'review', demo: true,
+    bn: { ten: 'Bệnh nhân Mẫu (giả)', tuoi: '68', gioi: 'nam', phong: '12', can_nang: '62', dtd: true, bmv: false, creat: '160' },
+    pad: { side: 'phải', sym: 'tissue', tm: 'below', w: '1', fi: '0', abi: '0.45', tp: '25' },
     segs: [
-      seg('', 'bệnh nhân nam 68 tuổi giường 12 khoa phẫu thuật mạch máu vào viện ngày 20 tháng 11 vì đau nhức bàn chân phải và vết loét ngón 1 chân phải', 18, 30),
+      seg('', 'bệnh nhân nam 68 tuổi phòng 12 khoa phẫu thuật mạch máu vào viện ngày 20 tháng 11 vì đau nhức bàn chân phải và vết loét ngón 1 chân phải', 18, 30),
       seg('benh_su', 'khoảng 6 tháng nay đau cách hồi bắp chân phải đi khoảng 100 mét phải nghỉ 2 tuần nay đau cả khi nghỉ về đêm loét đầu ngón 1 chân phải không lành', 22, 28),
       seg('tien_su', 'tăng huyết áp 10 năm đái tháo đường típ 2 8 năm đang dùng metformin 850 mi li gam ngày 2 lần hút thuốc lá 30 gói năm không dị ứng thuốc', 20, 26),
       seg('kham', 'chân phải lạnh hơn chân trái mạch khoeo phải bắt yếu mạch mu chân và chày sau phải không bắt được loét ngón 1 kích thước 1 x 1 cm đáy nhợt không có mủ', 21, 24),
       seg('mach_mau', 'a bê i phải 0,45 trái 0,9 siêu âm đốp lơ hẹp tắc động mạch đùi nông phải đoạn giữa dài khoảng 12 cm dòng chảy sau tắc dạng đơn pha', 19, 22),
-      seg('cls', 'glucose 9,8 hba1c 8,2 phần trăm creatinin 98 cholesterol LDL 3,4', 12, 20),
+      seg('cls', 'glucose 9,8 hba1c 8,2 phần trăm creatinin 160 cholesterol LDL 3,4', 12, 20),
       seg('dieu_tri', 'đã can thiệp nong bóng đặt stent động mạch đùi nông phải ngày 22 tháng 11 dùng aspirin 81 clopidogrel 75 atorvastatin 40 thay băng vết loét hằng ngày', 23, 10),
     ],
     form: {
-      nguoi_benh: 'Nam, 68 tuổi, Khoa Phẫu thuật mạch máu, giường 12.',
+      nguoi_benh: 'Nam, 68 tuổi, Khoa Phẫu thuật mạch máu, phòng 12.',
       ngay_vao_vien: '20/11',
       ly_do: 'Đau nhức bàn chân phải, loét ngón I chân phải.',
       benh_su: 'Khoảng 6 tháng nay đau cách hồi bắp chân phải, quãng đường đi bộ khoảng 100 m. 2 tuần nay đau cả khi nghỉ, tăng về đêm; xuất hiện vết loét đầu ngón I chân phải không lành.',
       tien_su: '- Tăng huyết áp 10 năm.\n- Đái tháo đường típ 2, 8 năm, đang dùng metformin 850 mg × 2 lần/ngày.\n- Hút thuốc lá 30 gói-năm.\n- Không ghi nhận dị ứng thuốc.',
       kham: 'Chân phải lạnh hơn chân trái. Mạch khoeo phải bắt yếu; mạch mu chân và chày sau phải không bắt được. Loét đầu ngón I chân phải kích thước 1 × 1 cm, đáy nhợt, không có mủ.',
       mach_mau: '- ABI: phải 0,45; trái 0,90.\n- Siêu âm Doppler: hẹp tắc động mạch đùi nông phải đoạn giữa, dài khoảng 12 cm; dòng chảy sau chỗ tắc dạng đơn pha.\n- Phân độ: Rutherford 5, Fontaine IV.',
-      cls: 'Glucose 9,8 mmol/L; HbA1c 8,2 %; creatinin 98 µmol/L; LDL-cholesterol 3,4 mmol/L.',
+      cls: 'Glucose 9,8 mmol/L; HbA1c 8,2 %; creatinin 160 µmol/L; LDL-cholesterol 3,4 mmol/L.',
       cd_vao: 'Bệnh động mạch chi dưới mạn tính đe dọa chi (CLTI) chân phải, loét ngón I (ICD-10: I70.23 – gợi ý) / Tăng huyết áp / Đái tháo đường típ 2.',
       cd_hien_tai: '',
       dieu_tri: '- Can thiệp nong bóng, đặt stent động mạch đùi nông phải ngày 22/11.\n- Aspirin 81 mg, clopidogrel 75 mg, atorvastatin 40 mg.\n- Thay băng vết loét hằng ngày.',
@@ -329,7 +338,7 @@ function demoCase() {
         { muc: 'ngay_vao_vien', noi_dung: '20/11', ly_do: 'Không nghe thấy năm vào viện.' },
         { muc: 'mach_mau', noi_dung: 'Rutherford 5, Fontaine IV', ly_do: 'Phân độ được suy ra từ loét ngón và đau khi nghỉ, bác sĩ không đọc; cần xác nhận.' },
         { muc: 'cd_vao', noi_dung: 'ICD-10: I70.23', ly_do: 'Mã ICD-10 là gợi ý, cần bác sĩ xác nhận.' },
-        { muc: 'cls', noi_dung: 'creatinin 98 µmol/L', ly_do: 'Không đọc đơn vị; ghi theo đơn vị thường dùng.' },
+        { muc: 'cls', noi_dung: 'creatinin 160 µmol/L', ly_do: 'Không đọc đơn vị; ghi theo đơn vị thường dùng.' },
       ],
       chuan_hoa: [
         { goc: 'a bê i', chuan: 'ABI' }, { goc: 'đốp lơ', chuan: 'Doppler' }, { goc: 'mi li gam', chuan: 'mg' },
@@ -340,19 +349,179 @@ function demoCase() {
   };
 }
 
+// ---------- thông tin người bệnh (c.bn) — họ tên chỉ lưu trên máy / Supabase, KHÔNG gửi cho Claude ----------
+const BN_DEF = { ten: '', tuoi: '', gioi: '', phong: '', can_nang: '', dtd: false, bmv: false, creat: '' };
+const bnOf = c => Object.assign({}, BN_DEF, c.bn || {});
+const numv = x => { const n = parseFloat(String(x ?? '').replace(',', '.')); return Number.isFinite(n) ? n : null; };
+/** eGFR theo CKD-EPI 2021 (không hệ số chủng tộc); creatinin µmol/L. Cần tuổi + giới. */
+function egfr(b) {
+  const cr = numv(b.creat), age = numv(b.tuoi);
+  if (cr == null || cr <= 0 || age == null || !b.gioi) return null;
+  const f = b.gioi === 'nu', k = f ? 0.7 : 0.9, a = f ? -0.241 : -0.302, s = cr / 88.4 / k;
+  return 142 * Math.min(s, 1) ** a * Math.max(s, 1) ** -1.2 * 0.9938 ** age * (f ? 1.012 : 1);
+}
+const ckdG = e => (e >= 90 ? 'G1' : e >= 60 ? 'G2' : e >= 45 ? 'G3a' : e >= 30 ? 'G3b' : e >= 15 ? 'G4' : 'G5');
+const caseName = c => bnOf(c).ten.trim() || c.label || 'Ca chưa đặt tên';
+function caseSub(c) { const b = bnOf(c); return [b.tuoi && `${b.tuoi} tuổi`, b.phong && `Phòng ${b.phong}`].filter(Boolean).join(' · '); }
+/** Thẻ hiện ở danh sách: phân độ PAD + bệnh nền ảnh hưởng điều trị. */
+function caseTags(c) {
+  const b = bnOf(c), t = [];
+  if (c.pad?.sym && typeof PAD !== 'undefined') t.push(['pad', padCalc({ ...PAD_DEF, ...c.pad }).short]);
+  if (b.dtd) t.push(['dtd', 'Đái tháo đường']);
+  if (b.bmv) t.push(['bmv', 'BMV mạn đã can thiệp']);
+  const e = egfr(b);
+  if (e != null && e < 60) t.push(['ckd', `Suy thận ${ckdG(e)} · eGFR ${Math.round(e)}`]);
+  return t;
+}
+const tagsHtml = c => { const t = caseTags(c); return t.length ? `<span class="tags">${t.map(([k, l]) => `<em class="tag ${k}">${esc(l)}</em>`).join('')}</span>` : ''; };
+function bnBlock(c) {
+  const b = bnOf(c), e = egfr(b);
+  const tx = (k, l, ph, type = 'text', extra = '') => `<label class="bn-f">${l}<input name="${k}" type="${type}" value="${esc(b[k])}" placeholder="${ph}" ${extra}></label>`;
+  return `<details class="bn"${b.ten ? '' : ' open'}>
+    <summary><span class="bn-s"><b>${esc(caseName(c))}</b><small>${esc(caseSub(c)) || 'Chạm để nhập tên, tuổi, phòng'}</small></span>${tagsHtml(c)}</summary>
+    <form class="bn-form" autocomplete="off" onsubmit="return false">
+      ${tx('ten', 'Họ tên', 'Chỉ lưu trên máy, không gửi Claude', 'text', 'class="wide-in"')}
+      <div class="bn-row">${tx('tuoi', 'Tuổi', '68', 'number', 'inputmode="numeric" min="0" max="120"')}
+        <label class="bn-f">Giới<select name="gioi"><option value=""${!b.gioi ? ' selected' : ''}>—</option><option value="nam"${b.gioi === 'nam' ? ' selected' : ''}>Nam</option><option value="nu"${b.gioi === 'nu' ? ' selected' : ''}>Nữ</option></select></label>
+        ${tx('phong', 'Phòng', '12')}${tx('can_nang', 'Cân nặng (kg)', '60', 'number', 'inputmode="decimal" min="0" step="0.1"')}</div>
+      <div class="bn-chk"><label><input type="checkbox" name="dtd"${b.dtd ? ' checked' : ''}> Đái tháo đường</label>
+        <label><input type="checkbox" name="bmv"${b.bmv ? ' checked' : ''}> Bệnh mạch vành mạn đã can thiệp (PCI / CABG)</label></div>
+      <div class="bn-row">${tx('creat', 'Creatinin (µmol/L)', '90', 'number', 'inputmode="decimal" min="0" step="1"')}
+        <p class="bn-egfr">${e != null ? `eGFR <b>${Math.round(e)}</b> mL/phút/1,73 m² · <b>${ckdG(e)}</b>` : 'eGFR: nhập creatinin, tuổi, giới'}</p></div>
+      <p class="small muted" style="margin:0">eGFR theo CKD-EPI 2021; thẻ "Suy thận" hiện khi eGFR &lt; 60 (G3a–G5). Bệnh nền và creatinin được điền tự động khi Claude sắp xếp (nếu có đọc); bác sĩ sửa được.</p>
+    </form>
+  </details>`;
+}
+function wireBn(c, root) {
+  const fm = root.querySelector('.bn-form');
+  const upd = () => {
+    const fd = new FormData(fm), b = bnOf(c);
+    for (const k of ['ten', 'tuoi', 'gioi', 'phong', 'can_nang', 'creat']) b[k] = String(fd.get(k) ?? '').trim();
+    b.dtd = fd.has('dtd'); b.bmv = fd.has('bmv');
+    c.bn = b;
+    const e = egfr(b);
+    root.querySelector('.bn-egfr').innerHTML = e != null ? `eGFR <b>${Math.round(e)}</b> mL/phút/1,73 m² · <b>${ckdG(e)}</b>` : 'eGFR: nhập creatinin, tuổi, giới';
+    root.querySelector('summary').innerHTML = `<span class="bn-s"><b>${esc(caseName(c))}</b><small>${esc(caseSub(c)) || 'Chạm để nhập tên, tuổi, phòng'}</small></span>${tagsHtml(c)}`;
+  };
+  fm.addEventListener('input', upd);
+  fm.addEventListener('change', () => { upd(); touch(c); });
+}
+
+// ---------- Heparin (logic ở heparin.js, bản chuyển từ scripts/heparin/*.ts — Dager 2018, ASHP) ----------
+const HEP_VI = { vte: 'VTE (huyết khối TM sâu / thuyên tắc phổi)', stemi_rtpa: 'NMCT ST chênh lên + rt-PA liều đầy đủ', stemi_combo_rtpa: 'NMCT ST chênh lên + rt-PA phối hợp', nstemi_ua: 'NMCT không ST chênh lên / đau thắt ngực không ổn định', pci_with_gp: 'PCI có thuốc ức chế GP IIb/IIIa', pci_without_gp: 'PCI không có GP IIb/IIIa' };
+const HEP_DEF = { proto: 'vte', iu: '25000', ml: '50', rate: '', aptt: '' };
+const vn = (x, d = 1) => Number(x).toLocaleString('vi-VN', { maximumFractionDigits: d });
+function hepCalc(c) {
+  const h = Object.assign({}, HEP_DEF, c.hep || {}), p = HEP.getProtocol(h.proto), w = numv(bnOf(c).can_nang);
+  const iu = numv(h.iu), ml = numv(h.ml), conc = iu > 0 && ml > 0 ? iu / ml : null;
+  const r = { h, p, w, conc, init: null, adj: null };
+  if (!(w > 0) || !p.calculable || !conc) return r;
+  r.init = HEP.calcInitialDose(w, p, conc);
+  const rate = numv(h.rate) ?? r.init.infusion.mLPerHr, aptt = numv(h.aptt);
+  if (aptt > 0 && rate >= 0) { r.rateMl = rate; r.adj = HEP.calcAPTTAdjustment(aptt, w, rate * conc, p.apttBands, conc); }
+  return r;
+}
+function hepLines(r) {
+  const { h, p, w, init: d, adj: a } = r, name = HEP_VI[p.id];
+  const init = d && `- Heparin không phân đoạn TTM (phác đồ ${name}, ${vn(w)} kg; pha ${vn(numv(h.iu), 0)} UI/${vn(numv(h.ml))} mL): bolus ${vn(d.bolus.iu, 0)} UI (${vn(d.bolus.mL)} mL) TM, truyền ${vn(d.infusion.iuPerHr, 0)} UI/giờ (${vn(d.infusion.mLPerHr)} mL/giờ); aPTT đích ${p.targetAPTT.low}–${p.targetAPTT.high} giây, kiểm tra aPTT sau 6 giờ.`;
+  let adj = null;
+  if (a) {
+    const parts = a.noChange ? [`trong đích, giữ nguyên ${vn(r.rateMl)} mL/giờ`]
+      : [a.bolusSurcharge && `bolus thêm ${vn(a.bolusSurcharge.iu, 0)} UI (${vn(a.bolusSurcharge.mL)} mL)`, a.holdOneHour && 'ngưng truyền 1 giờ',
+        `${a.newRateIuPerHr > r.rateMl * r.conc ? 'tăng tốc độ lên' : 'giảm tốc độ còn'} ${vn(a.newRateIuPerHr, 0)} UI/giờ (${vn(a.newRateMlPerHr)} mL/giờ)`].filter(Boolean);
+    adj = `- Chỉnh heparin theo aPTT ${vn(a.aptt)} giây (đang ${vn(r.rateMl)} mL/giờ): ${parts.join(', ')}; kiểm tra aPTT sau 6 giờ.`;
+  }
+  return { init, adj };
+}
+function paneHeparin(c, $p) {
+  if (typeof HEP === 'undefined') { $p.innerHTML = '<div class="notice">Không tải được phần tính heparin.</div>'; return; }
+  const hset = o => { c.hep = { ...Object.assign({}, HEP_DEF, c.hep || {}), ...o }; };
+  const band = b => (b.noChange ? 'Giữ nguyên' : [b.bolusPerKg > 0 && `bolus ${b.bolusPerKg} UI/kg${b.bolusMaxIu ? ` (tối đa ${vn(b.bolusMaxIu, 0)})` : ''}`, b.holdOneHour && 'ngưng 1 giờ', `${b.ratePerKg > 0 ? 'tăng' : 'giảm'} ${Math.abs(b.ratePerKg)} UI/kg/giờ`].filter(Boolean).join(', '));
+  const ins = k => `<div class="row"><button type="button" class="grow" data-ins="${k}">Chèn vào Phương pháp điều trị</button><button type="button" class="ghost" data-cp="${k}">Chép</button></div>`;
+  let L = {};
+  // phần tĩnh (ô nhập giữ nguyên khi gõ, để bàn phím iPhone không bị đóng)
+  const build = () => {
+    const r = hepCalc(c), { h, p } = r, adv = h.proto !== 'vte';
+    $p.innerHTML = `
+      <div class="notice"><b>Phác đồ ${esc(HEP_VI[p.id])}</b>${p.calculable ? ` — bolus ${p.bolusPerKg} UI/kg${p.bolusMaxIu ? ` (tối đa ${vn(p.bolusMaxIu, 0)} UI)` : ''}, truyền ${p.infusionPerKgHr} UI/kg/giờ${p.infusionMaxIuPerHr ? ` (tối đa ${vn(p.infusionMaxIuPerHr, 0)} UI/giờ)` : ''}, aPTT đích ${p.targetAPTT.low}–${p.targetAPTT.high} giây` : ' — theo dõi bằng ACT, không chỉnh theo aPTT'}. Theo Dager 2018 (ASHP). Bác sĩ kiểm tra liều trước khi dùng; phác đồ của bệnh viện được ưu tiên.${adv ? ' <button type="button" class="linkbtn" id="tovte">Về phác đồ VTE</button>' : ''}</div>
+      <form class="card hp hp-in" autocomplete="off" onsubmit="return false">
+        <div class="bn-row">
+          <label class="bn-f">Cân nặng (kg)<input name="w" type="number" inputmode="decimal" min="0" step="0.1" value="${esc(bnOf(c).can_nang)}" placeholder="60"></label>
+          ${p.calculable ? `<label class="bn-f">Heparin (UI)<input name="iu" type="number" inputmode="numeric" min="0" value="${esc(h.iu)}"></label>
+          <label class="bn-f">Pha trong (mL)<input name="ml" type="number" inputmode="decimal" min="0" value="${esc(h.ml)}"></label>` : ''}
+        </div>
+        <div id="hpconc" class="small muted"></div>
+      </form>
+      ${!p.calculable ? `<div class="card hp"><h3>Liều bolus</h3><div id="hpact"></div><p class="small">ACT đích: ${esc(p.actTargetLabel)}</p><p class="small muted">${esc(p.notes)}</p></div>` : `
+      <div class="card hp"><h3>Liều khởi đầu</h3><div id="hpinit"></div>${ins('init')}</div>
+      <div class="card hp"><h3>Chỉnh liều theo aPTT</h3>
+        <form class="bn-row" autocomplete="off" onsubmit="return false">
+          <label class="bn-f">Đang truyền (mL/giờ)<input name="rate" type="number" inputmode="decimal" min="0" step="0.1" value="${esc(h.rate)}"></label>
+          <label class="bn-f">aPTT (giây)<input name="aptt" type="number" inputmode="decimal" min="0" step="1" value="${esc(h.aptt)}" placeholder="75"></label>
+        </form>
+        <div id="hpadj"></div>${ins('adj')}
+        <table class="hp-tab"><tr><th>aPTT (giây)</th><th>Xử trí</th></tr>${p.apttBands.map(b => `<tr class="${b.noChange ? 'ok' : b.holdOneHour || b.from === 0 ? 'hi' : ''}"><td>${HEP.formatBandRange(b)}</td><td>${band(b)}</td></tr>`).join('')}</table>
+      </div>`}
+      <details class="card hp-adv"${adv ? ' open' : ''}><summary>Nâng cao: phác đồ khác (tim mạch, PCI)</summary>
+        <label class="bn-f">Phác đồ<select id="proto">${HEP.PROTOCOLS.map(x => `<option value="${x.id}"${x.id === p.id ? ' selected' : ''}>${esc(HEP_VI[x.id])}${x.calculable ? '' : ' · ACT'}</option>`).join('')}</select></label>
+        <p class="small muted">${esc(p.notes)} <i>(${esc(p.citation)})</i></p>
+        <details><summary class="small">Tài liệu tham khảo (${HEP.REFERENCES.length})</summary><ol class="small">${HEP.REFERENCES.map(x => `<li>${esc(x.title)}. <span class="muted">${esc(x.source)}, ${x.year}.</span> <a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">link</a></li>`).join('')}</ol></details>
+      </details>`;
+    $p.querySelectorAll('input[name]').forEach(el => {
+      el.addEventListener('input', () => { if (el.name === 'w') c.bn = { ...bnOf(c), can_nang: el.value.trim() }; else hset({ [el.name]: el.value.trim() }); upd(); });
+      el.addEventListener('change', () => touch(c));
+    });
+    const setProto = id => { hset({ proto: id, rate: '', aptt: '' }); touch(c); build(); };
+    $p.querySelector('#proto').onchange = e => setProto(e.target.value);
+    $p.querySelector('#tovte')?.addEventListener('click', () => setProto('vte'));
+    $p.querySelectorAll('[data-ins]').forEach(b => (b.onclick = () => {
+      const line = L[b.dataset.ins]; if (!line) return;
+      if (!c.form) c.form = Object.fromEntries(FKEYS.map(k => [k, '']));
+      c.form.dieu_tri = (c.form.dieu_tri.trim() ? c.form.dieu_tri.trim() + '\n' : '') + line;
+      touch(c); toast('Đã chèn vào Phương pháp điều trị (tab Duyệt)');
+    }));
+    $p.querySelectorAll('[data-cp]').forEach(b => (b.onclick = async () => {
+      const line = L[b.dataset.cp]; if (!line) return;
+      try { await navigator.clipboard.writeText(line.replace(/^- /, '')); toast('Đã chép'); } catch { toast('Không chép được'); }
+    }));
+    upd();
+  };
+  // phần kết quả (vẽ lại mỗi lần gõ)
+  const upd = () => {
+    const r = hepCalc(c), { p, w } = r, q = s => $p.querySelector(s);
+    L = hepLines(r);
+    q('#hpconc').innerHTML = (p.calculable ? (r.conc ? `Nồng độ ${vn(r.conc)} UI/mL` : 'Nhập lượng heparin và thể tích pha') : '') + (w > 200 ? '<p class="flag">Cân nặng &gt; 200 kg — kiểm tra lại.</p>' : '');
+    if (!p.calculable) {
+      q('#hpact').innerHTML = `<p class="hp-big">${w > 0 ? (p.id === 'pci_with_gp' ? `${vn(50 * w, 0)}–${vn(70 * w, 0)} UI` : `${vn(70 * w, 0)}–${vn(100 * w, 0)} UI`) : esc(p.bolusRangeLabel)}</p>`;
+      return;
+    }
+    q('#hpinit').innerHTML = r.init ? `<div class="hp-res"><div><small>Bolus TM</small><b>${vn(r.init.bolus.iu, 0)} UI</b><span>${vn(r.init.bolus.mL)} mL${r.init.bolusCapped ? ' · đã giới hạn tối đa' : ''}</span></div>
+      <div><small>Truyền liên tục</small><b>${vn(r.init.infusion.mLPerHr)} mL/giờ</b><span>${vn(r.init.infusion.iuPerHr, 0)} UI/giờ${r.init.infusionCapped ? ' · đã giới hạn tối đa' : ''}</span></div></div>`
+      : '<p class="small muted" style="margin:0">Nhập cân nặng (ở đây hoặc phần thông tin người bệnh).</p>';
+    q('[name="rate"]').placeholder = r.init ? String(r.init.infusion.mLPerHr) : '';
+    const a = r.adj;
+    q('#hpadj').innerHTML = a ? `${a.holdOneHour ? '<p class="hp-stop">Ngưng truyền 1 giờ, sau đó chạy lại với tốc độ mới.</p>' : ''}
+      <div class="hp-res">${a.noChange ? `<div class="ok"><small>aPTT trong đích</small><b>Giữ nguyên</b><span>${vn(r.rateMl)} mL/giờ</span></div>` : `
+        ${a.bolusSurcharge ? `<div><small>Bolus thêm</small><b>${vn(a.bolusSurcharge.iu, 0)} UI</b><span>${vn(a.bolusSurcharge.mL)} mL</span></div>` : ''}
+        <div><small>Tốc độ mới</small><b>${vn(a.newRateMlPerHr)} mL/giờ</b><span>${vn(a.newRateIuPerHr, 0)} UI/giờ${a.newRateIuPerHr === 0 ? ' · tối thiểu 0' : ''}</span></div>`}</div>`
+      : '<p class="small muted" style="margin:0">Nhập aPTT mới nhất; để trống "Đang truyền" thì lấy tốc độ khởi đầu.</p>';
+    $p.querySelectorAll('[data-ins="init"],[data-cp="init"]').forEach(b => (b.disabled = !L.init));
+    $p.querySelectorAll('[data-ins="adj"],[data-cp="adj"]').forEach(b => (b.disabled = !L.adj));
+  };
+  build();
+}
+
 // ---------- danh sách ca ----------
 function renderList() {
   const cs = [...S.cases].sort((a, b) => b.updated - a.updated);
   $app.innerHTML = `
     ${!C.key ? `<div class="notice"><b>Bắt đầu:</b> vào <a href="#cai-dat">Cài đặt</a> dán khóa API Claude (chỉ lưu trên máy này). Ghi âm vẫn dùng được khi chưa có khóa.</div>` : ''}
     <button class="newcase" type="button" id="new">+ Ca mới</button>
-    <div class="cases">${cs.map(c => `<button class="case" type="button" data-id="${c.id}"><b>${esc(c.label)}</b><span>${fmtTime(c.updated)} · ${c.segs.length} đoạn</span><i><span class="st ${c.status}">${STATUS[c.status]}</span></i></button>`).join('') || '<p class="empty">Chưa có ca nào.</p>'}</div>
+    <div class="cases">${cs.map(c => `<button class="case" type="button" data-id="${c.id}"><b>${esc(caseName(c))}</b><span>${esc(caseSub(c)) || '—'}</span><i><span class="st ${c.status}">${STATUS[c.status]}</span></i>${tagsHtml(c)}</button>`).join('') || '<p class="empty">Chưa có ca nào.</p>'}</div>
     <button class="ghost demo" type="button" id="demo">Xem ca mẫu (bệnh nhân giả)</button>
     <p class="muted small">${syncLine()}${C.keepDays > 0 ? `, tự xóa sau ${C.keepDays} ngày không sửa` : ''}. Khi ghi, không đọc họ tên, số điện thoại, số hồ sơ của người bệnh.</p>`;
   document.getElementById('new').onclick = () => {
-    const label = prompt('Tên ca (ẩn danh, vd: Giường 12 · Nam 68t):', '');
-    if (label === null) return;
-    const c = { id: uid(), label: label.trim() || 'Ca ' + fmtTime(Date.now()), created: Date.now(), updated: Date.now(), status: 'draft', segs: [], form: null, meta: null };
+    const c = { id: uid(), label: '', bn: { ...BN_DEF }, created: Date.now(), updated: Date.now(), status: 'draft', segs: [], form: null, meta: null };
     S.cases.push(c); save(); go('c/' + c.id + '/ghi');
   };
   document.getElementById('demo').onclick = () => {
@@ -368,17 +537,16 @@ function renderCase(c, tab) {
   $app.innerHTML = `
     <div class="casehead">
       <div class="row"><button class="back" type="button" id="back">‹ Danh sách ca</button><button class="back delcase" type="button" id="delcase">Xóa ca</button></div>
-      <input id="label" value="${esc(c.label)}" aria-label="Tên ca">
-      <div class="tabs" role="tablist">${[['ghi', 'Ghi'], ['duyet', 'Duyệt'], ['xuat', 'Xuất']].map(([k, l]) => `<button type="button" role="tab" data-t="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div>
+      ${bnBlock(c)}
+      <div class="tabs" role="tablist">${[['ghi', 'Ghi'], ['duyet', 'Duyệt'], ['hep', 'Heparin'], ['xuat', 'Xuất']].map(([k, l]) => `<button type="button" role="tab" data-t="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div>
     </div>
     <div id="pane" style="display:grid;gap:12px"></div>`;
   document.getElementById('back').onclick = () => go('');
-  document.getElementById('delcase').onclick = () => { if (confirm(`Xóa vĩnh viễn ca "${c.label}"${c._s ? ' (cả trên Supabase)' : ''}?`)) { forget(c.id); go(''); } };
-  const $l = document.getElementById('label');
-  $l.onchange = () => { c.label = $l.value.trim() || c.label; touch(c); };
+  document.getElementById('delcase').onclick = () => { if (confirm(`Xóa vĩnh viễn ca "${caseName(c)}"${c._s ? ' (cả trên Supabase)' : ''}?`)) { forget(c.id); go(''); } };
+  wireBn(c, $app.querySelector('.casehead'));
   $app.querySelectorAll('.tabs [data-t]').forEach(b => (b.onclick = () => go(`c/${c.id}/${b.dataset.t}`)));
   document.querySelector('.dock')?.remove();
-  ({ ghi: paneRecord, duyet: paneReview, xuat: paneExport })[tab](c, document.getElementById('pane'));
+  ({ ghi: paneRecord, duyet: paneReview, hep: paneHeparin, xuat: paneExport })[tab](c, document.getElementById('pane'));
 }
 
 // --- Ghi ---
@@ -447,6 +615,11 @@ async function runOrganize(c) {
     const { out, usage } = await organize(c);
     c.form = Object.fromEntries(FKEYS.map(k => [k, String(out[k] ?? '')]));
     c.meta = { can_kiem_tra: out.can_kiem_tra || [], chuan_hoa: out.chuan_hoa || [], usage, at: Date.now(), segCount: c.segs.length };
+    const bx = out.benh_nen || {}, b = bnOf(c);
+    if (bx.dai_thao_duong) b.dtd = true;
+    if (bx.bmv_can_thiep) b.bmv = true;
+    if (!b.creat && numv(bx.creatinin_umol_l) > 0) b.creat = String(numv(bx.creatinin_umol_l));
+    c.bn = b;
     c.status = 'review'; touch(c);
     go(`c/${c.id}/duyet`);
   } catch (e) {
@@ -483,17 +656,18 @@ function padCalc(v) {
     completesTreadmill: { yes: true, no: false }[v.tread] ?? null, postExerciseApMmhg: num('post'), restingApForClaudication: num('rap') });
   const lines = [`Fontaine ${f.stage} (${FONT_VI[f.stage]})`, `Rutherford độ ${ru.grade}, nhóm ${ru.category} (${RUTH_VI[ru.category]})`];
   const warns = [...f.warnings, ...ru.warnings];
-  let wifi = '';
+  let wifi = '', ws = '';
   if (rest || tissue) {
     const m = { abi: num('abi'), anklePressureMmhg: num('rap'), toePressureMmhg: num('tp'), tcpo2Mmhg: num('tc') };
     if (Object.values(m).every(x => x == null)) wifi = 'WIfI: cần ít nhất một chỉ số tưới máu (ABI, áp lực cổ chân, áp lực ngón hoặc TcPO₂).';
     else {
       const w = tissue ? +v.w : 0, fi = tissue ? +v.fi : 0, i = PAD.scoreWifiIschemia(m), r = PAD.classifyWifi({ w, i, fi });
+      ws = ` · WIfI ${r.clinical_stage}`;
       lines.push(`WIfI W${w} I${i} fI${fi} → giai đoạn ${r.clinical_stage} (nguy cơ cắt cụt 1 năm ${LVL_VI[r.clinical_stage]}; lợi ích tái thông ${LVL_VI[r.revasc_benefit]})`);
       warns.push(...r.notes);
     }
   }
-  return { text: `- Phân độ (chân ${v.side}): ${lines.join('; ')}.`, lines, wifi, warns };
+  return { text: `- Phân độ (chân ${v.side}): ${lines.join('; ')}.`, lines, wifi, warns, short: `Fontaine ${f.stage} · R${ru.category}${ws}` };
 }
 function padPanel(c, box, t, onInsert) {
   const v = Object.assign({}, PAD_DEF, c.pad || {});
@@ -604,7 +778,7 @@ function paneExport(c, $p) {
       <button type="button" id="share">Chia sẻ…</button>
       <button type="button" id="done" class="wide ghost">${c.status === 'done' ? 'Đã đánh dấu xuất' : 'Đánh dấu đã xuất'}</button>
     </div>`;
-  const fname = `TTBA ${c.label.replace(/[\\/:*?"<>|]/g, '-')} ${new Date().toISOString().slice(0, 10)}.doc`;
+  const fname = `TTBA ${caseName(c).replace(/[\\/:*?"<>|]/g, '-')} ${new Date().toISOString().slice(0, 10)}.doc`;
   const docBlob = () => new Blob(['\ufeff', asDocHtml(c)], { type: 'application/msword' });
   $p.querySelector('#copy').onclick = async () => {
     try { await navigator.clipboard.writeText(asText(c)); toast('Đã chép — dán vào phần mềm bệnh viện'); }

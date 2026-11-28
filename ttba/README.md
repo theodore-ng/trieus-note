@@ -12,11 +12,12 @@ Bác sĩ đọc thông tin ca bệnh thành từng đoạn (không cần theo th
 
 0. **Xem ca mẫu** (ở danh sách ca): mở một ca bệnh nhân giả đã sắp xếp sẵn để xem giao diện, không cần khóa API.
 1. **Cài đặt**: dán khóa API Claude (tạo ở platform.claude.com › API keys; nên đặt hạn mức chi tiêu), chọn model, sửa **từ điển cá nhân** (`cách đọc = cách viết`, vd `a bê i = ABI`).
-2. **+ Ca mới**: đặt tên ẩn danh (vd "Giường 12 · Nam 68t").
+2. **+ Ca mới**: điền **thông tin người bệnh** ở đầu ca: họ tên, tuổi, giới, phòng, cân nặng, đái tháo đường, bệnh mạch vành mạn đã can thiệp, creatinin → eGFR (CKD-EPI 2021, phân độ G1–G5). **Họ tên chỉ lưu trên máy / Supabase, không gửi cho Claude**; đoạn ghi có đọc họ tên thì app cảnh báo trước khi gửi. Ở danh sách, mỗi ca hiện Họ tên · tuổi · phòng và các thẻ: phân độ PAD, Đái tháo đường, BMV mạn đã can thiệp, Suy thận Gx (eGFR < 60).
 3. **Ghi**: chọn chủ đề (không bắt buộc: Bệnh sử, Tiền sử, Khám, Mạch máu, CLS, Chẩn đoán, Điều trị, Ra viện), bấm nút đỏ để đọc, bấm lại để dừng; mỗi lần là một đoạn, sửa/xóa được. **Gõ tay** để nhập (hoặc dùng micro trên bàn phím iPhone).
 4. **Sắp xếp →**: gửi các đoạn cho Claude, nhận bản theo mẫu (thường 15–60 giây).
 5. **Duyệt**: mục **Chỉ số mạch máu** có nút **Phân độ**: chọn chân, triệu chứng nặng nhất, mức mất mô, W/fI, nhập ABI / áp lực cổ chân / áp lực ngón / TcPO₂ → tính Fontaine, Rutherford, WIfI (khi đau khi nghỉ hoặc mất mô) và chèn một dòng "- Phân độ (chân …): …" vào mục (thay dòng Phân độ cũ nếu có); dữ liệu nhập được nhớ theo ca. Mục trống nền vàng (chạm 🎤 để nói thẳng vào mục), chỗ cần kiểm tra màu cam (số liệu, liều, ICD-10), danh sách thuật ngữ đã chuẩn hóa. Ghi thêm đoạn rồi **Sắp xếp thêm**: Claude giữ phần đã sửa, chỉ bổ sung.
-6. **Xuất**: chép toàn bộ (dán vào phần mềm bệnh viện), tải Word (.doc), chia sẻ qua Bảng chia sẻ iOS. Bản xuất chỉ gồm các mục có nội dung.
+6. **Heparin**: mặc định phác đồ VTE (bolus 80 UI/kg, truyền 18 UI/kg/giờ, aPTT đích 60–100 giây; Dager 2018). Cân nặng lấy từ thông tin người bệnh; nhập túi pha (mặc định 25.000 UI/50 mL) → liều khởi đầu; nhập aPTT (và tốc độ đang truyền) → chỉnh liều theo bảng 5 mức. **Chèn vào Phương pháp điều trị** hoặc **Chép**. Phác đồ khác (NMCT + rt-PA, NSTEMI/ĐTN không ổn định, PCI theo ACT) ở mục **Nâng cao**.
+7. **Xuất**: chép toàn bộ (dán vào phần mềm bệnh viện), tải Word (.doc), chia sẻ qua Bảng chia sẻ iOS. Bản xuất chỉ gồm các mục có nội dung.
 
 ## Mẫu (mẫu chung, chỉnh sau)
 
@@ -29,6 +30,8 @@ Người bệnh (ẩn danh) · Ngày vào viện · Lý do vào viện · Bệnh
 - **Dữ liệu**: localStorage của trình duyệt (`trieusnote_ttba_v1` ca bệnh, `trieusnote_ttba_cfg` cài đặt + khóa). Từ 2.12.0, khi đã đăng nhập Trieu's Note thì ca bệnh đồng bộ lên Supabase, bảng `ttba_cases` (`id`, `user_id`, `data` jsonb = cả ca, `updated_at`; RLS theo người dùng; SQL trong `supabase/schema.sql`). Ca sửa sau cùng được giữ; ca đã đồng bộ mà Supabase không còn thì coi như đã xóa ở máy khác; mất mạng thì các lần xóa được nhớ trong `S.gone` để làm sau. Khóa API và cài đặt không đồng bộ. Tự xóa ca không sửa sau N ngày (mặc định 30), áp dụng cả trên Supabase. Ngoài Supabase (khi đăng nhập), nội dung chỉ rời máy khi bấm Sắp xếp (gửi tới API Claude).
 - **Ẩn danh**: nhắc không đọc họ tên/số hồ sơ; trước khi gửi, quét các dấu hiệu định danh (tên, dãy số giống SĐT/căn cước, số hồ sơ) và hỏi lại; Claude được dặn thay bằng `[ẩn]`.
 - **Phân độ PAD**: `pad.js` = logic của app PAD Classification cũ (đã gộp vào đây từ 3.0.0), chuyển nguyên trạng từ `scripts/pad/classification.py`; sửa logic phải sửa cả hai, chạy `pytest scripts/pad/tests` và `scripts/pad/parity.py` (phải OK). Cảnh báo lâm sàng giữ tiếng Anh như bản gốc (để parity khớp); mô tả giai đoạn hiển thị tiếng Việt trong `ttba.js`.
+- **Heparin**: `heparin.js` = logic của app Heparin IV Calc. cũ (gộp vào đây từ 3.1.0), chuyển nguyên trạng từ `scripts/heparin/*.ts`; sửa logic phải sửa cả hai và chạy `scripts/heparin/parity.py` (phải OK). Trạng thái theo ca ở `c.hep` (phác đồ, túi pha, tốc độ, aPTT).
+- **Thông tin người bệnh**: `c.bn` = {ten, tuoi, gioi, phong, can_nang, dtd, bmv, creat}; `buildPrompt` gửi kèm mọi trường trừ `ten`. Schema có thêm `benh_nen` để Claude điền sẵn bệnh nền.
 - Kiểm thử: `window.__TTBA_MOCK__` thay lời gọi Claude bằng hàm giả (không tốn phí, không gửi dữ liệu).
 
 ## Điểm cần lưu ý

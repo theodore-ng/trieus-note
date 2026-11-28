@@ -2,6 +2,25 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 3.1.0 – 28/11/2026
+
+- **Gộp Heparin IV Calc. vào Tóm tắt bệnh án, xóa mục `heparin/`**.
+  - Mỗi ca có tab mới **Heparin**, mặc định phác đồ **VTE**: bolus 80 UI/kg, truyền 18 UI/kg/giờ, aPTT đích 60–100 giây (Dager 2018).
+    - Cân nặng lấy từ thông tin người bệnh; nhập lượng heparin trong túi và thể tích pha (mặc định 25.000 UI / 50 mL).
+    - Liều khởi đầu và chỉnh liều theo aPTT tính ngay khi nhập, kèm bảng xử trí 5 mức.
+    - **Chèn vào Phương pháp điều trị** hoặc **Chép** y lệnh.
+  - Các phác đồ còn lại của app cũ (NMCT ST chênh lên + rt-PA, NMCT không ST chênh lên / ĐTN không ổn định, PCI theo ACT) chuyển vào mục **Nâng cao**.
+  - Logic giữ nguyên, chuyển sang `ttba/heparin.js`: parity với TypeScript gốc 14.644 ca OK.
+- **Thông tin người bệnh** ở đầu mỗi ca: họ tên, tuổi, giới, phòng, cân nặng; bệnh nền đái tháo đường, bệnh mạch vành mạn đã can thiệp (PCI/CABG); creatinin → eGFR (CKD-EPI 2021) và phân độ G1–G5.
+  - **Họ tên không gửi cho Claude.** Trước khi gửi, app cảnh báo nếu đoạn ghi có đọc họ tên.
+  - Khi sắp xếp, Claude điền sẵn đái tháo đường, BMV đã can thiệp và creatinin nếu có đọc; app chỉ bật, không tắt lựa chọn của bác sĩ.
+- **Thẻ ở danh sách ca**: Họ tên · tuổi · phòng, trạng thái, và các thẻ:
+  - phân độ PAD (Fontaine · Rutherford · WIfI);
+  - Đái tháo đường;
+  - BMV mạn đã can thiệp;
+  - Suy thận Gx · eGFR (khi eGFR < 60).
+- Dùng "phòng" thay "giường" ở mọi nơi.
+
 ## 3.0.0 – 28/11/2026
 
 - **Gộp PAD Classification vào Tóm tắt bệnh án, xóa mục `pad/`** (đổi cấu trúc app → major).

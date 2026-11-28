@@ -120,3 +120,48 @@ details.norm ul { margin: 6px 0 0; padding-left: 18px; line-height: 1.6; }
 .pc-in { grid-template-columns: 1fr 1fr; column-gap: 8px; }
 .pc-in > b { grid-column: 1 / -1; }
 .pc-n { align-content: start; }
+
+/* thông tin người bệnh + thẻ */
+.case .tags { grid-column: 1 / -1; }
+.tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.tag { font-style: normal; font-size: 12px; font-weight: 600; border-radius: 6px; padding: 2px 7px; background: #ece4d3; color: var(--ink); white-space: nowrap; }
+.tag.pad { background: #e6ddf0; color: #4b3470; }
+.tag.dtd { background: #dfe9f3; color: #234a6e; }
+.tag.bmv { background: #f3dfdc; color: #7a2a20; }
+.tag.ckd { background: #f6e5d3; color: #6b3d12; }
+details.bn { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 10px 12px; }
+details.bn > summary { cursor: pointer; list-style: none; }
+details.bn > summary::-webkit-details-marker { display: none; }
+.bn-s { display: grid; }
+.bn-s b { font-size: 17px; font-weight: 600; overflow-wrap: anywhere; }
+.bn-s small { color: var(--muted); font-size: 13px; }
+.bn-form { display: grid; gap: 10px; margin-top: 10px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.bn-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; align-items: end; }
+.bn-f { display: grid; gap: 3px; font-size: 13px; color: var(--muted); font-weight: 400; }
+.bn-f input, .bn-f select { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); font-size: 16px; }
+.bn-chk { display: grid; gap: 2px; }
+.bn-chk label { display: flex; gap: 8px; align-items: flex-start; font-size: 14.5px; padding: 5px 0; }
+.bn-chk input { width: 18px; height: 18px; margin-top: 2px; flex: none; accent-color: var(--accent); }
+.bn-egfr { margin: 0; font-size: 13.5px; padding-bottom: 8px; }
+/* heparin */
+.tabs { grid-template-columns: repeat(4, 1fr); }
+.hp { display: grid; gap: 10px; padding: 12px; }
+.hp h3 { margin: 0; font-size: 15px; }
+.hp-res { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hp-res > div { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: grid; }
+.hp-res > div.ok { grid-column: 1 / -1; background: #e0ebdc; }
+.hp-res small { font-size: 12px; color: var(--muted); }
+.hp-res b { font-family: var(--serif, inherit); font-size: 22px; font-weight: 600; }
+.hp-res span { font-size: 13px; color: var(--muted); }
+.hp-big { margin: 0; font-size: 22px; font-weight: 600; }
+.hp-stop { margin: 0; background: #f3dfdc; color: #7a2a20; border-radius: 8px; padding: 8px 10px; font-weight: 600; font-size: 14px; }
+.hp-tab { width: 100%; border-collapse: collapse; font-size: 13px; }
+.hp-tab th, .hp-tab td { text-align: left; padding: 5px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.hp-tab td:first-child { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.hp-tab tr.ok td { background: #e0ebdc; }
+.hp-tab tr.hi td { background: #f6e5d3; }
+.hp-adv summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+.hp-adv { display: grid; gap: 8px; padding: 12px; }
+.hp-adv ol { padding-left: 18px; line-height: 1.5; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; font: inherit; height: auto; }
+.hp-in .bn-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }

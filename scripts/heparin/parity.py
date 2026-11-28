@@ -1,4 +1,4 @@
-r"""Kiểm tra heparin/heparin.js khớp 100% với bản TypeScript gốc (heparin.ts, protocols.ts, references.ts của heparin-web-app).
+r"""Kiểm tra ttba/heparin.js khớp 100% với bản TypeScript gốc (heparin.ts, protocols.ts, references.ts của heparin-web-app).
 
 Cách dùng (Git Bash, từ gốc dự án):
   .venv/Scripts/python webapp/scripts/heparin/parity.py <thư mục tạm>
@@ -16,7 +16,7 @@ out = os.path.abspath(sys.argv[1])
 os.makedirs(out, exist_ok=True)
 for f in ("heparin.ts", "protocols.ts", "references.ts"):
     shutil.copy(os.path.join(HERE, f), out)
-shutil.copy(os.path.join(HERE, "..", "..", "heparin", "heparin.js"), out)
+shutil.copy(os.path.join(HERE, "..", "..", "ttba", "heparin.js"), out)
 open(os.path.join(out, "parity.html"), "w", encoding="utf-8").write(r"""<!doctype html><meta charset="utf-8"><body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/typescript/5.4.5/typescript.min.js"></script>
 <script src="heparin.js"></script>

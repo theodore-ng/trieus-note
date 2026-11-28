@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 3.2.1 – 28/11/2026
+
+- Case Summary: gắn sẵn Google OAuth Client ID cho nút Update OR schedule. Mọi máy dùng được ngay, không cần dán Client ID ở Settings; vẫn đổi được trong Settings nếu cần.
+
 ## 3.2.0 – 28/11/2026
 
 - Case Summary: nút **Update OR schedule → Calendar** ở danh sách ca. Nút này thay GitHub Action tự chạy của repo `operation-schedule`.

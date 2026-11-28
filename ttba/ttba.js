@@ -74,6 +74,9 @@ const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch
 const saveCfg = () => { try { localStorage.setItem(CFG, JSON.stringify(C)); } catch {} };
 const S = load(KEY, { cases: [] });
 const C = Object.assign({ key: '', model: MODELS[0][0], glossary: DEFAULT_GLOSSARY, keepDays: 30, gClientId: '', gCalendarId: 'primary', orDays: 2 }, load(CFG, {}));
+// OAuth Client ID (loại Web application, origin https://theodore-ng.github.io) — không phải bí mật; máy nào chưa nhập thì dùng mặc định này
+const DEFAULT_GCID = '170903685009-9c8ajtomrp6j4ac3tdb4vuc4qe48sfmt.apps.googleusercontent.com';
+if (!C.gClientId) C.gClientId = DEFAULT_GCID;
 S.gone ||= []; // mã ca đã xóa trên máy này nhưng chưa xóa được trên Supabase (mất mạng)
 // tự xóa ca cũ
 const expired = () => {

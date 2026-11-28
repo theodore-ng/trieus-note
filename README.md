@@ -15,6 +15,7 @@ Web app cá nhân gồm nhiều mục, mở từ một trang chủ dạng thẻ 
 | [**Procedure Catalog**](ky-thuat/README.md) | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (bộ mã QĐ 7603, giá TT39/TT13) và quy trình kỹ thuật khoa Phẫu thuật mạch máu, kèm giải thích theo văn bản | Tiếng Việt |
 | [**PAD Classification**](pad/README.md) | `pad/` | Phân loại bệnh động mạch chi dưới: Fontaine, Rutherford, WIfI | English |
 | [**Heparin IV Calc.**](heparin/README.md) | `heparin/` | Liều heparin IV theo cân nặng, chỉnh liều theo aPTT (Dager 2018) | English |
+| [**Tóm tắt bệnh án**](ttba/README.md) | `ttba/` | Đọc ca bệnh trên iPhone, Claude chuẩn hóa thuật ngữ và xếp vào mẫu tóm tắt bệnh án; duyệt, xuất Word. Dữ liệu chỉ trên máy | Tiếng Việt |
 
 PAD Classification và Heparin IV Calc. là công cụ hỗ trợ quyết định lâm sàng, không thay thế đánh giá của bác sĩ. Finance là công cụ theo dõi và lập kế hoạch, không phải khuyến nghị đầu tư.
 
@@ -25,7 +26,7 @@ index.html, core.js     Trang chủ: đăng nhập dùng chung (Supabase Auth), 
 style.css               Giao diện chung: retro nền giấy, chỉ giao diện sáng, Newsreader + Be Vietnam Pro
 config.js               URL + khóa publishable của Supabase (để trống = chế độ cục bộ)
 logo.svg, favicon-32.png, apple-touch-icon.png
-notes/  finance/  ky-thuat/  pad/  heparin/     Các mục (mỗi mục có README riêng)
+notes/  finance/  ky-thuat/  pad/  heparin/  ttba/     Các mục (mỗi mục có README riêng)
 data/                   Dữ liệu thị trường JSON (GitHub Actions cập nhật), các mục đọc bằng ../data/
 scripts/                Cập nhật dữ liệu (update_*.py), build Danh mục kỹ thuật (ky_thuat/),
                         bản gốc + kiểm tra khớp logic (pad/, heparin/), bản thử để kiểm thử (dev/harness.py)

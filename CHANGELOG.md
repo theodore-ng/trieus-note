@@ -2,6 +2,16 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.11.0 – 28/11/2026
+
+- Mục mới **Tóm tắt bệnh án** (`ttba/`, tiếng Việt, làm cho iPhone):
+  - **Ghi**: đọc từng đoạn bằng nhận dạng giọng nói tiếng Việt của Safari (hoặc gõ / micro bàn phím), chọn chủ đề cho đoạn (Bệnh sử, Tiền sử, Khám, Mạch máu, CLS…), nút ghi lớn ở vùng ngón cái, giữ màn hình sáng khi ghi.
+  - **Sắp xếp**: Claude (mặc định Opus 5.5, khóa API người dùng dán, chỉ lưu trên máy) chuẩn hóa thuật ngữ theo từ điển cá nhân và xếp vào mẫu chung 13 mục (có mục Chỉ số mạch máu), trả JSON theo schema; đánh dấu chỗ cần kiểm tra (số liệu, liều, ICD-10 gợi ý).
+  - **Duyệt**: mục trống nền vàng, nói thẳng vào từng mục, ghi thêm đoạn rồi sắp xếp bổ sung (giữ phần đã sửa); ước tính chi phí mỗi lần.
+  - **Xuất**: chép toàn bộ để dán vào phần mềm bệnh viện, tải Word (.doc), chia sẻ qua iOS.
+  - Dữ liệu chỉ lưu trên máy, tự xóa ca sau 30 ngày (đổi được); nhắc và quét thông tin định danh trước khi gửi.
+- Trang chủ: thẻ **Case Summary**; cập nhật mô tả thẻ Procedure Catalog (bộ mã 7603, giá TT39/TT13, quy trình Bộ Y tế 2025).
+
 ## 2.10.0 – 27/11/2026
 
 - Procedure Catalog: **quy trình Bộ Y tế 2025 là bản chính.** Lấy từ *Hướng dẫn quy trình kỹ thuật về Tuần hoàn* Tập 1.1 (QĐ 3675/QĐ-BYT) và Tập 2.1 (QĐ 3676/QĐ-BYT):

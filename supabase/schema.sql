@@ -60,3 +60,23 @@ create policy "notes_select_own" on public.notes for select using (auth.uid() = 
 create policy "notes_insert_own" on public.notes for insert with check (auth.uid() = user_id);
 create policy "notes_update_own" on public.notes for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "notes_delete_own" on public.notes for delete using (auth.uid() = user_id);
+
+-- ===== Trieu's Note › Tóm tắt bệnh án (thêm 2.12.0). Mỗi ca một dòng, data = cả ca (đoạn ghi, bản tóm tắt, cờ kiểm tra).
+-- Chỉ chủ tài khoản đọc/ghi được ca của mình (RLS). Chạy được nhiều lần. =====
+create table if not exists public.ttba_cases (
+  id text primary key,
+  user_id uuid not null default auth.uid() references auth.users (id) on delete cascade,
+  data jsonb not null,
+  updated_at timestamptz not null default now()
+);
+create index if not exists ttba_cases_user on public.ttba_cases (user_id, updated_at desc);
+alter table public.ttba_cases enable row level security;
+
+drop policy if exists "ttba_select_own" on public.ttba_cases;
+drop policy if exists "ttba_insert_own" on public.ttba_cases;
+drop policy if exists "ttba_update_own" on public.ttba_cases;
+drop policy if exists "ttba_delete_own" on public.ttba_cases;
+create policy "ttba_select_own" on public.ttba_cases for select using (auth.uid() = user_id);
+create policy "ttba_insert_own" on public.ttba_cases for insert with check (auth.uid() = user_id);
+create policy "ttba_update_own" on public.ttba_cases for update using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create policy "ttba_delete_own" on public.ttba_cases for delete using (auth.uid() = user_id);

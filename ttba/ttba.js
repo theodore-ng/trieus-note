@@ -1,7 +1,8 @@
 /* Tóm tắt bệnh án (TTBA) — ghi bằng giọng nói trên iPhone, Claude sắp xếp vào mẫu.
    - Giọng nói → chữ: Web Speech API của Safari (vi-VN); không có thì gõ / dùng mic bàn phím iOS.
    - Chữ → mẫu: Claude (Anthropic SDK, gọi thẳng từ trình duyệt bằng khóa lưu trên máy), đầu ra JSON theo schema.
-   - Dữ liệu chỉ lưu trên máy (localStorage); không gửi đi đâu ngoài lời gọi Claude khi bấm "Sắp xếp". */
+   - Dữ liệu: localStorage của máy (bản làm việc, dùng được khi mất mạng); đã đăng nhập Trieu's Note thì đồng bộ
+     Supabase bảng ttba_cases (RLS theo người dùng). Khóa API và cài đặt chỉ ở từng máy. */
 (() => {
 'use strict';
 
@@ -66,15 +67,93 @@ Quy tắc:
 
 // ---------- lưu trữ ----------
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { toast('Không lưu được: bộ nhớ trình duyệt đầy hoặc bị chặn'); } };
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { toast('Không lưu được: bộ nhớ trình duyệt đầy hoặc bị chặn'); } Sync.soon(); };
 const saveCfg = () => { try { localStorage.setItem(CFG, JSON.stringify(C)); } catch {} };
 const S = load(KEY, { cases: [] });
 const C = Object.assign({ key: '', model: MODELS[0][0], glossary: DEFAULT_GLOSSARY, keepDays: 30 }, load(CFG, {}));
+S.gone ||= []; // mã ca đã xóa trên máy này nhưng chưa xóa được trên Supabase (mất mạng)
 // tự xóa ca cũ
-if (C.keepDays > 0) {
-  const lim = Date.now() - C.keepDays * 864e5, n = S.cases.length;
-  S.cases = S.cases.filter(c => c.updated >= lim);
-  if (S.cases.length !== n) save();
+const expired = () => {
+  if (!(C.keepDays > 0)) return;
+  const lim = Date.now() - C.keepDays * 864e5;
+  S.cases.filter(c => c.updated < lim).forEach(c => forget(c.id));
+};
+
+/* ---------- đồng bộ Supabase (bảng ttba_cases: id, user_id, data jsonb, updated_at) ----------
+   Mỗi ca một dòng, data = cả ca. Ca mới nhất (updated) thắng. Ca đã từng đồng bộ (_s) mà trên Supabase không còn
+   = đã xóa ở máy khác → xóa ở máy này. Ca mẫu (demo) không đồng bộ. */
+const Sync = {
+  sb: typeof TN !== 'undefined' ? TN.sb : null, user: null, state: 'off', err: '', snap: {}, timer: 0, busy: null,
+  body: c => { const { _s, ...rest } = c; return JSON.stringify(rest); },
+  soon() { if (this.user) { clearTimeout(this.timer); this.timer = setTimeout(() => this.push(), 800); } },
+  async init() {
+    if (!this.sb) return;
+    try { this.user = await TN.currentUser(); } catch { this.user = null; }
+    if (!this.user) { this.state = 'login'; return; }
+    await this.pull();
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') this.pull(true); });
+  },
+  async pull(rerender) {
+    if (!this.user || this.busy) return this.busy;
+    this.busy = (async () => {
+      try {
+        const { data, error } = await this.sb.from('ttba_cases').select('id, data');
+        if (error) throw error;
+        const remote = new Map(data.map(r => [r.id, r.data]));
+        const local = new Map(S.cases.map(c => [c.id, c]));
+        const out = [];
+        for (const c of S.cases) {
+          const r = remote.get(c.id);
+          if (c.demo || (!r && !c._s)) out.push(c);            // ca mẫu, ca mới chưa đẩy lên
+          else if (r) out.push(r.updated > c.updated ? { ...r, _s: 1 } : c);
+          // còn lại: đã đồng bộ nhưng Supabase không còn → đã xóa ở máy khác
+        }
+        for (const [id, r] of remote) if (!local.has(id) && !S.gone.includes(id)) out.push({ ...r, _s: 1 });
+        S.cases = out;
+        for (const c of out) if (c._s && remote.has(c.id) && remote.get(c.id).updated === c.updated) this.snap[c.id] = this.body(c);
+        this.state = 'on'; this.err = '';
+        expired();
+        try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
+        await this.push();
+      } catch (e) { this.state = 'err'; this.err = e.message || String(e); }
+      this.busy = null;
+      if (rerender) quietRoute();
+    })();
+    return this.busy;
+  },
+  async push() {
+    if (!this.user) return;
+    clearTimeout(this.timer);
+    try {
+      for (const id of [...S.gone]) {
+        const { error } = await this.sb.from('ttba_cases').delete().eq('id', id);
+        if (error) throw error;
+        S.gone = S.gone.filter(x => x !== id);
+      }
+      const dirty = S.cases.filter(c => !c.demo && this.snap[c.id] !== this.body(c));
+      if (dirty.length) {
+        const rows = dirty.map(c => { const { _s, ...d } = c; return { id: c.id, user_id: this.user.id, data: d, updated_at: new Date(c.updated).toISOString() }; });
+        const { error } = await this.sb.from('ttba_cases').upsert(rows);
+        if (error) throw error;
+        dirty.forEach(c => { c._s = 1; this.snap[c.id] = this.body(c); });
+      }
+      this.state = 'on'; this.err = '';
+    } catch (e) { this.state = 'err'; this.err = e.message || String(e); }
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
+    const b = document.getElementById('syncst'); if (b) b.outerHTML = syncLine();
+  },
+};
+/** Xóa ca trên máy; ca đã đồng bộ thì xóa cả trên Supabase (mất mạng thì nhớ để xóa sau). */
+function forget(id) {
+  const c = caseById(id); if (!c) return;
+  S.cases = S.cases.filter(x => x !== c);
+  delete Sync.snap[id];
+  if (c._s) S.gone.push(id);
+  save();
+}
+function syncLine() {
+  const t = { off: 'Ca chỉ lưu trên máy này', login: 'Ca chỉ lưu trên máy này — <a href="../">đăng nhập Trieu&#39;s Note</a> để đồng bộ', on: '✓ Đồng bộ Supabase (tài khoản Trieu&#39;s Note)', err: '⚠ Chưa đồng bộ được: ' + esc(Sync.err) + ' — vẫn lưu trên máy, sẽ thử lại' }[Sync.state];
+  return `<span id="syncst">${t}</span>`;
 }
 
 // ---------- tiện ích ----------
@@ -202,6 +281,8 @@ function idRisks(c) {
 }
 
 // ---------- định tuyến ----------
+// vẽ lại sau khi đồng bộ, trừ khi đang ghi âm hay đang gõ
+function quietRoute() { if (!Dict.active && !document.activeElement?.matches('textarea, input, select') && !document.querySelector('.busy')) route(); }
 function route() {
   if (Dict.active) Dict.stop(true);
   document.querySelector('.dock')?.remove();
@@ -267,7 +348,7 @@ function renderList() {
     <button class="newcase" type="button" id="new">+ Ca mới</button>
     <div class="cases">${cs.map(c => `<button class="case" type="button" data-id="${c.id}"><b>${esc(c.label)}</b><span>${fmtTime(c.updated)} · ${c.segs.length} đoạn</span><i><span class="st ${c.status}">${STATUS[c.status]}</span></i></button>`).join('') || '<p class="empty">Chưa có ca nào.</p>'}</div>
     <button class="ghost demo" type="button" id="demo">Xem ca mẫu (bệnh nhân giả)</button>
-    <p class="muted small">Ca chỉ lưu trên máy này${C.keepDays > 0 ? `, tự xóa sau ${C.keepDays} ngày không sửa` : ''}. Khi ghi, không đọc họ tên, số điện thoại, số hồ sơ của người bệnh.</p>`;
+    <p class="muted small">${syncLine()}${C.keepDays > 0 ? `, tự xóa sau ${C.keepDays} ngày không sửa` : ''}. Khi ghi, không đọc họ tên, số điện thoại, số hồ sơ của người bệnh.</p>`;
   document.getElementById('new').onclick = () => {
     const label = prompt('Tên ca (ẩn danh, vd: Giường 12 · Nam 68t):', '');
     if (label === null) return;
@@ -286,12 +367,13 @@ function renderList() {
 function renderCase(c, tab) {
   $app.innerHTML = `
     <div class="casehead">
-      <button class="back" type="button" id="back">‹ Danh sách ca</button>
+      <div class="row"><button class="back" type="button" id="back">‹ Danh sách ca</button><button class="back delcase" type="button" id="delcase">Xóa ca</button></div>
       <input id="label" value="${esc(c.label)}" aria-label="Tên ca">
       <div class="tabs" role="tablist">${[['ghi', 'Ghi'], ['duyet', 'Duyệt'], ['xuat', 'Xuất']].map(([k, l]) => `<button type="button" role="tab" data-t="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div>
     </div>
     <div id="pane" style="display:grid;gap:12px"></div>`;
   document.getElementById('back').onclick = () => go('');
+  document.getElementById('delcase').onclick = () => { if (confirm(`Xóa vĩnh viễn ca "${c.label}"${c._s ? ' (cả trên Supabase)' : ''}?`)) { forget(c.id); go(''); } };
   const $l = document.getElementById('label');
   $l.onchange = () => { c.label = $l.value.trim() || c.label; touch(c); };
   $app.querySelectorAll('.tabs [data-t]').forEach(b => (b.onclick = () => go(`c/${c.id}/${b.dataset.t}`)));
@@ -514,10 +596,12 @@ function renderSettings() {
     catch (e) { $r.textContent = '✗ ' + apiError(e); }
   };
   document.getElementById('wipe').onclick = () => {
-    if (!S.cases.length || !confirm(`Xóa vĩnh viễn ${S.cases.length} ca trên máy này?`)) return;
-    S.cases = []; save(); toast('Đã xóa tất cả ca'); renderSettings();
+    if (!S.cases.length || !confirm(`Xóa vĩnh viễn ${S.cases.length} ca${Sync.user ? ' (trên máy này và trên Supabase)' : ' trên máy này'}?`)) return;
+    S.cases.map(c => c.id).forEach(forget); toast('Đã xóa tất cả ca'); renderSettings();
   };
 }
 
+expired();
 route();
+Sync.init().then(() => { if (Sync.state !== 'off') quietRoute(); });
 })();

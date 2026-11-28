@@ -2,6 +2,17 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.12.0 – 28/11/2026
+
+- Tóm tắt bệnh án: **đồng bộ ca bệnh qua Supabase** khi đã đăng nhập Trieu's Note (bảng `ttba_cases`, mỗi người chỉ đọc/ghi được ca của mình nhờ RLS).
+  - Máy vẫn giữ một bản trong localStorage, nên ghi và sửa được khi mất mạng; có mạng lại thì tự đồng bộ, và đồng bộ lại khi mở lại app.
+  - Ca sửa sau cùng được giữ; ca xóa ở máy này cũng bị xóa ở máy khác.
+  - Khóa API Claude và cài đặt chỉ lưu trên từng máy, không lên Supabase. Ca mẫu không được đồng bộ.
+  - Tự xóa ca sau N ngày áp dụng cho cả Supabase.
+  - Chưa đăng nhập thì app chạy như trước (chỉ trên máy).
+  - Cần chạy phần SQL `ttba_cases` mới trong `supabase/schema.sql` một lần.
+- Nút **Xóa ca** cho từng ca (trước chỉ có Xóa tất cả).
+
 ## 2.11.1 – 28/11/2026
 
 - Tóm tắt bệnh án: nút **Xem ca mẫu (bệnh nhân giả)** ở danh sách ca. Nút tạo sẵn một ca giả (nam 68 tuổi, CLTI chân phải, đặt stent động mạch đùi nông) gồm 7 đoạn ghi và bản đã sắp xếp: có mục trống, chỗ cần kiểm tra, thuật ngữ đã chuẩn hóa. Dùng để xem cấu trúc giao diện mà không cần khóa API, không gọi Claude. Có thể xóa như ca thường.

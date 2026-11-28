@@ -26,12 +26,12 @@ Người bệnh (ẩn danh) · Ngày vào viện · Lý do vào viện · Bệnh
 
 - **Giọng nói → chữ**: Web Speech API của Safari (`vi-VN`, nhận dạng của Apple), tự bật lại khi iOS ngắt sau khoảng lặng; giữ màn hình sáng khi ghi (Wake Lock). Không có thì gõ hoặc dùng micro bàn phím. Không lưu file âm thanh.
 - **Chữ → mẫu**: Claude qua `@anthropic-ai/sdk@1.8.0` (ESM từ jsDelivr, `dangerouslyAllowBrowser` vì khóa do người dùng tự dán trên máy mình); mặc định `claude-opus-5-5`, effort `medium`, đầu ra `output_config.format` = JSON schema (13 mục + `can_kiem_tra` + `chuan_hoa`); Opus/Sonnet bật `fallbacks: "default"` (beta `server-side-fallback-2026-07-01`) khi bị bộ lọc an toàn từ chối. Ước tính chi phí hiện dưới tab Duyệt.
-- **Dữ liệu**: chỉ trong localStorage của trình duyệt (`trieusnote_ttba_v1` ca bệnh, `trieusnote_ttba_cfg` cài đặt + khóa); tự xóa ca không sửa sau N ngày (mặc định 30). Nội dung các đoạn chỉ rời máy khi bấm Sắp xếp (gửi tới API Claude).
+- **Dữ liệu**: localStorage của trình duyệt (`trieusnote_ttba_v1` ca bệnh, `trieusnote_ttba_cfg` cài đặt + khóa). Từ 2.12.0, khi đã đăng nhập Trieu's Note thì ca bệnh đồng bộ lên Supabase, bảng `ttba_cases` (`id`, `user_id`, `data` jsonb = cả ca, `updated_at`; RLS theo người dùng; SQL trong `supabase/schema.sql`). Ca sửa sau cùng được giữ; ca đã đồng bộ mà Supabase không còn thì coi như đã xóa ở máy khác; mất mạng thì các lần xóa được nhớ trong `S.gone` để làm sau. Khóa API và cài đặt không đồng bộ. Tự xóa ca không sửa sau N ngày (mặc định 30), áp dụng cả trên Supabase. Ngoài Supabase (khi đăng nhập), nội dung chỉ rời máy khi bấm Sắp xếp (gửi tới API Claude).
 - **Ẩn danh**: nhắc không đọc họ tên/số hồ sơ; trước khi gửi, quét các dấu hiệu định danh (tên, dãy số giống SĐT/căn cước, số hồ sơ) và hỏi lại; Claude được dặn thay bằng `[ẩn]`.
 - Kiểm thử: `window.__TTBA_MOCK__` thay lời gọi Claude bằng hàm giả (không tốn phí, không gửi dữ liệu).
 
 ## Điểm cần lưu ý
 
-- Dữ liệu sức khỏe là dữ liệu cá nhân nhạy cảm (NĐ 13/2023/NĐ-CP, Luật Bảo vệ dữ liệu cá nhân 2025); đối chiếu quy định của bệnh viện trước khi dùng với ca thật.
+- Dữ liệu sức khỏe là dữ liệu cá nhân nhạy cảm (NĐ 13/2023/NĐ-CP, Luật Bảo vệ dữ liệu cá nhân 2025). Khi đồng bộ, ca bệnh nằm trên Supabase ở dạng đọc được (không mã hóa đầu-cuối, người dùng chọn) và máy chủ ở nước ngoài; đối chiếu quy định của bệnh viện trước khi dùng với ca thật.
 - Mã ICD-10 và mọi nội dung do AI sắp xếp phải được bác sĩ kiểm tra.
 - Nhận dạng tiếng Việt của Safari trên iPhone cần thử thực tế (quyền Micro + Nhận dạng giọng nói khi bấm ghi lần đầu).

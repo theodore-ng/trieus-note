@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.11.1 – 28/11/2026
+
+- Tóm tắt bệnh án: nút **Xem ca mẫu (bệnh nhân giả)** ở danh sách ca. Nút tạo sẵn một ca giả (nam 68 tuổi, CLTI chân phải, đặt stent động mạch đùi nông) gồm 7 đoạn ghi và bản đã sắp xếp: có mục trống, chỗ cần kiểm tra, thuật ngữ đã chuẩn hóa. Dùng để xem cấu trúc giao diện mà không cần khóa API, không gọi Claude. Có thể xóa như ca thường.
+
 ## 2.11.0 – 28/11/2026
 
 - Mục mới **Tóm tắt bệnh án** (`ttba/`, tiếng Việt, làm cho iPhone):

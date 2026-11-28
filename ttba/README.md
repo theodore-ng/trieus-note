@@ -10,6 +10,7 @@ Bác sĩ đọc thông tin ca bệnh thành từng đoạn (không cần theo th
 
 ## Cách dùng
 
+0. **Xem ca mẫu** (ở danh sách ca): mở một ca bệnh nhân giả đã sắp xếp sẵn để xem giao diện, không cần khóa API.
 1. **Cài đặt**: dán khóa API Claude (tạo ở platform.claude.com › API keys; nên đặt hạn mức chi tiêu), chọn model, sửa **từ điển cá nhân** (`cách đọc = cách viết`, vd `a bê i = ABI`).
 2. **+ Ca mới**: đặt tên ẩn danh (vd "Giường 12 · Nam 68t").
 3. **Ghi**: chọn chủ đề (không bắt buộc: Bệnh sử, Tiền sử, Khám, Mạch máu, CLS, Chẩn đoán, Điều trị, Ra viện), bấm nút đỏ để đọc, bấm lại để dừng; mỗi lần là một đoạn, sửa/xóa được. **Gõ tay** để nhập (hoặc dùng micro trên bàn phím iPhone).

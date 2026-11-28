@@ -214,6 +214,51 @@ function route() {
 window.addEventListener('hashchange', route);
 const go = h => { if (location.hash === '#' + h) route(); else location.hash = h; };
 
+// Ca mẫu (bệnh nhân giả, đã sắp xếp sẵn) để xem giao diện — không gọi API
+function demoCase() {
+  const t = Date.now(), seg = (topic, text, dur, ago) => ({ id: uid(), at: t - ago * 60000, topic, text, dur });
+  return {
+    id: uid(), label: 'Ca mẫu · Giường 12 · Nam 68t', created: t, updated: t, status: 'review', demo: true,
+    segs: [
+      seg('', 'bệnh nhân nam 68 tuổi giường 12 khoa phẫu thuật mạch máu vào viện ngày 20 tháng 11 vì đau nhức bàn chân phải và vết loét ngón 1 chân phải', 18, 30),
+      seg('benh_su', 'khoảng 6 tháng nay đau cách hồi bắp chân phải đi khoảng 100 mét phải nghỉ 2 tuần nay đau cả khi nghỉ về đêm loét đầu ngón 1 chân phải không lành', 22, 28),
+      seg('tien_su', 'tăng huyết áp 10 năm đái tháo đường típ 2 8 năm đang dùng metformin 850 mi li gam ngày 2 lần hút thuốc lá 30 gói năm không dị ứng thuốc', 20, 26),
+      seg('kham', 'chân phải lạnh hơn chân trái mạch khoeo phải bắt yếu mạch mu chân và chày sau phải không bắt được loét ngón 1 kích thước 1 x 1 cm đáy nhợt không có mủ', 21, 24),
+      seg('mach_mau', 'a bê i phải 0,45 trái 0,9 siêu âm đốp lơ hẹp tắc động mạch đùi nông phải đoạn giữa dài khoảng 12 cm dòng chảy sau tắc dạng đơn pha', 19, 22),
+      seg('cls', 'glucose 9,8 hba1c 8,2 phần trăm creatinin 98 cholesterol LDL 3,4', 12, 20),
+      seg('dieu_tri', 'đã can thiệp nong bóng đặt stent động mạch đùi nông phải ngày 22 tháng 11 dùng aspirin 81 clopidogrel 75 atorvastatin 40 thay băng vết loét hằng ngày', 23, 10),
+    ],
+    form: {
+      nguoi_benh: 'Nam, 68 tuổi, Khoa Phẫu thuật mạch máu, giường 12.',
+      ngay_vao_vien: '20/11',
+      ly_do: 'Đau nhức bàn chân phải, loét ngón I chân phải.',
+      benh_su: 'Khoảng 6 tháng nay đau cách hồi bắp chân phải, quãng đường đi bộ khoảng 100 m. 2 tuần nay đau cả khi nghỉ, tăng về đêm; xuất hiện vết loét đầu ngón I chân phải không lành.',
+      tien_su: '- Tăng huyết áp 10 năm.\n- Đái tháo đường típ 2, 8 năm, đang dùng metformin 850 mg × 2 lần/ngày.\n- Hút thuốc lá 30 gói-năm.\n- Không ghi nhận dị ứng thuốc.',
+      kham: 'Chân phải lạnh hơn chân trái. Mạch khoeo phải bắt yếu; mạch mu chân và chày sau phải không bắt được. Loét đầu ngón I chân phải kích thước 1 × 1 cm, đáy nhợt, không có mủ.',
+      mach_mau: '- ABI: phải 0,45; trái 0,90.\n- Siêu âm Doppler: hẹp tắc động mạch đùi nông phải đoạn giữa, dài khoảng 12 cm; dòng chảy sau chỗ tắc dạng đơn pha.\n- Phân độ: Rutherford 5, Fontaine IV.',
+      cls: 'Glucose 9,8 mmol/L; HbA1c 8,2 %; creatinin 98 µmol/L; LDL-cholesterol 3,4 mmol/L.',
+      cd_vao: 'Bệnh động mạch chi dưới mạn tính đe dọa chi (CLTI) chân phải, loét ngón I (ICD-10: I70.23 – gợi ý) / Tăng huyết áp / Đái tháo đường típ 2.',
+      cd_hien_tai: '',
+      dieu_tri: '- Can thiệp nong bóng, đặt stent động mạch đùi nông phải ngày 22/11.\n- Aspirin 81 mg, clopidogrel 75 mg, atorvastatin 40 mg.\n- Thay băng vết loét hằng ngày.',
+      tinh_trang: '',
+      huong_tiep: '',
+    },
+    meta: {
+      can_kiem_tra: [
+        { muc: 'ngay_vao_vien', noi_dung: '20/11', ly_do: 'Không nghe thấy năm vào viện.' },
+        { muc: 'mach_mau', noi_dung: 'Rutherford 5, Fontaine IV', ly_do: 'Phân độ được suy ra từ loét ngón và đau khi nghỉ, bác sĩ không đọc; cần xác nhận.' },
+        { muc: 'cd_vao', noi_dung: 'ICD-10: I70.23', ly_do: 'Mã ICD-10 là gợi ý, cần bác sĩ xác nhận.' },
+        { muc: 'cls', noi_dung: 'creatinin 98 µmol/L', ly_do: 'Không đọc đơn vị; ghi theo đơn vị thường dùng.' },
+      ],
+      chuan_hoa: [
+        { goc: 'a bê i', chuan: 'ABI' }, { goc: 'đốp lơ', chuan: 'Doppler' }, { goc: 'mi li gam', chuan: 'mg' },
+        { goc: 'hba1c', chuan: 'HbA1c' }, { goc: 'ngón 1', chuan: 'ngón I' },
+      ],
+      usage: { in: 3120, out: 1450, usd: 0.0415, model: 'ca mẫu (không gọi API)' }, at: t, segCount: 7,
+    },
+  };
+}
+
 // ---------- danh sách ca ----------
 function renderList() {
   const cs = [...S.cases].sort((a, b) => b.updated - a.updated);
@@ -221,12 +266,18 @@ function renderList() {
     ${!C.key ? `<div class="notice"><b>Bắt đầu:</b> vào <a href="#cai-dat">Cài đặt</a> dán khóa API Claude (chỉ lưu trên máy này). Ghi âm vẫn dùng được khi chưa có khóa.</div>` : ''}
     <button class="newcase" type="button" id="new">+ Ca mới</button>
     <div class="cases">${cs.map(c => `<button class="case" type="button" data-id="${c.id}"><b>${esc(c.label)}</b><span>${fmtTime(c.updated)} · ${c.segs.length} đoạn</span><i><span class="st ${c.status}">${STATUS[c.status]}</span></i></button>`).join('') || '<p class="empty">Chưa có ca nào.</p>'}</div>
+    <button class="ghost demo" type="button" id="demo">Xem ca mẫu (bệnh nhân giả)</button>
     <p class="muted small">Ca chỉ lưu trên máy này${C.keepDays > 0 ? `, tự xóa sau ${C.keepDays} ngày không sửa` : ''}. Khi ghi, không đọc họ tên, số điện thoại, số hồ sơ của người bệnh.</p>`;
   document.getElementById('new').onclick = () => {
     const label = prompt('Tên ca (ẩn danh, vd: Giường 12 · Nam 68t):', '');
     if (label === null) return;
     const c = { id: uid(), label: label.trim() || 'Ca ' + fmtTime(Date.now()), created: Date.now(), updated: Date.now(), status: 'draft', segs: [], form: null, meta: null };
     S.cases.push(c); save(); go('c/' + c.id + '/ghi');
+  };
+  document.getElementById('demo').onclick = () => {
+    let c = S.cases.find(x => x.demo);
+    if (!c) { c = demoCase(); S.cases.push(c); save(); }
+    go('c/' + c.id + '/duyet');
   };
   $app.querySelectorAll('.case').forEach(b => (b.onclick = () => go('c/' + b.dataset.id)));
 }

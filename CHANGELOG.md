@@ -2,6 +2,17 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 3.2.0 – 28/11/2026
+
+- Case Summary: nút **Update OR schedule → Calendar** ở danh sách ca. Nút này thay GitHub Action tự chạy của repo `operation-schedule`.
+  - Mỗi lần bấm, app làm như bản Python cũ:
+    - đăng nhập Google;
+    - đọc các email "lịch mổ" có file .xlsx trong N ngày gần nhất, chưa gắn nhãn `schedule-processed`;
+    - lọc các ca "Pt tim";
+    - tạo một sự kiện cả ngày cho mỗi ngày mổ, rồi gắn nhãn email đã xử lý.
+  - Định dạng sự kiện giống hệt bản Python (đã so trên file mẫu) và không có tên bệnh nhân. File Excel chỉ được đọc trong trình duyệt.
+  - Cài đặt một lần ở **Settings › OR schedule**: Google OAuth Client ID (loại Web application), Calendar ID, số ngày tìm lại.
+
 ## 3.1.1 – 28/11/2026
 
 - Tóm tắt bệnh án: **giao diện chuyển sang tiếng Anh** (tên app: Case Summary).

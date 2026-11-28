@@ -73,7 +73,7 @@ const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; 
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { toast('Could not save: browser storage is full or blocked'); } Sync.soon(); };
 const saveCfg = () => { try { localStorage.setItem(CFG, JSON.stringify(C)); } catch {} };
 const S = load(KEY, { cases: [] });
-const C = Object.assign({ key: '', model: MODELS[0][0], glossary: DEFAULT_GLOSSARY, keepDays: 30 }, load(CFG, {}));
+const C = Object.assign({ key: '', model: MODELS[0][0], glossary: DEFAULT_GLOSSARY, keepDays: 30, gClientId: '', gCalendarId: 'primary', orDays: 2 }, load(CFG, {}));
 S.gone ||= []; // mã ca đã xóa trên máy này nhưng chưa xóa được trên Supabase (mất mạng)
 // tự xóa ca cũ
 const expired = () => {
@@ -513,12 +513,53 @@ function paneHeparin(c, $p) {
   build();
 }
 
+// ---------- OR schedule → Google Calendar (một nút; logic ở orsched.js) ----------
+// Google Identity Services phải nạp sẵn để lúc bấm nút mở được cửa sổ đăng nhập ngay (Safari chặn popup mở sau await).
+const GIS_URL = 'https://accounts.google.com/gsi/client', XLSX_URL = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+const OR_SCOPE = 'https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/calendar.events';
+const loadScript = src => new Promise((ok, no) => { if (document.querySelector(`script[src="${src}"]`)?.dataset.ok) return ok(); const el = document.createElement('script'); el.src = src; el.onload = () => { el.dataset.ok = 1; ok(); }; el.onerror = () => no(new Error('Could not load ' + src)); document.head.append(el); });
+const Gtok = { token: '', exp: 0, client: null, cid: '' };
+function orPreload() { if (C.gClientId && !window.google?.accounts) loadScript(GIS_URL).catch(() => {}); }
+function orButton() {
+  const out = document.getElementById('orres');
+  if (!C.gClientId) { toast('Set up Google in Settings first'); return go('cai-dat'); }
+  if (!window.google?.accounts?.oauth2) { out.innerHTML = '<p class="small muted">Loading Google sign-in… tap again in a moment.</p>'; orPreload(); return; }
+  if (Gtok.token && Date.now() < Gtok.exp) return orRun(out);
+  if (!Gtok.client || Gtok.cid !== C.gClientId) {
+    Gtok.cid = C.gClientId;
+    Gtok.client = google.accounts.oauth2.initTokenClient({ client_id: C.gClientId, scope: OR_SCOPE, callback: r => {
+      if (r.error) { out.innerHTML = `<p class="flag">Google sign-in failed: ${esc(r.error_description || r.error)}</p>`; return; }
+      if (!google.accounts.oauth2.hasGrantedAllScopes(r, ...OR_SCOPE.split(' '))) { out.innerHTML = '<p class="flag">Both Gmail and Calendar access are needed. Tap again and allow both.</p>'; return; }
+      Gtok.token = r.access_token; Gtok.exp = Date.now() + (r.expires_in - 60) * 1000; orRun(out);
+    }, error_callback: e => { out.innerHTML = `<p class="flag">Google sign-in was closed or blocked (${esc(e.type || 'error')}).</p>`; } });
+  }
+  Gtok.client.requestAccessToken({ prompt: '' });
+}
+async function orRun(out) {
+  const btn = document.getElementById('orsync'); if (btn) btn.disabled = true;
+  out.innerHTML = '<p class="small muted">Checking Gmail for schedule emails…</p>';
+  try {
+    await loadScript(XLSX_URL);
+    const readXlsx = u8 => { const wb = XLSX.read(u8, { type: 'array' }); return XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: '', raw: false, blankrows: true }); };
+    const res = await ORS.run({ token: Gtok.token, calendarId: C.gCalendarId || 'primary', days: C.orDays || 2, readXlsx });
+    C.orLast = Date.now(); saveCfg();
+    const d = x => (x ? x.split('-').reverse().join('/') : '—');
+    const MSG = { created: '✓ Added to Calendar', exists: 'Already in Calendar', nocases: 'No Pt tim cases', noxlsx: 'No .xlsx attachment', nodate: 'No date in the email subject', error: '✗ Error (will retry next time)' };
+    out.innerHTML = res.length ? `<ul class="orlist">${res.map(r => `<li class="${r.status}"><b>${d(r.date)}</b> · ${MSG[r.status] || r.status}${r.title ? `<br><small>${esc(r.title)}</small>` : ''}${r.error ? `<br><small>${esc(r.error)}</small>` : ''}</li>`).join('')}</ul>`
+      : `<p class="small muted">No new schedule emails in the last ${C.orDays || 2} days.</p>`;
+  } catch (e) {
+    if (e.status === 401) { Gtok.token = ''; out.innerHTML = '<p class="flag">Google sign-in expired. Tap the button again.</p>'; }
+    else out.innerHTML = `<p class="flag">${esc(e.status === 403 ? 'Access denied by Google (check the OAuth setup / test user in Settings).' : e.status === 404 ? 'Calendar not found — check the Calendar ID in Settings.' : e.message)}</p>`;
+  } finally { if (btn) btn.disabled = false; }
+}
+
 // ---------- danh sách ca ----------
 function renderList() {
   const cs = [...S.cases].sort((a, b) => b.updated - a.updated);
   $app.innerHTML = `
     ${!C.key ? `<div class="notice"><b>Getting started:</b> open <a href="#cai-dat">Settings</a> and paste a Claude API key (stored on this device only). Dictation works without a key.</div>` : ''}
     <button class="newcase" type="button" id="new">+ New case</button>
+    <div class="orbox"><button class="ghost orbtn" type="button" id="orsync">Update OR schedule → Calendar</button><div id="orres">${C.orLast ? `<p class="small muted">Last updated ${fmtTime(C.orLast)}</p>` : ''}</div></div>
     <div class="cases">${cs.map(c => `<button class="case" type="button" data-id="${c.id}"><b>${esc(caseName(c))}</b><span>${esc(caseSub(c)) || '—'}</span><i><span class="st ${c.status}">${STATUS[c.status]}</span></i>${tagsHtml(c)}</button>`).join('') || '<p class="empty">No cases yet.</p>'}</div>
     <button class="ghost demo" type="button" id="demo">View sample case (fake patient)</button>
     <p class="muted small">${syncLine()}${C.keepDays > 0 ? `; auto-deleted after ${C.keepDays} days without edits` : ''}. When dictating, do not say the patient's name, phone or record number.</p>`;
@@ -526,6 +567,8 @@ function renderList() {
     const c = { id: uid(), label: '', bn: { ...BN_DEF }, created: Date.now(), updated: Date.now(), status: 'draft', segs: [], form: null, meta: null };
     S.cases.push(c); save(); go('c/' + c.id + '/ghi');
   };
+  document.getElementById('orsync').onclick = orButton;
+  orPreload();
   document.getElementById('demo').onclick = () => {
     let c = S.cases.find(x => x.demo);
     if (!c) { c = demoCase(); S.cases.push(c); save(); }
@@ -830,6 +873,28 @@ function renderSettings() {
       </label>
       <button type="button" id="saveset">Save settings</button>
     </div>
+    <div class="set card">
+      <h3 style="margin:0">OR schedule → Google Calendar</h3>
+      <p class="small" style="margin:0">The <b>Update OR schedule</b> button on the case list reads schedule emails (“lịch mổ” with an .xlsx) in your Gmail, keeps the Pt tim cases and adds one all-day event per operating day to Google Calendar — the same format as the old operation-schedule GitHub Action. The spreadsheet is read in this browser only; the event has no patient names.</p>
+      <label>Google OAuth Client ID
+        <input id="gcid" autocomplete="off" spellcheck="false" placeholder="…apps.googleusercontent.com" value="${esc(C.gClientId)}">
+      </label>
+      <label>Calendar ID
+        <input id="gcal" autocomplete="off" spellcheck="false" value="${esc(C.gCalendarId || 'primary')}">
+        <small>“primary” = your main calendar, or the calendar ID used by the old GitHub Action (secret CALENDAR_ID).</small>
+      </label>
+      <label>Look back (days)
+        <input id="ordays" type="number" min="1" max="30" step="1" value="${C.orDays || 2}">
+      </label>
+      <details class="small"><summary>One-time Google setup</summary><ol style="padding-left:18px;line-height:1.55">
+        <li>console.cloud.google.com → the same project as operation-schedule (Gmail API and Calendar API already enabled).</li>
+        <li>APIs &amp; Services → Credentials → Create credentials → OAuth client ID → <b>Web application</b>.</li>
+        <li>Authorized JavaScript origins: <code>https://theodore-ng.github.io</code> → Create → copy the Client ID here and save.</li>
+        <li>OAuth consent screen: keep the app in Testing with your Gmail as a test user. The first time, Google warns the app is unverified: tap Continue and allow Gmail + Calendar.</li>
+        <li>After it works, the old GitHub Action schedule can be turned off.</li>
+      </ol></details>
+      <button type="button" id="saveor">Save</button>
+    </div>
     <div class="card set">
       <p class="small" style="margin:0">Speech recognition: ${SR ? 'available (Vietnamese, Safari/Apple).' : 'not available in this browser — use the microphone on the iPhone keyboard.'} The first time you record, the iPhone asks for microphone and speech recognition access: tap Allow.</p>
       <button type="button" id="wipe" class="danger">Delete all cases (${S.cases.length})</button>
@@ -839,6 +904,10 @@ function renderSettings() {
   document.getElementById('show').onclick = e => { $k.type = $k.type === 'password' ? 'text' : 'password'; e.target.textContent = $k.type === 'password' ? 'Show' : 'Hide'; };
   const collect = () => { C.key = $k.value.trim(); C.model = document.getElementById('model').value; C.glossary = document.getElementById('gloss').value; C.keepDays = Math.max(0, parseInt(document.getElementById('keep').value, 10) || 0); saveCfg(); };
   document.getElementById('saveset').onclick = () => { collect(); toast('Settings saved'); };
+  document.getElementById('saveor').onclick = () => {
+    C.gClientId = document.getElementById('gcid').value.trim(); C.gCalendarId = document.getElementById('gcal').value.trim() || 'primary';
+    C.orDays = Math.min(30, Math.max(1, parseInt(document.getElementById('ordays').value, 10) || 2)); saveCfg(); Gtok.token = ''; toast('Saved');
+  };
   document.getElementById('test').onclick = async () => {
     collect();
     const $r = document.getElementById('testres'); $r.textContent = 'Testing…';

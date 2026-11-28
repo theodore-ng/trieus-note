@@ -13,7 +13,7 @@ Web app cá nhân gồm nhiều mục, mở từ một trang chủ dạng thẻ 
 | [**Notes**](notes/README.md) | `notes/` | Ghi chú Markdown: checklist, tag, ghim, Archive / Trash, tìm kiếm không dấu, Paste, **+ GitHub** (tóm tắt + review repo) | English |
 | [**Finance**](finance/README.md) | `finance/` | Quản lý danh mục vàng, tiền mặt, tiết kiệm, chứng khoán; phân bổ tối ưu theo CFA (SAA), điều chỉnh chiến thuật (TAA), lộ trình giảm tỷ trọng vàng, dữ liệu thị trường VN và thế giới | Tiếng Việt |
 | [**Procedure Catalog**](ky-thuat/README.md) | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (bộ mã QĐ 7603, giá TT39/TT13) và quy trình kỹ thuật khoa Phẫu thuật mạch máu, kèm giải thích theo văn bản | Tiếng Việt |
-| [**Tóm tắt bệnh án**](ttba/README.md) | `ttba/` | Đọc ca bệnh trên iPhone, Claude chuẩn hóa thuật ngữ và xếp vào mẫu tóm tắt bệnh án; phân độ PAD (Fontaine, Rutherford, WIfI), liều heparin TTM (VTE, Dager 2018), eGFR; duyệt, xuất Word; đồng bộ Supabase khi đăng nhập | Tiếng Việt |
+| [**Tóm tắt bệnh án**](ttba/README.md) | `ttba/` | Đọc ca bệnh trên iPhone, Claude chuẩn hóa thuật ngữ và xếp vào mẫu tóm tắt bệnh án; phân độ PAD (Fontaine, Rutherford, WIfI), liều heparin TTM (VTE, Dager 2018), eGFR; duyệt, xuất Word; đồng bộ Supabase khi đăng nhập | English (bản tóm tắt tiếng Việt) |
 
 Phân độ PAD và tính liều heparin (trong Tóm tắt bệnh án) là công cụ hỗ trợ quyết định lâm sàng, không thay thế đánh giá của bác sĩ. Finance là công cụ theo dõi và lập kế hoạch, không phải khuyến nghị đầu tư.
 

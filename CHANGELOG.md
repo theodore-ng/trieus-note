@@ -2,6 +2,12 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 3.1.1 – 28/11/2026
+
+- Tóm tắt bệnh án: **giao diện chuyển sang tiếng Anh** (tên app: Case Summary).
+  - Đổi sang tiếng Anh: nút, nhãn, thông báo, tab, thông tin người bệnh, thẻ, bảng phân độ PAD, Heparin, Cài đặt.
+  - Vẫn tiếng Việt: bản tóm tắt bệnh án, bản xuất Word, các dòng chèn vào bản tóm tắt (Phân độ, Heparin), prompt gửi Claude và nhận dạng giọng nói.
+
 ## 3.1.0 – 28/11/2026
 
 - **Gộp Heparin IV Calc. vào Tóm tắt bệnh án, xóa mục `heparin/`**.

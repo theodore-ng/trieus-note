@@ -9,32 +9,33 @@
 const KEY = 'trieusnote_ttba_v1', CFG = 'trieusnote_ttba_cfg';
 const SDK_URL = 'https://cdn.jsdelivr.net/npm/@anthropic-ai/sdk@1.8.0/+esm';
 const MODELS = [
-  ['claude-opus-5-5', 'Claude Opus 5.5 — chính xác nhất (mặc định)', 4, 20],
-  ['claude-sonnet-5-5', 'Claude Sonnet 5.5 — nhanh, rẻ hơn', 2, 10],
-  ['claude-haiku-5-5', 'Claude Haiku 5.5 — rẻ nhất', 0.1, 0.5],
+  ['claude-opus-5-5', 'Claude Opus 5.5 — most accurate (default)', 4, 20],
+  ['claude-sonnet-5-5', 'Claude Sonnet 5.5 — faster, cheaper', 2, 10],
+  ['claude-haiku-5-5', 'Claude Haiku 5.5 — cheapest', 0.1, 0.5],
 ];
 const USD_VND = 26000; // chỉ để ước tính chi phí hiển thị
 
-// Mẫu chung: các mục tóm tắt bệnh án (ẩn danh) + chỉ số mạch máu
+// Mẫu chung: [khóa, tên mục tiếng Việt (bản xuất), gợi ý TV, tên mục tiếng Anh (giao diện), gợi ý tiếng Anh]
 const FIELDS = [
-  ['nguoi_benh', 'Người bệnh (ẩn danh)', 'Giới, tuổi, khoa/phòng; không ghi họ tên, số hồ sơ'],
-  ['ngay_vao_vien', 'Ngày vào viện', ''],
-  ['ly_do', 'Lý do vào viện', ''],
-  ['benh_su', 'Bệnh sử', 'Quá trình bệnh lý và diễn biến lâm sàng'],
-  ['tien_su', 'Tiền sử', 'Bản thân, gia đình, dị ứng, thuốc đang dùng'],
-  ['kham', 'Khám lâm sàng', 'Những dấu hiệu lâm sàng chính'],
-  ['mach_mau', 'Chỉ số mạch máu', 'ABI/TBI, siêu âm Doppler, CEAP; nút Phân độ tính Fontaine / Rutherford / WIfI'],
-  ['cls', 'Cận lâm sàng', 'Kết quả xét nghiệm, chẩn đoán hình ảnh có giá trị chẩn đoán'],
-  ['cd_vao', 'Chẩn đoán vào viện', 'Kèm mã ICD-10 (gợi ý, cần xác nhận)'],
-  ['cd_hien_tai', 'Chẩn đoán xác định / ra viện', 'Bệnh chính, bệnh kèm, mã ICD-10 (gợi ý, cần xác nhận)'],
-  ['dieu_tri', 'Phương pháp điều trị', 'Thuốc, phẫu thuật / thủ thuật đã làm'],
-  ['tinh_trang', 'Tình trạng người bệnh', 'Hiện tại hoặc lúc ra viện'],
-  ['huong_tiep', 'Hướng điều trị và chế độ tiếp theo', ''],
+  ['nguoi_benh', 'Người bệnh (ẩn danh)', 'Giới, tuổi, khoa/phòng; không ghi họ tên, số hồ sơ', 'Patient (anonymised)', 'Sex, age, ward/room; no name or record number'],
+  ['ngay_vao_vien', 'Ngày vào viện', '', 'Admission date', ''],
+  ['ly_do', 'Lý do vào viện', '', 'Reason for admission', ''],
+  ['benh_su', 'Bệnh sử', 'Quá trình bệnh lý và diễn biến lâm sàng', 'History of present illness', 'Course of illness and clinical progress'],
+  ['tien_su', 'Tiền sử', 'Bản thân, gia đình, dị ứng, thuốc đang dùng', 'Past history', 'Personal, family, allergies, current medications'],
+  ['kham', 'Khám lâm sàng', 'Những dấu hiệu lâm sàng chính', 'Physical examination', 'Key clinical findings'],
+  ['mach_mau', 'Chỉ số mạch máu', 'ABI/TBI, siêu âm Doppler, CEAP; nút Phân độ tính Fontaine / Rutherford / WIfI', 'Vascular indices', 'ABI/TBI, Doppler ultrasound, CEAP; Staging button computes Fontaine / Rutherford / WIfI'],
+  ['cls', 'Cận lâm sàng', 'Kết quả xét nghiệm, chẩn đoán hình ảnh có giá trị chẩn đoán', 'Investigations', 'Relevant lab and imaging results'],
+  ['cd_vao', 'Chẩn đoán vào viện', 'Kèm mã ICD-10 (gợi ý, cần xác nhận)', 'Admission diagnosis', 'With ICD-10 code (suggested, confirm)'],
+  ['cd_hien_tai', 'Chẩn đoán xác định / ra viện', 'Bệnh chính, bệnh kèm, mã ICD-10 (gợi ý, cần xác nhận)', 'Final / discharge diagnosis', 'Main and secondary diagnoses, ICD-10 (suggested, confirm)'],
+  ['dieu_tri', 'Phương pháp điều trị', 'Thuốc, phẫu thuật / thủ thuật đã làm', 'Treatment', 'Medications, surgery / procedures performed'],
+  ['tinh_trang', 'Tình trạng người bệnh', 'Hiện tại hoặc lúc ra viện', 'Patient status', 'Current or at discharge'],
+  ['huong_tiep', 'Hướng điều trị và chế độ tiếp theo', '', 'Plan and follow-up', ''],
 ];
 const FKEYS = FIELDS.map(f => f[0]);
-const TOPICS = [['', 'Tự do'], ['benh_su', 'Bệnh sử'], ['tien_su', 'Tiền sử'], ['kham', 'Khám'], ['mach_mau', 'Mạch máu'], ['cls', 'CLS'], ['cd', 'Chẩn đoán'], ['dieu_tri', 'Điều trị'], ['ra_vien', 'Ra viện']];
-const TOPIC_NAME = Object.fromEntries(TOPICS);
-const DEFAULT_GLOSSARY = `# Mỗi dòng: cách đọc = cách viết chuẩn (bỏ dòng bắt đầu bằng #)
+// [khóa, tên tiếng Việt (gửi Claude), nhãn tiếng Anh (giao diện)]
+const TOPICS = [['', 'Tự do', 'Free'], ['benh_su', 'Bệnh sử', 'History'], ['tien_su', 'Tiền sử', 'Past hx'], ['kham', 'Khám', 'Exam'], ['mach_mau', 'Mạch máu', 'Vascular'], ['cls', 'CLS', 'Labs/imaging'], ['cd', 'Chẩn đoán', 'Diagnosis'], ['dieu_tri', 'Điều trị', 'Treatment'], ['ra_vien', 'Ra viện', 'Discharge']];
+const TOPIC_NAME = Object.fromEntries(TOPICS.map(([k, v]) => [k, v])), TOPIC_EN = Object.fromEntries(TOPICS.map(([k, , e]) => [k, e]));
+const DEFAULT_GLOSSARY = `# One per line: as heard (Vietnamese) = standard spelling; lines starting with # are ignored
 a bê i = ABI (chỉ số cổ chân - cánh tay)
 tê bê i = TBI (chỉ số ngón chân - cánh tay)
 đê vê tê = DVT (huyết khối tĩnh mạch sâu)
@@ -69,7 +70,7 @@ Quy tắc:
 
 // ---------- lưu trữ ----------
 const load = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { toast('Không lưu được: bộ nhớ trình duyệt đầy hoặc bị chặn'); } Sync.soon(); };
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch { toast('Could not save: browser storage is full or blocked'); } Sync.soon(); };
 const saveCfg = () => { try { localStorage.setItem(CFG, JSON.stringify(C)); } catch {} };
 const S = load(KEY, { cases: [] });
 const C = Object.assign({ key: '', model: MODELS[0][0], glossary: DEFAULT_GLOSSARY, keepDays: 30 }, load(CFG, {}));
@@ -154,7 +155,7 @@ function forget(id) {
   save();
 }
 function syncLine() {
-  const t = { off: 'Ca chỉ lưu trên máy này', login: 'Ca chỉ lưu trên máy này — <a href="../">đăng nhập Trieu&#39;s Note</a> để đồng bộ', on: '✓ Đồng bộ Supabase (tài khoản Trieu&#39;s Note)', err: '⚠ Chưa đồng bộ được: ' + esc(Sync.err) + ' — vẫn lưu trên máy, sẽ thử lại' }[Sync.state];
+  const t = { off: 'Cases are stored on this device only', login: 'Cases are stored on this device only — <a href="../">sign in to Trieu&#39;s Note</a> to sync', on: '✓ Synced with Supabase (Trieu&#39;s Note account)', err: '⚠ Sync failed: ' + esc(Sync.err) + ' — still saved on this device, will retry' }[Sync.state];
   return `<span id="syncst">${t}</span>`;
 }
 
@@ -162,13 +163,13 @@ function syncLine() {
 const $app = document.getElementById('app');
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
-const fmtTime = t => new Date(t).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
+const fmtTime = t => new Date(t).toLocaleString('en-GB', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' });
 const mmss = s => `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
 let toastT;
 function toast(m) { const t = document.getElementById('toast'); t.textContent = m; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => (t.hidden = true), 2600); }
 const caseById = id => S.cases.find(c => c.id === id);
 const touch = c => { c.updated = Date.now(); save(); };
-const STATUS = { draft: 'Đang ghi', review: 'Chờ duyệt', done: 'Đã xuất' };
+const STATUS = { draft: 'Recording', review: 'To review', done: 'Exported' };
 function autosize(t) { t.style.height = 'auto'; t.style.height = Math.max(t.scrollHeight + 2, 48) + 'px'; }
 
 // ---------- giọng nói (Web Speech API, vi-VN) ----------
@@ -198,13 +199,13 @@ const Dict = {
     r.onerror = e => {
       if (e.error === 'no-speech' || e.error === 'aborted') return;
       this.active = false;
-      const msg = { 'not-allowed': 'Chưa cho phép micro / nhận dạng giọng nói (Cài đặt › Safari › Micro).', 'service-not-allowed': 'iPhone chưa bật nhận dạng giọng nói (Cài đặt › Siri / Đọc chính tả).', network: 'Mất mạng khi nhận dạng giọng nói.', 'language-not-supported': 'Máy chưa hỗ trợ nhận dạng tiếng Việt.' }[e.error] || 'Lỗi nhận dạng giọng nói: ' + e.error;
+      const msg = { 'not-allowed': 'Microphone / speech recognition not allowed (Settings › Safari › Microphone).', 'service-not-allowed': 'Speech recognition is off on this iPhone (Settings › Siri / Dictation).', network: 'Network lost during speech recognition.', 'language-not-supported': 'This device does not support Vietnamese speech recognition.' }[e.error] || 'Speech recognition error: ' + e.error;
       toast(msg); this.onUpdate?.(this.finalText, '', true);
     };
     // iOS hay tự dừng sau khoảng lặng: tự bật lại khi người dùng chưa bấm dừng
     r.onend = () => { if (this.active) { try { r.start(); } catch { this._run(); } } };
     this.rec = r;
-    try { r.start(); } catch (err) { this.active = false; toast('Không bật được micro: ' + err.message); }
+    try { r.start(); } catch (err) { this.active = false; toast('Could not start the microphone: ' + err.message); }
   },
   stop(silent) {
     this.active = false;
@@ -221,7 +222,7 @@ const Dict = {
 // ---------- Claude ----------
 let sdkMod;
 async function claude() {
-  if (!C.key) throw Object.assign(new Error('Chưa có khóa API Claude. Vào Cài đặt để dán khóa.'), { code: 'nokey' });
+  if (!C.key) throw Object.assign(new Error('No Claude API key yet. Paste one in Settings.'), { code: 'nokey' });
   sdkMod ||= await import(SDK_URL);
   const Anthropic = sdkMod.default;
   return new Anthropic({ apiKey: C.key, dangerouslyAllowBrowser: true });
@@ -254,10 +255,10 @@ async function organize(c) {
     res = C.model.startsWith('claude-haiku') ? await cl.messages.create(params)
       : await cl.beta.messages.create({ ...params, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' });
   }
-  if (res.stop_reason === 'refusal') throw new Error('Claude từ chối xử lý nội dung này' + (res.stop_details?.explanation ? ': ' + res.stop_details.explanation : '.'));
-  if (res.stop_reason === 'max_tokens') throw new Error('Kết quả quá dài, bị cắt. Thử chia ca thành ít đoạn hơn.');
+  if (res.stop_reason === 'refusal') throw new Error('Claude declined to process this content' + (res.stop_details?.explanation ? ': ' + res.stop_details.explanation : '.'));
+  if (res.stop_reason === 'max_tokens') throw new Error('The result was too long and got cut off. Try fewer segments.');
   const txt = (res.content || []).find(b => b.type === 'text')?.text;
-  if (!txt) throw new Error('Claude không trả về nội dung.');
+  if (!txt) throw new Error('Claude returned no content.');
   const out = JSON.parse(txt);
   const m = MODELS.find(x => x[0] === C.model) || MODELS[0], u = res.usage || {};
   const usd = ((u.input_tokens || 0) * m[2] + (u.output_tokens || 0) * m[3]) / 1e6;
@@ -266,24 +267,24 @@ async function organize(c) {
 function apiError(e) {
   const st = e?.status;
   if (e?.code === 'nokey') return e.message;
-  if (st === 401) return 'Khóa API không đúng hoặc đã bị thu hồi (Cài đặt).';
-  if (st === 403) return 'Khóa API không có quyền dùng model này.';
-  if (st === 404) return 'Không tìm thấy model — chọn model khác trong Cài đặt.';
-  if (st === 429) return 'Quá giới hạn tốc độ hoặc hết hạn mức chi tiêu. Thử lại sau ít phút.';
-  if (st === 529 || st >= 500) return 'Máy chủ Claude đang quá tải. Thử lại sau.';
-  if (e instanceof SyntaxError) return 'Kết quả trả về không đúng định dạng. Thử lại.';
-  if (!navigator.onLine) return 'Không có mạng.';
+  if (st === 401) return 'API key is wrong or revoked (Settings).';
+  if (st === 403) return 'This API key cannot use this model.';
+  if (st === 404) return 'Model not found — pick another model in Settings.';
+  if (st === 429) return 'Rate limit or spend limit reached. Try again in a few minutes.';
+  if (st === 529 || st >= 500) return 'Claude is overloaded. Try again later.';
+  if (e instanceof SyntaxError) return 'The result was not in the expected format. Try again.';
+  if (!navigator.onLine) return 'No network connection.';
   return e?.message || String(e);
 }
 
 // ---------- kiểm tra thông tin định danh trước khi gửi ----------
 function idRisks(c) {
   const txt = c.segs.map(s => s.text).join('\n'), hits = [];
-  if (/(họ tên|họ và tên|tên là|tên bệnh nhân|bệnh nhân tên)/i.test(txt)) hits.push('có nhắc tên người bệnh');
+  if (/(họ tên|họ và tên|tên là|tên bệnh nhân|bệnh nhân tên)/i.test(txt)) hits.push('mentions the patient\'s name');
   const ten = bnOf(c).ten.trim().toLowerCase();
-  if (ten.length > 3 && txt.toLowerCase().includes(ten)) hits.push('có đọc họ tên người bệnh');
-  if (/(?<!\d)(0\d{9}|\d{12})(?!\d)/.test(txt.replace(/[\s.]/g, ''))) hits.push('có dãy số giống số điện thoại / căn cước');
-  if (/(số hồ sơ|mã bệnh án|mã y tế|số vào viện|số căn cước|cccd)/i.test(txt)) hits.push('có nhắc số hồ sơ / căn cước');
+  if (ten.length > 3 && txt.toLowerCase().includes(ten)) hits.push('contains the patient\'s full name');
+  if (/(?<!\d)(0\d{9}|\d{12})(?!\d)/.test(txt.replace(/[\s.]/g, ''))) hits.push('contains a number that looks like a phone / ID number');
+  if (/(số hồ sơ|mã bệnh án|mã y tế|số vào viện|số căn cước|cccd)/i.test(txt)) hits.push('mentions a record / ID number');
   return hits;
 }
 
@@ -306,8 +307,8 @@ const go = h => { if (location.hash === '#' + h) route(); else location.hash = h
 function demoCase() {
   const t = Date.now(), seg = (topic, text, dur, ago) => ({ id: uid(), at: t - ago * 60000, topic, text, dur });
   return {
-    id: uid(), label: 'Ca mẫu', created: t, updated: t, status: 'review', demo: true,
-    bn: { ten: 'Bệnh nhân Mẫu (giả)', tuoi: '68', gioi: 'nam', phong: '12', can_nang: '62', dtd: true, bmv: false, creat: '160' },
+    id: uid(), label: 'Sample case', created: t, updated: t, status: 'review', demo: true,
+    bn: { ten: 'Sample Patient (fake)', tuoi: '68', gioi: 'nam', phong: '12', can_nang: '62', dtd: true, bmv: false, creat: '160' },
     pad: { side: 'phải', sym: 'tissue', tm: 'below', w: '1', fi: '0', abi: '0.45', tp: '25' },
     segs: [
       seg('', 'bệnh nhân nam 68 tuổi phòng 12 khoa phẫu thuật mạch máu vào viện ngày 20 tháng 11 vì đau nhức bàn chân phải và vết loét ngón 1 chân phải', 18, 30),
@@ -344,7 +345,7 @@ function demoCase() {
         { goc: 'a bê i', chuan: 'ABI' }, { goc: 'đốp lơ', chuan: 'Doppler' }, { goc: 'mi li gam', chuan: 'mg' },
         { goc: 'hba1c', chuan: 'HbA1c' }, { goc: 'ngón 1', chuan: 'ngón I' },
       ],
-      usage: { in: 3120, out: 1450, usd: 0.0415, model: 'ca mẫu (không gọi API)' }, at: t, segCount: 7,
+      usage: { in: 3120, out: 1450, usd: 0.0415, model: 'sample case (no API call)' }, at: t, segCount: 7,
     },
   };
 }
@@ -361,16 +362,16 @@ function egfr(b) {
   return 142 * Math.min(s, 1) ** a * Math.max(s, 1) ** -1.2 * 0.9938 ** age * (f ? 1.012 : 1);
 }
 const ckdG = e => (e >= 90 ? 'G1' : e >= 60 ? 'G2' : e >= 45 ? 'G3a' : e >= 30 ? 'G3b' : e >= 15 ? 'G4' : 'G5');
-const caseName = c => bnOf(c).ten.trim() || c.label || 'Ca chưa đặt tên';
-function caseSub(c) { const b = bnOf(c); return [b.tuoi && `${b.tuoi} tuổi`, b.phong && `Phòng ${b.phong}`].filter(Boolean).join(' · '); }
+const caseName = c => bnOf(c).ten.trim() || c.label || 'Unnamed case';
+function caseSub(c) { const b = bnOf(c); return [b.tuoi && `${b.tuoi} y`, b.phong && `Room ${b.phong}`].filter(Boolean).join(' · '); }
 /** Thẻ hiện ở danh sách: phân độ PAD + bệnh nền ảnh hưởng điều trị. */
 function caseTags(c) {
   const b = bnOf(c), t = [];
   if (c.pad?.sym && typeof PAD !== 'undefined') t.push(['pad', padCalc({ ...PAD_DEF, ...c.pad }).short]);
-  if (b.dtd) t.push(['dtd', 'Đái tháo đường']);
-  if (b.bmv) t.push(['bmv', 'BMV mạn đã can thiệp']);
+  if (b.dtd) t.push(['dtd', 'Diabetes']);
+  if (b.bmv) t.push(['bmv', 'CAD s/p PCI/CABG']);
   const e = egfr(b);
-  if (e != null && e < 60) t.push(['ckd', `Suy thận ${ckdG(e)} · eGFR ${Math.round(e)}`]);
+  if (e != null && e < 60) t.push(['ckd', `CKD ${ckdG(e)} · eGFR ${Math.round(e)}`]);
   return t;
 }
 const tagsHtml = c => { const t = caseTags(c); return t.length ? `<span class="tags">${t.map(([k, l]) => `<em class="tag ${k}">${esc(l)}</em>`).join('')}</span>` : ''; };
@@ -378,17 +379,17 @@ function bnBlock(c) {
   const b = bnOf(c), e = egfr(b);
   const tx = (k, l, ph, type = 'text', extra = '') => `<label class="bn-f">${l}<input name="${k}" type="${type}" value="${esc(b[k])}" placeholder="${ph}" ${extra}></label>`;
   return `<details class="bn"${b.ten ? '' : ' open'}>
-    <summary><span class="bn-s"><b>${esc(caseName(c))}</b><small>${esc(caseSub(c)) || 'Chạm để nhập tên, tuổi, phòng'}</small></span>${tagsHtml(c)}</summary>
+    <summary><span class="bn-s"><b>${esc(caseName(c))}</b><small>${esc(caseSub(c)) || 'Tap to enter name, age, room'}</small></span>${tagsHtml(c)}</summary>
     <form class="bn-form" autocomplete="off" onsubmit="return false">
-      ${tx('ten', 'Họ tên', 'Chỉ lưu trên máy, không gửi Claude', 'text', 'class="wide-in"')}
-      <div class="bn-row">${tx('tuoi', 'Tuổi', '68', 'number', 'inputmode="numeric" min="0" max="120"')}
-        <label class="bn-f">Giới<select name="gioi"><option value=""${!b.gioi ? ' selected' : ''}>—</option><option value="nam"${b.gioi === 'nam' ? ' selected' : ''}>Nam</option><option value="nu"${b.gioi === 'nu' ? ' selected' : ''}>Nữ</option></select></label>
-        ${tx('phong', 'Phòng', '12')}${tx('can_nang', 'Cân nặng (kg)', '60', 'number', 'inputmode="decimal" min="0" step="0.1"')}</div>
-      <div class="bn-chk"><label><input type="checkbox" name="dtd"${b.dtd ? ' checked' : ''}> Đái tháo đường</label>
-        <label><input type="checkbox" name="bmv"${b.bmv ? ' checked' : ''}> Bệnh mạch vành mạn đã can thiệp (PCI / CABG)</label></div>
-      <div class="bn-row">${tx('creat', 'Creatinin (µmol/L)', '90', 'number', 'inputmode="decimal" min="0" step="1"')}
-        <p class="bn-egfr">${e != null ? `eGFR <b>${Math.round(e)}</b> mL/phút/1,73 m² · <b>${ckdG(e)}</b>` : 'eGFR: nhập creatinin, tuổi, giới'}</p></div>
-      <p class="small muted" style="margin:0">eGFR theo CKD-EPI 2021; thẻ "Suy thận" hiện khi eGFR &lt; 60 (G3a–G5). Bệnh nền và creatinin được điền tự động khi Claude sắp xếp (nếu có đọc); bác sĩ sửa được.</p>
+      ${tx('ten', 'Full name', 'Kept on device, never sent to Claude', 'text', 'class="wide-in"')}
+      <div class="bn-row">${tx('tuoi', 'Age', '68', 'number', 'inputmode="numeric" min="0" max="120"')}
+        <label class="bn-f">Sex<select name="gioi"><option value=""${!b.gioi ? ' selected' : ''}>—</option><option value="nam"${b.gioi === 'nam' ? ' selected' : ''}>Male</option><option value="nu"${b.gioi === 'nu' ? ' selected' : ''}>Female</option></select></label>
+        ${tx('phong', 'Room', '12')}${tx('can_nang', 'Weight (kg)', '60', 'number', 'inputmode="decimal" min="0" step="0.1"')}</div>
+      <div class="bn-chk"><label><input type="checkbox" name="dtd"${b.dtd ? ' checked' : ''}> Diabetes mellitus</label>
+        <label><input type="checkbox" name="bmv"${b.bmv ? ' checked' : ''}> Chronic coronary artery disease, revascularised (PCI / CABG)</label></div>
+      <div class="bn-row">${tx('creat', 'Creatinine (µmol/L)', '90', 'number', 'inputmode="decimal" min="0" step="1"')}
+        <p class="bn-egfr">${e != null ? `eGFR <b>${Math.round(e)}</b> mL/min/1.73 m² · <b>${ckdG(e)}</b>` : 'eGFR: enter creatinine, age, sex'}</p></div>
+      <p class="small muted" style="margin:0">eGFR by CKD-EPI 2021; the "CKD" tag shows when eGFR &lt; 60 (G3a–G5). Comorbidities and creatinine are filled in automatically when Claude organises the case (if dictated); you can edit them.</p>
     </form>
   </details>`;
 }
@@ -400,8 +401,8 @@ function wireBn(c, root) {
     b.dtd = fd.has('dtd'); b.bmv = fd.has('bmv');
     c.bn = b;
     const e = egfr(b);
-    root.querySelector('.bn-egfr').innerHTML = e != null ? `eGFR <b>${Math.round(e)}</b> mL/phút/1,73 m² · <b>${ckdG(e)}</b>` : 'eGFR: nhập creatinin, tuổi, giới';
-    root.querySelector('summary').innerHTML = `<span class="bn-s"><b>${esc(caseName(c))}</b><small>${esc(caseSub(c)) || 'Chạm để nhập tên, tuổi, phòng'}</small></span>${tagsHtml(c)}`;
+    root.querySelector('.bn-egfr').innerHTML = e != null ? `eGFR <b>${Math.round(e)}</b> mL/min/1.73 m² · <b>${ckdG(e)}</b>` : 'eGFR: enter creatinine, age, sex';
+    root.querySelector('summary').innerHTML = `<span class="bn-s"><b>${esc(caseName(c))}</b><small>${esc(caseSub(c)) || 'Tap to enter name, age, room'}</small></span>${tagsHtml(c)}`;
   };
   fm.addEventListener('input', upd);
   fm.addEventListener('change', () => { upd(); touch(c); });
@@ -410,7 +411,8 @@ function wireBn(c, root) {
 // ---------- Heparin (logic ở heparin.js, bản chuyển từ scripts/heparin/*.ts — Dager 2018, ASHP) ----------
 const HEP_VI = { vte: 'VTE (huyết khối TM sâu / thuyên tắc phổi)', stemi_rtpa: 'NMCT ST chênh lên + rt-PA liều đầy đủ', stemi_combo_rtpa: 'NMCT ST chênh lên + rt-PA phối hợp', nstemi_ua: 'NMCT không ST chênh lên / đau thắt ngực không ổn định', pci_with_gp: 'PCI có thuốc ức chế GP IIb/IIIa', pci_without_gp: 'PCI không có GP IIb/IIIa' };
 const HEP_DEF = { proto: 'vte', iu: '25000', ml: '50', rate: '', aptt: '' };
-const vn = (x, d = 1) => Number(x).toLocaleString('vi-VN', { maximumFractionDigits: d });
+const vn = (x, d = 1) => Number(x).toLocaleString('vi-VN', { maximumFractionDigits: d }); // dòng chèn vào bản tóm tắt (tiếng Việt)
+const en = (x, d = 1) => Number(x).toLocaleString('en-US', { maximumFractionDigits: d }); // giao diện
 function hepCalc(c) {
   const h = Object.assign({}, HEP_DEF, c.hep || {}), p = HEP.getProtocol(h.proto), w = numv(bnOf(c).can_nang);
   const iu = numv(h.iu), ml = numv(h.ml), conc = iu > 0 && ml > 0 ? iu / ml : null;
@@ -434,38 +436,38 @@ function hepLines(r) {
   return { init, adj };
 }
 function paneHeparin(c, $p) {
-  if (typeof HEP === 'undefined') { $p.innerHTML = '<div class="notice">Không tải được phần tính heparin.</div>'; return; }
+  if (typeof HEP === 'undefined') { $p.innerHTML = '<div class="notice">Could not load the heparin calculator.</div>'; return; }
   const hset = o => { c.hep = { ...Object.assign({}, HEP_DEF, c.hep || {}), ...o }; };
-  const band = b => (b.noChange ? 'Giữ nguyên' : [b.bolusPerKg > 0 && `bolus ${b.bolusPerKg} UI/kg${b.bolusMaxIu ? ` (tối đa ${vn(b.bolusMaxIu, 0)})` : ''}`, b.holdOneHour && 'ngưng 1 giờ', `${b.ratePerKg > 0 ? 'tăng' : 'giảm'} ${Math.abs(b.ratePerKg)} UI/kg/giờ`].filter(Boolean).join(', '));
-  const ins = k => `<div class="row"><button type="button" class="grow" data-ins="${k}">Chèn vào Phương pháp điều trị</button><button type="button" class="ghost" data-cp="${k}">Chép</button></div>`;
+  const band = b => (b.noChange ? 'No change' : [b.bolusPerKg > 0 && `bolus ${b.bolusPerKg} IU/kg${b.bolusMaxIu ? ` (max ${en(b.bolusMaxIu, 0)})` : ''}`, b.holdOneHour && 'hold 1 hr', `${b.ratePerKg > 0 ? 'increase' : 'decrease'} ${Math.abs(b.ratePerKg)} IU/kg/hr`].filter(Boolean).join(', '));
+  const ins = k => `<div class="row"><button type="button" class="grow" data-ins="${k}">Insert into Treatment</button><button type="button" class="ghost" data-cp="${k}">Copy</button></div>`;
   let L = {};
   // phần tĩnh (ô nhập giữ nguyên khi gõ, để bàn phím iPhone không bị đóng)
   const build = () => {
     const r = hepCalc(c), { h, p } = r, adv = h.proto !== 'vte';
     $p.innerHTML = `
-      <div class="notice"><b>Phác đồ ${esc(HEP_VI[p.id])}</b>${p.calculable ? ` — bolus ${p.bolusPerKg} UI/kg${p.bolusMaxIu ? ` (tối đa ${vn(p.bolusMaxIu, 0)} UI)` : ''}, truyền ${p.infusionPerKgHr} UI/kg/giờ${p.infusionMaxIuPerHr ? ` (tối đa ${vn(p.infusionMaxIuPerHr, 0)} UI/giờ)` : ''}, aPTT đích ${p.targetAPTT.low}–${p.targetAPTT.high} giây` : ' — theo dõi bằng ACT, không chỉnh theo aPTT'}. Theo Dager 2018 (ASHP). Bác sĩ kiểm tra liều trước khi dùng; phác đồ của bệnh viện được ưu tiên.${adv ? ' <button type="button" class="linkbtn" id="tovte">Về phác đồ VTE</button>' : ''}</div>
+      <div class="notice"><b>${esc(p.name)} protocol</b>${p.calculable ? ` — bolus ${p.bolusPerKg} IU/kg${p.bolusMaxIu ? ` (max ${en(p.bolusMaxIu, 0)} IU)` : ''}, infusion ${p.infusionPerKgHr} IU/kg/hr${p.infusionMaxIuPerHr ? ` (max ${en(p.infusionMaxIuPerHr, 0)} IU/hr)` : ''}, target aPTT ${p.targetAPTT.low}–${p.targetAPTT.high} sec` : ' — monitored by ACT, no aPTT adjustment'}. Per Dager 2018 (ASHP). Verify doses before administration; institutional protocol takes precedence.${adv ? ' <button type="button" class="linkbtn" id="tovte">Back to VTE protocol</button>' : ''}</div>
       <form class="card hp hp-in" autocomplete="off" onsubmit="return false">
         <div class="bn-row">
-          <label class="bn-f">Cân nặng (kg)<input name="w" type="number" inputmode="decimal" min="0" step="0.1" value="${esc(bnOf(c).can_nang)}" placeholder="60"></label>
-          ${p.calculable ? `<label class="bn-f">Heparin (UI)<input name="iu" type="number" inputmode="numeric" min="0" value="${esc(h.iu)}"></label>
-          <label class="bn-f">Pha trong (mL)<input name="ml" type="number" inputmode="decimal" min="0" value="${esc(h.ml)}"></label>` : ''}
+          <label class="bn-f">Weight (kg)<input name="w" type="number" inputmode="decimal" min="0" step="0.1" value="${esc(bnOf(c).can_nang)}" placeholder="60"></label>
+          ${p.calculable ? `<label class="bn-f">Heparin (IU)<input name="iu" type="number" inputmode="numeric" min="0" value="${esc(h.iu)}"></label>
+          <label class="bn-f">Diluted in (mL)<input name="ml" type="number" inputmode="decimal" min="0" value="${esc(h.ml)}"></label>` : ''}
         </div>
         <div id="hpconc" class="small muted"></div>
       </form>
-      ${!p.calculable ? `<div class="card hp"><h3>Liều bolus</h3><div id="hpact"></div><p class="small">ACT đích: ${esc(p.actTargetLabel)}</p><p class="small muted">${esc(p.notes)}</p></div>` : `
-      <div class="card hp"><h3>Liều khởi đầu</h3><div id="hpinit"></div>${ins('init')}</div>
-      <div class="card hp"><h3>Chỉnh liều theo aPTT</h3>
+      ${!p.calculable ? `<div class="card hp"><h3>Bolus dose</h3><div id="hpact"></div><p class="small">ACT target: ${esc(p.actTargetLabel)}</p><p class="small muted">${esc(p.notes)}</p></div>` : `
+      <div class="card hp"><h3>Initial dose</h3><div id="hpinit"></div>${ins('init')}</div>
+      <div class="card hp"><h3>aPTT adjustment</h3>
         <form class="bn-row" autocomplete="off" onsubmit="return false">
-          <label class="bn-f">Đang truyền (mL/giờ)<input name="rate" type="number" inputmode="decimal" min="0" step="0.1" value="${esc(h.rate)}"></label>
-          <label class="bn-f">aPTT (giây)<input name="aptt" type="number" inputmode="decimal" min="0" step="1" value="${esc(h.aptt)}" placeholder="75"></label>
+          <label class="bn-f">Current rate (mL/hr)<input name="rate" type="number" inputmode="decimal" min="0" step="0.1" value="${esc(h.rate)}"></label>
+          <label class="bn-f">aPTT (sec)<input name="aptt" type="number" inputmode="decimal" min="0" step="1" value="${esc(h.aptt)}" placeholder="75"></label>
         </form>
         <div id="hpadj"></div>${ins('adj')}
-        <table class="hp-tab"><tr><th>aPTT (giây)</th><th>Xử trí</th></tr>${p.apttBands.map(b => `<tr class="${b.noChange ? 'ok' : b.holdOneHour || b.from === 0 ? 'hi' : ''}"><td>${HEP.formatBandRange(b)}</td><td>${band(b)}</td></tr>`).join('')}</table>
+        <table class="hp-tab"><tr><th>aPTT (sec)</th><th>Action</th></tr>${p.apttBands.map(b => `<tr class="${b.noChange ? 'ok' : b.holdOneHour || b.from === 0 ? 'hi' : ''}"><td>${HEP.formatBandRange(b)}</td><td>${band(b)}</td></tr>`).join('')}</table>
       </div>`}
-      <details class="card hp-adv"${adv ? ' open' : ''}><summary>Nâng cao: phác đồ khác (tim mạch, PCI)</summary>
-        <label class="bn-f">Phác đồ<select id="proto">${HEP.PROTOCOLS.map(x => `<option value="${x.id}"${x.id === p.id ? ' selected' : ''}>${esc(HEP_VI[x.id])}${x.calculable ? '' : ' · ACT'}</option>`).join('')}</select></label>
+      <details class="card hp-adv"${adv ? ' open' : ''}><summary>Advanced: other protocols (cardiac, PCI)</summary>
+        <label class="bn-f">Protocol<select id="proto">${HEP.PROTOCOLS.map(x => `<option value="${x.id}"${x.id === p.id ? ' selected' : ''}>${esc(x.name)}${x.calculable ? '' : ' · ACT'}</option>`).join('')}</select></label>
         <p class="small muted">${esc(p.notes)} <i>(${esc(p.citation)})</i></p>
-        <details><summary class="small">Tài liệu tham khảo (${HEP.REFERENCES.length})</summary><ol class="small">${HEP.REFERENCES.map(x => `<li>${esc(x.title)}. <span class="muted">${esc(x.source)}, ${x.year}.</span> <a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">link</a></li>`).join('')}</ol></details>
+        <details><summary class="small">References (${HEP.REFERENCES.length})</summary><ol class="small">${HEP.REFERENCES.map(x => `<li>${esc(x.title)}. <span class="muted">${esc(x.source)}, ${x.year}.</span> <a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">link</a></li>`).join('')}</ol></details>
       </details>`;
     $p.querySelectorAll('input[name]').forEach(el => {
       el.addEventListener('input', () => { if (el.name === 'w') c.bn = { ...bnOf(c), can_nang: el.value.trim() }; else hset({ [el.name]: el.value.trim() }); upd(); });
@@ -478,11 +480,11 @@ function paneHeparin(c, $p) {
       const line = L[b.dataset.ins]; if (!line) return;
       if (!c.form) c.form = Object.fromEntries(FKEYS.map(k => [k, '']));
       c.form.dieu_tri = (c.form.dieu_tri.trim() ? c.form.dieu_tri.trim() + '\n' : '') + line;
-      touch(c); toast('Đã chèn vào Phương pháp điều trị (tab Duyệt)');
+      touch(c); toast('Inserted into Treatment (Review tab)');
     }));
     $p.querySelectorAll('[data-cp]').forEach(b => (b.onclick = async () => {
       const line = L[b.dataset.cp]; if (!line) return;
-      try { await navigator.clipboard.writeText(line.replace(/^- /, '')); toast('Đã chép'); } catch { toast('Không chép được'); }
+      try { await navigator.clipboard.writeText(line.replace(/^- /, '')); toast('Copied'); } catch { toast('Could not copy'); }
     }));
     upd();
   };
@@ -490,21 +492,21 @@ function paneHeparin(c, $p) {
   const upd = () => {
     const r = hepCalc(c), { p, w } = r, q = s => $p.querySelector(s);
     L = hepLines(r);
-    q('#hpconc').innerHTML = (p.calculable ? (r.conc ? `Nồng độ ${vn(r.conc)} UI/mL` : 'Nhập lượng heparin và thể tích pha') : '') + (w > 200 ? '<p class="flag">Cân nặng &gt; 200 kg — kiểm tra lại.</p>' : '');
+    q('#hpconc').innerHTML = (p.calculable ? (r.conc ? `Concentration ${en(r.conc)} IU/mL` : 'Enter heparin amount and diluent volume') : '') + (w > 200 ? '<p class="flag">Weight &gt; 200 kg — please double-check.</p>' : '');
     if (!p.calculable) {
-      q('#hpact').innerHTML = `<p class="hp-big">${w > 0 ? (p.id === 'pci_with_gp' ? `${vn(50 * w, 0)}–${vn(70 * w, 0)} UI` : `${vn(70 * w, 0)}–${vn(100 * w, 0)} UI`) : esc(p.bolusRangeLabel)}</p>`;
+      q('#hpact').innerHTML = `<p class="hp-big">${w > 0 ? (p.id === 'pci_with_gp' ? `${en(50 * w, 0)}–${en(70 * w, 0)} IU` : `${en(70 * w, 0)}–${en(100 * w, 0)} IU`) : esc(p.bolusRangeLabel)}</p>`;
       return;
     }
-    q('#hpinit').innerHTML = r.init ? `<div class="hp-res"><div><small>Bolus TM</small><b>${vn(r.init.bolus.iu, 0)} UI</b><span>${vn(r.init.bolus.mL)} mL${r.init.bolusCapped ? ' · đã giới hạn tối đa' : ''}</span></div>
-      <div><small>Truyền liên tục</small><b>${vn(r.init.infusion.mLPerHr)} mL/giờ</b><span>${vn(r.init.infusion.iuPerHr, 0)} UI/giờ${r.init.infusionCapped ? ' · đã giới hạn tối đa' : ''}</span></div></div>`
-      : '<p class="small muted" style="margin:0">Nhập cân nặng (ở đây hoặc phần thông tin người bệnh).</p>';
+    q('#hpinit').innerHTML = r.init ? `<div class="hp-res"><div><small>IV bolus</small><b>${en(r.init.bolus.iu, 0)} IU</b><span>${en(r.init.bolus.mL)} mL${r.init.bolusCapped ? ' · capped at max' : ''}</span></div>
+      <div><small>Continuous infusion</small><b>${en(r.init.infusion.mLPerHr)} mL/hr</b><span>${en(r.init.infusion.iuPerHr, 0)} IU/hr${r.init.infusionCapped ? ' · capped at max' : ''}</span></div></div>`
+      : '<p class="small muted" style="margin:0">Enter the weight (here or in the patient info).</p>';
     q('[name="rate"]').placeholder = r.init ? String(r.init.infusion.mLPerHr) : '';
     const a = r.adj;
-    q('#hpadj').innerHTML = a ? `${a.holdOneHour ? '<p class="hp-stop">Ngưng truyền 1 giờ, sau đó chạy lại với tốc độ mới.</p>' : ''}
-      <div class="hp-res">${a.noChange ? `<div class="ok"><small>aPTT trong đích</small><b>Giữ nguyên</b><span>${vn(r.rateMl)} mL/giờ</span></div>` : `
-        ${a.bolusSurcharge ? `<div><small>Bolus thêm</small><b>${vn(a.bolusSurcharge.iu, 0)} UI</b><span>${vn(a.bolusSurcharge.mL)} mL</span></div>` : ''}
-        <div><small>Tốc độ mới</small><b>${vn(a.newRateMlPerHr)} mL/giờ</b><span>${vn(a.newRateIuPerHr, 0)} UI/giờ${a.newRateIuPerHr === 0 ? ' · tối thiểu 0' : ''}</span></div>`}</div>`
-      : '<p class="small muted" style="margin:0">Nhập aPTT mới nhất; để trống "Đang truyền" thì lấy tốc độ khởi đầu.</p>';
+    q('#hpadj').innerHTML = a ? `${a.holdOneHour ? '<p class="hp-stop">Hold the infusion for 1 hour, then restart at the new rate.</p>' : ''}
+      <div class="hp-res">${a.noChange ? `<div class="ok"><small>aPTT in target range</small><b>No change</b><span>${en(r.rateMl)} mL/hr</span></div>` : `
+        ${a.bolusSurcharge ? `<div><small>Additional bolus</small><b>${en(a.bolusSurcharge.iu, 0)} IU</b><span>${en(a.bolusSurcharge.mL)} mL</span></div>` : ''}
+        <div><small>New rate</small><b>${en(a.newRateMlPerHr)} mL/hr</b><span>${en(a.newRateIuPerHr, 0)} IU/hr${a.newRateIuPerHr === 0 ? ' · minimum 0' : ''}</span></div>`}</div>`
+      : '<p class="small muted" style="margin:0">Enter the latest aPTT; if "Current rate" is empty, the initial rate is used.</p>';
     $p.querySelectorAll('[data-ins="init"],[data-cp="init"]').forEach(b => (b.disabled = !L.init));
     $p.querySelectorAll('[data-ins="adj"],[data-cp="adj"]').forEach(b => (b.disabled = !L.adj));
   };
@@ -515,11 +517,11 @@ function paneHeparin(c, $p) {
 function renderList() {
   const cs = [...S.cases].sort((a, b) => b.updated - a.updated);
   $app.innerHTML = `
-    ${!C.key ? `<div class="notice"><b>Bắt đầu:</b> vào <a href="#cai-dat">Cài đặt</a> dán khóa API Claude (chỉ lưu trên máy này). Ghi âm vẫn dùng được khi chưa có khóa.</div>` : ''}
-    <button class="newcase" type="button" id="new">+ Ca mới</button>
-    <div class="cases">${cs.map(c => `<button class="case" type="button" data-id="${c.id}"><b>${esc(caseName(c))}</b><span>${esc(caseSub(c)) || '—'}</span><i><span class="st ${c.status}">${STATUS[c.status]}</span></i>${tagsHtml(c)}</button>`).join('') || '<p class="empty">Chưa có ca nào.</p>'}</div>
-    <button class="ghost demo" type="button" id="demo">Xem ca mẫu (bệnh nhân giả)</button>
-    <p class="muted small">${syncLine()}${C.keepDays > 0 ? `, tự xóa sau ${C.keepDays} ngày không sửa` : ''}. Khi ghi, không đọc họ tên, số điện thoại, số hồ sơ của người bệnh.</p>`;
+    ${!C.key ? `<div class="notice"><b>Getting started:</b> open <a href="#cai-dat">Settings</a> and paste a Claude API key (stored on this device only). Dictation works without a key.</div>` : ''}
+    <button class="newcase" type="button" id="new">+ New case</button>
+    <div class="cases">${cs.map(c => `<button class="case" type="button" data-id="${c.id}"><b>${esc(caseName(c))}</b><span>${esc(caseSub(c)) || '—'}</span><i><span class="st ${c.status}">${STATUS[c.status]}</span></i>${tagsHtml(c)}</button>`).join('') || '<p class="empty">No cases yet.</p>'}</div>
+    <button class="ghost demo" type="button" id="demo">View sample case (fake patient)</button>
+    <p class="muted small">${syncLine()}${C.keepDays > 0 ? `; auto-deleted after ${C.keepDays} days without edits` : ''}. When dictating, do not say the patient's name, phone or record number.</p>`;
   document.getElementById('new').onclick = () => {
     const c = { id: uid(), label: '', bn: { ...BN_DEF }, created: Date.now(), updated: Date.now(), status: 'draft', segs: [], form: null, meta: null };
     S.cases.push(c); save(); go('c/' + c.id + '/ghi');
@@ -536,13 +538,13 @@ function renderList() {
 function renderCase(c, tab) {
   $app.innerHTML = `
     <div class="casehead">
-      <div class="row"><button class="back" type="button" id="back">‹ Danh sách ca</button><button class="back delcase" type="button" id="delcase">Xóa ca</button></div>
+      <div class="row"><button class="back" type="button" id="back">‹ Cases</button><button class="back delcase" type="button" id="delcase">Delete case</button></div>
       ${bnBlock(c)}
-      <div class="tabs" role="tablist">${[['ghi', 'Ghi'], ['duyet', 'Duyệt'], ['hep', 'Heparin'], ['xuat', 'Xuất']].map(([k, l]) => `<button type="button" role="tab" data-t="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div>
+      <div class="tabs" role="tablist">${[['ghi', 'Record'], ['duyet', 'Review'], ['hep', 'Heparin'], ['xuat', 'Export']].map(([k, l]) => `<button type="button" role="tab" data-t="${k}" aria-selected="${k === tab}">${l}</button>`).join('')}</div>
     </div>
     <div id="pane" style="display:grid;gap:12px"></div>`;
   document.getElementById('back').onclick = () => go('');
-  document.getElementById('delcase').onclick = () => { if (confirm(`Xóa vĩnh viễn ca "${caseName(c)}"${c._s ? ' (cả trên Supabase)' : ''}?`)) { forget(c.id); go(''); } };
+  document.getElementById('delcase').onclick = () => { if (confirm(`Permanently delete "${caseName(c)}"${c._s ? ' (also on Supabase)' : ''}?`)) { forget(c.id); go(''); } };
   wireBn(c, $app.querySelector('.casehead'));
   $app.querySelectorAll('.tabs [data-t]').forEach(b => (b.onclick = () => go(`c/${c.id}/${b.dataset.t}`)));
   document.querySelector('.dock')?.remove();
@@ -553,29 +555,29 @@ function renderCase(c, tab) {
 function paneRecord(c, $p) {
   let topic = '';
   $p.innerHTML = `
-    <div class="topics" role="group" aria-label="Chủ đề đoạn sắp ghi">${TOPICS.map(([k, l]) => `<button type="button" data-k="${k}" aria-pressed="${k === topic}">${l}</button>`).join('')}</div>
-    ${SR ? '' : `<div class="notice">Trình duyệt này không có nhận dạng giọng nói. Bấm <b>Gõ tay</b> rồi chạm biểu tượng <b>micro trên bàn phím iPhone</b> để đọc.</div>`}
+    <div class="topics" role="group" aria-label="Topic of the next segment">${TOPICS.map(([k, , l]) => `<button type="button" data-k="${k}" aria-pressed="${k === topic}">${l}</button>`).join('')}</div>
+    ${SR ? '' : `<div class="notice">This browser has no speech recognition. Tap <b>Type</b>, then use the <b>microphone on the iPhone keyboard</b> to dictate.</div>`}
     <div class="segs" id="segs"></div>`;
   const $segs = $p.querySelector('#segs');
   const syncOrg = () => { const b = document.getElementById('org'); if (b) b.disabled = !c.segs.some(s => s.text.trim()); };
   $p.querySelectorAll('.topics button').forEach(b => (b.onclick = () => { topic = b.dataset.k; $p.querySelectorAll('.topics button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); }));
   const drawSegs = () => {
-    $segs.innerHTML = c.segs.map((s, i) => `<div class="seg" data-i="${i}"><div class="meta"><b>Đoạn ${i + 1}</b>${s.topic ? '· ' + esc(TOPIC_NAME[s.topic]) : ''}${s.dur ? ' · ' + mmss(s.dur) : ''}<button class="ghost" type="button" data-del="${i}">Xóa</button></div><textarea aria-label="Nội dung đoạn ${i + 1}">${esc(s.text)}</textarea></div>`).join('')
-      || '<p class="empty">Chọn chủ đề (không bắt buộc) rồi bấm nút đỏ để đọc. Đọc từng đoạn, không cần theo thứ tự bệnh án.</p>';
+    $segs.innerHTML = c.segs.map((s, i) => `<div class="seg" data-i="${i}"><div class="meta"><b>Segment ${i + 1}</b>${s.topic ? '· ' + esc(TOPIC_EN[s.topic]) : ''}${s.dur ? ' · ' + mmss(s.dur) : ''}<button class="ghost" type="button" data-del="${i}">Delete</button></div><textarea aria-label="Segment ${i + 1} text">${esc(s.text)}</textarea></div>`).join('')
+      || '<p class="empty">Pick a topic (optional), then tap the red button to dictate. Dictate in segments, in any order.</p>';
     $segs.querySelectorAll('textarea').forEach(t => { autosize(t); t.oninput = () => autosize(t); t.onchange = () => { c.segs[+t.closest('.seg').dataset.i].text = t.value; touch(c); syncOrg(); }; });
-    $segs.querySelectorAll('[data-del]').forEach(b => (b.onclick = () => { if (confirm('Xóa đoạn này?')) { c.segs.splice(+b.dataset.del, 1); touch(c); drawSegs(); syncOrg(); } }));
+    $segs.querySelectorAll('[data-del]').forEach(b => (b.onclick = () => { if (confirm('Delete this segment?')) { c.segs.splice(+b.dataset.del, 1); touch(c); drawSegs(); syncOrg(); } }));
   };
   drawSegs();
 
   const dock = document.createElement('div');
   dock.className = 'dock';
-  dock.innerHTML = `<div class="in"><button class="side" type="button" id="type">Gõ tay</button><div><button class="rec" type="button" id="rec" aria-label="Bắt đầu ghi"></button><div class="timer" id="timer"></div></div><button class="side" type="button" id="org" ${c.segs.some(s => s.text.trim()) ? '' : 'disabled'}>Sắp xếp →</button></div>`;
+  dock.innerHTML = `<div class="in"><button class="side" type="button" id="type">Type</button><div><button class="rec" type="button" id="rec" aria-label="Start recording"></button><div class="timer" id="timer"></div></div><button class="side" type="button" id="org" ${c.segs.some(s => s.text.trim()) ? '' : 'disabled'}>Organise →</button></div>`;
   document.body.append(dock);
   const $rec = dock.querySelector('#rec'), $timer = dock.querySelector('#timer'), $org = dock.querySelector('#org');
   let live = null, tick = null;
   const finish = () => {
     const t = Dict.stop();
-    clearInterval(tick); $rec.classList.remove('on'); $rec.setAttribute('aria-label', 'Bắt đầu ghi'); $timer.textContent = '';
+    clearInterval(tick); $rec.classList.remove('on'); $rec.setAttribute('aria-label', 'Start recording'); $timer.textContent = '';
     live?.remove(); live = null;
     if (t) { c.segs.push({ id: uid(), at: Date.now(), topic, text: t, dur: Math.round((Date.now() - Dict.started) / 1000) }); c.status = c.form ? 'review' : 'draft'; touch(c); drawSegs(); syncOrg(); }
   };
@@ -584,7 +586,7 @@ function paneRecord(c, $p) {
     if (Dict.active) return finish();
     live = document.createElement('div');
     live.className = 'seg live';
-    live.innerHTML = `<div class="meta"><b>Đang nghe…</b>${topic ? '· ' + esc(TOPIC_NAME[topic]) : ''}</div><p><span class="fin"></span> <span class="interim"></span></p>`;
+    live.innerHTML = `<div class="meta"><b>Listening…</b>${topic ? '· ' + esc(TOPIC_EN[topic]) : ''}</div><p><span class="fin"></span> <span class="interim"></span></p>`;
     $segs.querySelector('.empty')?.remove(); $segs.append(live);
     const ok = await Dict.start((fin, interim, failed) => {
       if (!live) return;
@@ -592,7 +594,7 @@ function paneRecord(c, $p) {
       if (failed) finish();
     });
     if (!ok) return;
-    $rec.classList.add('on'); $rec.setAttribute('aria-label', 'Dừng ghi');
+    $rec.classList.add('on'); $rec.setAttribute('aria-label', 'Stop recording');
     tick = setInterval(() => { $timer.textContent = mmss(Math.round((Date.now() - Dict.started) / 1000)); }, 500);
   };
   dock.querySelector('#type').onclick = () => {
@@ -604,12 +606,12 @@ function paneRecord(c, $p) {
 }
 
 async function runOrganize(c) {
-  if (!c.segs.some(s => s.text.trim())) return toast('Chưa có đoạn nào có nội dung.');
+  if (!c.segs.some(s => s.text.trim())) return toast('No segment has any text yet.');
   const risks = idRisks(c);
-  if (risks.length && !confirm(`Có thể có thông tin định danh (${risks.join('; ')}).\nClaude sẽ thay bằng [ẩn], nhưng nội dung vẫn được gửi đi. Tiếp tục?`)) return;
+  if (risks.length && !confirm(`Possible identifying information (${risks.join('; ')}).\nClaude will replace it with [ẩn], but the text is still sent. Continue?`)) return;
   const busy = document.createElement('div');
   busy.className = 'busy';
-  busy.innerHTML = `<div><div class="spin"></div><p>Claude đang sắp xếp vào mẫu…<br>thường 15–60 giây</p></div>`;
+  busy.innerHTML = `<div><div class="spin"></div><p>Claude is organising the case…<br>usually 15–60 seconds</p></div>`;
   document.body.append(busy);
   try {
     const { out, usage } = await organize(c);
@@ -637,14 +639,14 @@ function padForm(v) {
   const r = (n, val, l) => `<label class="pc-o"><input type="radio" name="${n}" value="${val}"${v[n] === val ? ' checked' : ''}> ${l}</label>`;
   const n = (k, l, u, step = 1) => `<label class="pc-n">${l}<input name="${k}" type="number" inputmode="decimal" min="0" step="${step}" value="${esc(v[k])}">${u ? `<small>${u}</small>` : ''}</label>`;
   return `<form class="pc" onsubmit="return false" autocomplete="off">
-    <div class="pc-g pc-in"><b>Chân</b>${r('side', 'phải', 'Phải')}${r('side', 'trái', 'Trái')}</div>
-    <div class="pc-g pc-in"><b>Triệu chứng nặng nhất</b>${r('sym', 'none', 'Không triệu chứng')}${r('sym', 'claud', 'Đau cách hồi')}${r('sym', 'rest', 'Đau khi nghỉ')}${r('sym', 'tissue', 'Loét / hoại tử')}</div>
-    <div class="pc-g" data-if="claud"><b>Đau cách hồi</b>${n('dist', 'Quãng đường đi không đau', 'm')}
-      <span class="pc-sub">Thảm lăn (5 phút, dốc 12%, 2 mph):</span>${r('tread', 'yes', 'Đi hết')}${r('tread', 'no', 'Không đi hết')}${r('tread', 'na', 'Không làm')}${n('post', 'Áp lực cổ chân sau gắng sức', 'mmHg')}</div>
-    <div class="pc-g" data-if="tissue"><b>Mất mô</b>${r('tm', 'below', 'Dưới mức khớp cổ–bàn ngón')}${r('tm', 'above', 'Trên mức đó / bàn chân không bảo tồn được')}${r('tm', 'unknown', 'Chưa rõ')}
-      <span class="pc-sub">W — vết thương:</span>${r('w', '1', '1 · Loét nhỏ, nông, không lộ xương')}${r('w', '2', '2 · Loét sâu lộ gân/bao khớp/xương, hoặc loét gót nông')}${r('w', '3', '3 · Loét rộng sâu bàn chân trước ± giữa, hoặc loét gót sâu')}
-      <span class="pc-sub">fI — nhiễm trùng bàn chân:</span>${r('fi', '0', '0 · Không')}${r('fi', '1', '1 · Nhẹ, tại chỗ (quầng đỏ 0,5–2 cm)')}${r('fi', '2', '2 · Vừa (quầng đỏ > 2 cm, viêm bạch mạch, áp xe sâu, hoại thư)')}${r('fi', '3', '3 · Nặng (kèm ≥ 2 tiêu chuẩn SIRS)')}</div>
-    <div class="pc-g"><b>Huyết động</b><div class="pc-ns">${n('abi', 'ABI', '', 0.01)}${n('rap', 'Áp lực cổ chân', 'mmHg')}${n('tp', 'Áp lực ngón', 'mmHg')}${n('tc', 'TcPO₂', 'mmHg')}</div></div>
+    <div class="pc-g pc-in"><b>Leg</b>${r('side', 'phải', 'Right')}${r('side', 'trái', 'Left')}</div>
+    <div class="pc-g pc-in"><b>Worst symptom</b>${r('sym', 'none', 'Asymptomatic')}${r('sym', 'claud', 'Claudication')}${r('sym', 'rest', 'Rest pain')}${r('sym', 'tissue', 'Ulcer / gangrene')}</div>
+    <div class="pc-g" data-if="claud"><b>Claudication</b>${n('dist', 'Pain-free walking distance', 'm')}
+      <span class="pc-sub">Treadmill (5 min, 12% grade, 2 mph):</span>${r('tread', 'yes', 'Completed')}${r('tread', 'no', 'Not completed')}${r('tread', 'na', 'Not done')}${n('post', 'Post-exercise ankle pressure', 'mmHg')}</div>
+    <div class="pc-g" data-if="tissue"><b>Tissue loss</b>${r('tm', 'below', 'Distal to transmetatarsal level')}${r('tm', 'above', 'Proximal to TM level / foot not salvageable')}${r('tm', 'unknown', 'Unknown')}
+      <span class="pc-sub">W — wound:</span>${r('w', '1', '1 · Small shallow ulcer, no exposed bone')}${r('w', '2', '2 · Deeper ulcer with exposed tendon/capsule/bone, or shallow heel ulcer')}${r('w', '3', '3 · Extensive deep forefoot ± midfoot ulcer, or deep heel ulcer')}
+      <span class="pc-sub">fI — foot infection:</span>${r('fi', '0', '0 · None')}${r('fi', '1', '1 · Mild, local (erythema 0.5–2 cm)')}${r('fi', '2', '2 · Moderate (erythema > 2 cm, lymphangitis, deep abscess, gangrene)')}${r('fi', '3', '3 · Severe (≥ 2 SIRS criteria)')}</div>
+    <div class="pc-g"><b>Haemodynamics</b><div class="pc-ns">${n('abi', 'ABI', '', 0.01)}${n('rap', 'Ankle pressure', 'mmHg')}${n('tp', 'Toe pressure', 'mmHg')}${n('tc', 'TcPO₂', 'mmHg')}</div></div>
   </form><div class="pc-res"></div>`;
 }
 function padCalc(v) {
@@ -655,32 +657,34 @@ function padCalc(v) {
     hasRestPain: rest, restingApMmhg: num('rap'), toePressureMmhg: num('tp'), hasClaudication: claud,
     completesTreadmill: { yes: true, no: false }[v.tread] ?? null, postExerciseApMmhg: num('post'), restingApForClaudication: num('rap') });
   const lines = [`Fontaine ${f.stage} (${FONT_VI[f.stage]})`, `Rutherford độ ${ru.grade}, nhóm ${ru.category} (${RUTH_VI[ru.category]})`];
+  const linesEn = [`Fontaine ${f.stage} — ${f.description}`, `Rutherford grade ${ru.grade}, category ${ru.category} — ${ru.description}`];
   const warns = [...f.warnings, ...ru.warnings];
   let wifi = '', ws = '';
   if (rest || tissue) {
     const m = { abi: num('abi'), anklePressureMmhg: num('rap'), toePressureMmhg: num('tp'), tcpo2Mmhg: num('tc') };
-    if (Object.values(m).every(x => x == null)) wifi = 'WIfI: cần ít nhất một chỉ số tưới máu (ABI, áp lực cổ chân, áp lực ngón hoặc TcPO₂).';
+    if (Object.values(m).every(x => x == null)) wifi = 'WIfI: needs at least one perfusion measure (ABI, ankle pressure, toe pressure or TcPO₂).';
     else {
       const w = tissue ? +v.w : 0, fi = tissue ? +v.fi : 0, i = PAD.scoreWifiIschemia(m), r = PAD.classifyWifi({ w, i, fi });
       ws = ` · WIfI ${r.clinical_stage}`;
       lines.push(`WIfI W${w} I${i} fI${fi} → giai đoạn ${r.clinical_stage} (nguy cơ cắt cụt 1 năm ${LVL_VI[r.clinical_stage]}; lợi ích tái thông ${LVL_VI[r.revasc_benefit]})`);
+      linesEn.push(`WIfI W${w} I${i} fI${fi} → stage ${r.clinical_stage} (${r.amp_risk_description}; ${r.revasc_benefit_description})`);
       warns.push(...r.notes);
     }
   }
-  return { text: `- Phân độ (chân ${v.side}): ${lines.join('; ')}.`, lines, wifi, warns, short: `Fontaine ${f.stage} · R${ru.category}${ws}` };
+  return { text: `- Phân độ (chân ${v.side}): ${lines.join('; ')}.`, lines, linesEn, wifi, warns, short: `Fontaine ${f.stage} · R${ru.category}${ws}` };
 }
 function padPanel(c, box, t, onInsert) {
   const v = Object.assign({}, PAD_DEF, c.pad || {});
-  box.innerHTML = padForm(v) + `<div class="row"><button type="button" class="grow pc-ins">Chèn vào mục</button><button type="button" class="ghost pc-x">Đóng</button></div>
-    <p class="small muted" style="margin:0">Theo Fontaine 1954, Rutherford 1986, WIfI (Mills 2014). Công cụ hỗ trợ, bác sĩ quyết định.</p>`;
+  box.innerHTML = padForm(v) + `<div class="row"><button type="button" class="grow pc-ins">Insert into field</button><button type="button" class="ghost pc-x">Close</button></div>
+    <p class="small muted" style="margin:0">Per Fontaine 1954, Rutherford 1986, WIfI (Mills 2014). Decision support only. The inserted line is in Vietnamese.</p>`;
   const fm = box.querySelector('form'), res = box.querySelector('.pc-res');
   let out;
   const upd = () => {
     new FormData(fm).forEach((x, k) => (v[k] = x));
     fm.querySelectorAll('[data-if]').forEach(g => (g.hidden = g.dataset.if !== v.sym));
     out = padCalc(v);
-    res.innerHTML = `<ul>${out.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>${out.wifi ? `<p class="small muted">${esc(out.wifi)}</p>` : ''}
-      ${out.warns.length ? `<details><summary>Lưu ý (${out.warns.length})</summary><ul class="small">${out.warns.map(w => `<li>${esc(w)}</li>`).join('')}</ul></details>` : ''}`;
+    res.innerHTML = `<ul>${out.linesEn.map(l => `<li>${esc(l)}</li>`).join('')}</ul>${out.wifi ? `<p class="small muted">${esc(out.wifi)}</p>` : ''}
+      ${out.warns.length ? `<details><summary>Notes (${out.warns.length})</summary><ul class="small">${out.warns.map(w => `<li>${esc(w)}</li>`).join('')}</ul></details>` : ''}`;
   };
   fm.addEventListener('input', upd); fm.addEventListener('change', upd); upd();
   box.querySelector('.pc-x').onclick = () => { c.pad = { ...v }; touch(c); box.hidden = true; };
@@ -695,8 +699,8 @@ function padPanel(c, box, t, onInsert) {
 
 function paneReview(c, $p) {
   if (!c.form) {
-    $p.innerHTML = `<div class="notice">Chưa sắp xếp vào mẫu. Ghi các đoạn ở tab <b>Ghi</b> rồi bấm <b>Sắp xếp</b>.</div>
-      ${c.segs.length ? `<button type="button" id="org">Sắp xếp ${c.segs.length} đoạn vào mẫu</button>` : ''}`;
+    $p.innerHTML = `<div class="notice">Not organised yet. Dictate segments in the <b>Record</b> tab, then tap <b>Organise</b>.</div>
+      ${c.segs.length ? `<button type="button" id="org">Organise ${c.segs.length} segment${c.segs.length > 1 ? 's' : ''} into the form</button>` : ''}`;
     $p.querySelector('#org')?.addEventListener('click', () => runOrganize(c));
     return;
   }
@@ -704,19 +708,19 @@ function paneReview(c, $p) {
   const nEmpty = FKEYS.filter(k => !c.form[k].trim()).length;
   const newSegs = c.segs.length - (m.segCount || 0);
   $p.innerHTML = `
-    <div class="notice">${nEmpty ? `<b>${nEmpty} mục còn trống</b> (nền vàng) — chạm 🎤 để nói thẳng vào mục, hoặc gõ. ` : ''}${flags.length ? `<b>${flags.length} chỗ cần kiểm tra</b> (cam). ` : ''}Mã ICD-10 chỉ là gợi ý, cần bác sĩ xác nhận.${newSegs > 0 ? ` <b>${newSegs} đoạn mới</b> chưa sắp xếp.` : ''}</div>
-    ${norm.length ? `<details class="norm"><summary>Thuật ngữ đã chuẩn hóa (${norm.length})</summary><ul>${norm.map(n => `<li>“${esc(n.goc)}” → <b>${esc(n.chuan)}</b></li>`).join('')}</ul></details>` : ''}
-    <div class="fields">${FIELDS.map(([k, t, h]) => {
+    <div class="notice">${nEmpty ? `<b>${nEmpty} empty field${nEmpty > 1 ? 's' : ''}</b> (yellow) — tap 🎤 to dictate straight into a field, or type. ` : ''}${flags.length ? `<b>${flags.length} item${flags.length > 1 ? 's' : ''} to check</b> (orange). ` : ''}ICD-10 codes are suggestions only — confirm them. The summary text stays in Vietnamese.${newSegs > 0 ? ` <b>${newSegs} new segment${newSegs > 1 ? 's' : ''}</b> not organised yet.` : ''}</div>
+    ${norm.length ? `<details class="norm"><summary>Normalised terms (${norm.length})</summary><ul>${norm.map(n => `<li>“${esc(n.goc)}” → <b>${esc(n.chuan)}</b></li>`).join('')}</ul></details>` : ''}
+    <div class="fields">${FIELDS.map(([k, , , t, h]) => {
       const fl = flags.filter(f => f.muc === k);
       return `<div class="field${c.form[k].trim() ? '' : ' blank'}" data-k="${k}">
-        <div class="fh"><b>${esc(t)}${h ? `<small>${esc(h)}</small>` : ''}</b>${k === 'mach_mau' && typeof PAD !== 'undefined' ? '<button class="padbtn" type="button">Phân độ</button>' : ''}${SR ? `<button class="mic" type="button" aria-label="Đọc vào mục ${esc(t)}">🎤</button>` : ''}</div>
-        <textarea aria-label="${esc(t)}" placeholder="Trống — nói hoặc gõ thêm">${esc(c.form[k])}</textarea>
+        <div class="fh"><b>${esc(t)}${h ? `<small>${esc(h)}</small>` : ''}</b>${k === 'mach_mau' && typeof PAD !== 'undefined' ? '<button class="padbtn" type="button">Staging</button>' : ''}${SR ? `<button class="mic" type="button" aria-label="Dictate into ${esc(t)}">🎤</button>` : ''}</div>
+        <textarea aria-label="${esc(t)}" placeholder="Empty — dictate or type">${esc(c.form[k])}</textarea>
         ${k === 'mach_mau' ? '<div class="padbox" hidden></div>' : ''}
-        ${fl.length ? `<div class="flags">${fl.map(f => `<div class="flag"><b>Kiểm tra:</b> ${esc(f.noi_dung)} — ${esc(f.ly_do)}</div>`).join('')}</div>` : ''}
+        ${fl.length ? `<div class="flags">${fl.map(f => `<div class="flag"><b>Check:</b> ${esc(f.noi_dung)} — ${esc(f.ly_do)}</div>`).join('')}</div>` : ''}
       </div>`;
     }).join('')}</div>
-    <div class="row"><button type="button" id="reorg" class="grow">${newSegs > 0 ? `Sắp xếp thêm ${newSegs} đoạn mới` : 'Sắp xếp lại'}</button><button type="button" id="toexp" class="grow">Xem bản xuất →</button></div>
-    ${m.usage ? `<p class="cost">${esc(m.usage.model)} · ${m.usage.in.toLocaleString('vi-VN')} + ${m.usage.out.toLocaleString('vi-VN')} token · ~${Math.round(m.usage.usd * USD_VND).toLocaleString('vi-VN')} đ</p>` : ''}`;
+    <div class="row"><button type="button" id="reorg" class="grow">${newSegs > 0 ? `Organise ${newSegs} new segment${newSegs > 1 ? 's' : ''}` : 'Re-organise'}</button><button type="button" id="toexp" class="grow">View export →</button></div>
+    ${m.usage ? `<p class="cost">${esc(m.usage.model)} · ${m.usage.in.toLocaleString('en-US')} + ${m.usage.out.toLocaleString('en-US')} tokens · ≈ ${Math.round(m.usage.usd * USD_VND).toLocaleString('en-US')} VND</p>` : ''}`;
   $p.querySelectorAll('.field').forEach(f => {
     const k = f.dataset.k, t = f.querySelector('textarea'), mic = f.querySelector('.mic'), pb = f.querySelector('.padbtn');
     autosize(t);
@@ -724,7 +728,7 @@ function paneReview(c, $p) {
       const box = f.querySelector('.padbox');
       if (!box.hidden) { box.hidden = true; return; }
       box.hidden = false;
-      padPanel(c, box, t, val => { t.value = val; c.form[k] = val; touch(c); autosize(t); f.classList.remove('blank'); toast('Đã chèn phân độ'); });
+      padPanel(c, box, t, val => { t.value = val; c.form[k] = val; touch(c); autosize(t); f.classList.remove('blank'); toast('Staging inserted'); });
       box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
     };
     t.oninput = () => { autosize(t); f.classList.toggle('blank', !t.value.trim()); };
@@ -748,7 +752,7 @@ function paneReview(c, $p) {
     };
   });
   $p.querySelector('#reorg').onclick = () => {
-    if (!newSegs && !confirm('Sắp xếp lại toàn bộ? Claude giữ phần bạn đã sửa và chỉ bổ sung.')) return;
+    if (!newSegs && !confirm('Re-organise everything? Claude keeps your edits and only adds to them.')) return;
     runOrganize(c);
   };
   $p.querySelector('#toexp').onclick = () => go(`c/${c.id}/xuat`);
@@ -767,22 +771,22 @@ function asDocHtml(c) {
   return `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word"><head><meta charset="utf-8"><title>Tóm tắt bệnh án</title><style>body{font-family:"Times New Roman",serif;font-size:13pt;line-height:1.4}h1{font-size:15pt;text-align:center}p{margin:0 0 6pt}</style></head><body><h1>TÓM TẮT BỆNH ÁN</h1>${body}</body></html>`;
 }
 function paneExport(c, $p) {
-  if (!c.form) { $p.innerHTML = `<div class="notice">Chưa có bản để xuất. Sắp xếp vào mẫu ở tab <b>Duyệt</b> trước.</div>`; return; }
+  if (!c.form) { $p.innerHTML = `<div class="notice">Nothing to export yet. Organise the case in the <b>Review</b> tab first.</div>`; return; }
   const flags = (c.meta?.can_kiem_tra || []).length, nEmpty = FKEYS.filter(k => !c.form[k].trim()).length;
   $p.innerHTML = `
-    ${flags || nEmpty ? `<div class="notice">Còn ${nEmpty ? `<b>${nEmpty} mục trống</b>` : ''}${nEmpty && flags ? ' và ' : ''}${flags ? `<b>${flags} chỗ cần kiểm tra</b>` : ''} ở tab Duyệt. Bản xuất chỉ gồm các mục có nội dung.</div>` : ''}
+    ${flags || nEmpty ? `<div class="notice">${nEmpty ? `<b>${nEmpty} empty field${nEmpty > 1 ? 's' : ''}</b>` : ''}${nEmpty && flags ? ' and ' : ''}${flags ? `<b>${flags} item${flags > 1 ? 's' : ''} to check</b>` : ''} left in the Review tab. The export only includes fields with content (in Vietnamese).</div>` : ''}
     <div class="preview">${esc(asText(c))}</div>
     <div class="expbtns">
-      <button type="button" id="copy" class="wide">Chép toàn bộ</button>
-      <button type="button" id="doc">Tải Word (.doc)</button>
-      <button type="button" id="share">Chia sẻ…</button>
-      <button type="button" id="done" class="wide ghost">${c.status === 'done' ? 'Đã đánh dấu xuất' : 'Đánh dấu đã xuất'}</button>
+      <button type="button" id="copy" class="wide">Copy all</button>
+      <button type="button" id="doc">Download Word (.doc)</button>
+      <button type="button" id="share">Share…</button>
+      <button type="button" id="done" class="wide ghost">${c.status === 'done' ? 'Marked as exported' : 'Mark as exported'}</button>
     </div>`;
   const fname = `TTBA ${caseName(c).replace(/[\\/:*?"<>|]/g, '-')} ${new Date().toISOString().slice(0, 10)}.doc`;
   const docBlob = () => new Blob(['\ufeff', asDocHtml(c)], { type: 'application/msword' });
   $p.querySelector('#copy').onclick = async () => {
-    try { await navigator.clipboard.writeText(asText(c)); toast('Đã chép — dán vào phần mềm bệnh viện'); }
-    catch { toast('Không chép được, hãy chọn và chép trong khung xem trước'); }
+    try { await navigator.clipboard.writeText(asText(c)); toast('Copied — paste into the hospital system'); }
+    catch { toast('Could not copy; select and copy from the preview'); }
   };
   $p.querySelector('#doc').onclick = () => {
     const a = document.createElement('a'); a.href = URL.createObjectURL(docBlob()); a.download = fname;
@@ -793,57 +797,57 @@ function paneExport(c, $p) {
   if (!navigator.canShare?.({ files: [file] }) && !navigator.share) $share.disabled = true;
   $share.onclick = async () => {
     try {
-      if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], title: 'Tóm tắt bệnh án' });
-      else await navigator.share({ title: 'Tóm tắt bệnh án', text: asText(c) });
-    } catch (e) { if (e.name !== 'AbortError') toast('Không chia sẻ được: ' + e.message); }
+      if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], title: 'Case summary' });
+      else await navigator.share({ title: 'Case summary', text: asText(c) });
+    } catch (e) { if (e.name !== 'AbortError') toast('Could not share: ' + e.message); }
   };
-  $p.querySelector('#done').onclick = () => { c.status = 'done'; touch(c); toast('Đã đánh dấu'); paneExport(c, $p); };
+  $p.querySelector('#done').onclick = () => { c.status = 'done'; touch(c); toast('Marked'); paneExport(c, $p); };
 }
 
 // ---------- cài đặt ----------
 function renderSettings() {
   document.querySelector('.dock')?.remove();
   $app.innerHTML = `
-    <button class="back" type="button" id="back">‹ Danh sách ca</button>
-    <h2>Cài đặt</h2>
+    <button class="back" type="button" id="back">‹ Cases</button>
+    <h2>Settings</h2>
     <div class="set card">
-      <label>Khóa API Claude
-        <div class="row"><input id="key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" class="grow" value="${esc(C.key)}"><button type="button" id="show" class="ghost">Hiện</button></div>
-        <small>Tạo ở platform.claude.com › API keys. Khóa chỉ lưu trong trình duyệt của máy này, dùng để gọi Claude khi bấm “Sắp xếp”. Nên đặt hạn mức chi tiêu cho khóa. Không dùng khóa này trên máy dùng chung.</small>
+      <label>Claude API key
+        <div class="row"><input id="key" type="password" autocomplete="off" spellcheck="false" placeholder="sk-ant-…" class="grow" value="${esc(C.key)}"><button type="button" id="show" class="ghost">Show</button></div>
+        <small>Create one at platform.claude.com › API keys. The key is stored only in this device's browser and is used to call Claude when you tap “Organise”. Set a spend limit on the key. Do not use it on a shared device.</small>
       </label>
-      <div class="row"><button type="button" id="test">Kiểm tra khóa</button><span id="testres" class="small muted"></span></div>
+      <div class="row"><button type="button" id="test">Test key</button><span id="testres" class="small muted"></span></div>
       <label>Model
         <select id="model">${MODELS.map(([id, l]) => `<option value="${id}"${id === C.model ? ' selected' : ''}>${esc(l)}</option>`).join('')}</select>
-        <small>Ước tính mỗi ca (5.000 token vào, 2.000 ra): Opus ~1.500 đ, Sonnet ~800 đ, Haiku ~40 đ.</small>
+        <small>Estimate per case (5,000 tokens in, 2,000 out): Opus ≈ 1,500 VND, Sonnet ≈ 800 VND, Haiku ≈ 40 VND.</small>
       </label>
-      <label>Từ điển cá nhân
+      <label>Personal glossary
         <textarea id="gloss" rows="7" spellcheck="false">${esc(C.glossary)}</textarea>
-        <small>Mỗi dòng “cách đọc = cách viết chuẩn”. Claude dùng khi chuẩn hóa thuật ngữ; thêm các từ máy hay nghe sai.</small>
+        <small>One per line: “as heard = standard spelling”. Claude uses it to normalise terms; add words the recogniser often mishears.</small>
       </label>
-      <label>Tự xóa ca sau (ngày)
+      <label>Auto-delete cases after (days)
         <input id="keep" type="number" min="0" max="365" step="1" value="${C.keepDays}">
-        <small>Tính từ lần sửa cuối; 0 = không tự xóa.</small>
+        <small>Counted from the last edit; 0 = never.</small>
       </label>
-      <button type="button" id="saveset">Lưu cài đặt</button>
+      <button type="button" id="saveset">Save settings</button>
     </div>
     <div class="card set">
-      <p class="small" style="margin:0">Nhận dạng giọng nói: ${SR ? 'có (tiếng Việt, của Safari/Apple).' : 'trình duyệt này không có — dùng micro trên bàn phím iPhone.'} Lần đầu bấm ghi, iPhone hỏi quyền micro và nhận dạng giọng nói: chọn Cho phép.</p>
-      <button type="button" id="wipe" class="danger">Xóa tất cả ca (${S.cases.length})</button>
+      <p class="small" style="margin:0">Speech recognition: ${SR ? 'available (Vietnamese, Safari/Apple).' : 'not available in this browser — use the microphone on the iPhone keyboard.'} The first time you record, the iPhone asks for microphone and speech recognition access: tap Allow.</p>
+      <button type="button" id="wipe" class="danger">Delete all cases (${S.cases.length})</button>
     </div>`;
   document.getElementById('back').onclick = () => go('');
   const $k = document.getElementById('key');
-  document.getElementById('show').onclick = e => { $k.type = $k.type === 'password' ? 'text' : 'password'; e.target.textContent = $k.type === 'password' ? 'Hiện' : 'Ẩn'; };
+  document.getElementById('show').onclick = e => { $k.type = $k.type === 'password' ? 'text' : 'password'; e.target.textContent = $k.type === 'password' ? 'Show' : 'Hide'; };
   const collect = () => { C.key = $k.value.trim(); C.model = document.getElementById('model').value; C.glossary = document.getElementById('gloss').value; C.keepDays = Math.max(0, parseInt(document.getElementById('keep').value, 10) || 0); saveCfg(); };
-  document.getElementById('saveset').onclick = () => { collect(); toast('Đã lưu cài đặt'); };
+  document.getElementById('saveset').onclick = () => { collect(); toast('Settings saved'); };
   document.getElementById('test').onclick = async () => {
     collect();
-    const $r = document.getElementById('testres'); $r.textContent = 'Đang kiểm tra…';
-    try { const cl = await claude(); const m = await cl.models.retrieve(C.model); $r.textContent = '✓ Khóa dùng được: ' + (m.display_name || m.id); }
+    const $r = document.getElementById('testres'); $r.textContent = 'Testing…';
+    try { const cl = await claude(); const m = await cl.models.retrieve(C.model); $r.textContent = '✓ Key works: ' + (m.display_name || m.id); }
     catch (e) { $r.textContent = '✗ ' + apiError(e); }
   };
   document.getElementById('wipe').onclick = () => {
-    if (!S.cases.length || !confirm(`Xóa vĩnh viễn ${S.cases.length} ca${Sync.user ? ' (trên máy này và trên Supabase)' : ' trên máy này'}?`)) return;
-    S.cases.map(c => c.id).forEach(forget); toast('Đã xóa tất cả ca'); renderSettings();
+    if (!S.cases.length || !confirm(`Permanently delete ${S.cases.length} case${S.cases.length > 1 ? 's' : ''}${Sync.user ? ' (on this device and on Supabase)' : ' on this device'}?`)) return;
+    S.cases.map(c => c.id).forEach(forget); toast('All cases deleted'); renderSettings();
   };
 }
 

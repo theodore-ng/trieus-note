@@ -2,7 +2,7 @@
 
 <img src="../logo.svg" width="48" alt="">
 
-Mục `ttba/` của [Trieu's Note](../README.md). Giao diện tiếng Việt, làm cho iPhone (Safari, có thể "Thêm vào Màn hình chính").
+Mục `ttba/` của [Trieu's Note](../README.md). Giao diện tiếng Anh từ 3.1.1 (bản tóm tắt, bản xuất, các dòng chèn Phân độ / Heparin, prompt và nhận dạng giọng nói vẫn tiếng Việt), làm cho iPhone (Safari, có thể "Thêm vào Màn hình chính").
 
 🔗 https://theodore-ng.github.io/trieus-note/ttba/
 

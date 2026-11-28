@@ -2,6 +2,10 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 2.12.1 – 28/11/2026
+
+- Bỏ tên tài khoản khỏi chú thích trong `config.js` (thay bằng ví dụ chung).
+
 ## 2.12.0 – 28/11/2026
 
 - Tóm tắt bệnh án: **đồng bộ ca bệnh qua Supabase** khi đã đăng nhập Trieu's Note (bảng `ttba_cases`, mỗi người chỉ đọc/ghi được ca của mình nhờ RLS).

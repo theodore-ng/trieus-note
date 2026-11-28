@@ -4,5 +4,5 @@
 window.QV_CONFIG = {
   supabaseUrl: "https://negkampmqbjzwmiwajhj.supabase.co",
   supabaseKey: "sb_publishable_4HNZEhFDOJGyskuzWR--IA_lrSyxx_s",
-  emailDomain: "quyvang.app", // tên đăng nhập "dongtrieu" => email dongtrieu@quyvang.app trong Supabase
+  emailDomain: "quyvang.app", // tên đăng nhập "<ten>" => email <ten>@quyvang.app trong Supabase
 };

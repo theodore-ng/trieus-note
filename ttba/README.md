@@ -15,7 +15,7 @@ Bác sĩ đọc thông tin ca bệnh thành từng đoạn (không cần theo th
 2. **+ Ca mới**: đặt tên ẩn danh (vd "Giường 12 · Nam 68t").
 3. **Ghi**: chọn chủ đề (không bắt buộc: Bệnh sử, Tiền sử, Khám, Mạch máu, CLS, Chẩn đoán, Điều trị, Ra viện), bấm nút đỏ để đọc, bấm lại để dừng; mỗi lần là một đoạn, sửa/xóa được. **Gõ tay** để nhập (hoặc dùng micro trên bàn phím iPhone).
 4. **Sắp xếp →**: gửi các đoạn cho Claude, nhận bản theo mẫu (thường 15–60 giây).
-5. **Duyệt**: mục trống nền vàng (chạm 🎤 để nói thẳng vào mục), chỗ cần kiểm tra màu cam (số liệu, liều, ICD-10), danh sách thuật ngữ đã chuẩn hóa. Ghi thêm đoạn rồi **Sắp xếp thêm**: Claude giữ phần đã sửa, chỉ bổ sung.
+5. **Duyệt**: mục **Chỉ số mạch máu** có nút **Phân độ**: chọn chân, triệu chứng nặng nhất, mức mất mô, W/fI, nhập ABI / áp lực cổ chân / áp lực ngón / TcPO₂ → tính Fontaine, Rutherford, WIfI (khi đau khi nghỉ hoặc mất mô) và chèn một dòng "- Phân độ (chân …): …" vào mục (thay dòng Phân độ cũ nếu có); dữ liệu nhập được nhớ theo ca. Mục trống nền vàng (chạm 🎤 để nói thẳng vào mục), chỗ cần kiểm tra màu cam (số liệu, liều, ICD-10), danh sách thuật ngữ đã chuẩn hóa. Ghi thêm đoạn rồi **Sắp xếp thêm**: Claude giữ phần đã sửa, chỉ bổ sung.
 6. **Xuất**: chép toàn bộ (dán vào phần mềm bệnh viện), tải Word (.doc), chia sẻ qua Bảng chia sẻ iOS. Bản xuất chỉ gồm các mục có nội dung.
 
 ## Mẫu (mẫu chung, chỉnh sau)
@@ -28,6 +28,7 @@ Người bệnh (ẩn danh) · Ngày vào viện · Lý do vào viện · Bệnh
 - **Chữ → mẫu**: Claude qua `@anthropic-ai/sdk@1.8.0` (ESM từ jsDelivr, `dangerouslyAllowBrowser` vì khóa do người dùng tự dán trên máy mình); mặc định `claude-opus-5-5`, effort `medium`, đầu ra `output_config.format` = JSON schema (13 mục + `can_kiem_tra` + `chuan_hoa`); Opus/Sonnet bật `fallbacks: "default"` (beta `server-side-fallback-2026-07-01`) khi bị bộ lọc an toàn từ chối. Ước tính chi phí hiện dưới tab Duyệt.
 - **Dữ liệu**: localStorage của trình duyệt (`trieusnote_ttba_v1` ca bệnh, `trieusnote_ttba_cfg` cài đặt + khóa). Từ 2.12.0, khi đã đăng nhập Trieu's Note thì ca bệnh đồng bộ lên Supabase, bảng `ttba_cases` (`id`, `user_id`, `data` jsonb = cả ca, `updated_at`; RLS theo người dùng; SQL trong `supabase/schema.sql`). Ca sửa sau cùng được giữ; ca đã đồng bộ mà Supabase không còn thì coi như đã xóa ở máy khác; mất mạng thì các lần xóa được nhớ trong `S.gone` để làm sau. Khóa API và cài đặt không đồng bộ. Tự xóa ca không sửa sau N ngày (mặc định 30), áp dụng cả trên Supabase. Ngoài Supabase (khi đăng nhập), nội dung chỉ rời máy khi bấm Sắp xếp (gửi tới API Claude).
 - **Ẩn danh**: nhắc không đọc họ tên/số hồ sơ; trước khi gửi, quét các dấu hiệu định danh (tên, dãy số giống SĐT/căn cước, số hồ sơ) và hỏi lại; Claude được dặn thay bằng `[ẩn]`.
+- **Phân độ PAD**: `pad.js` = logic của app PAD Classification cũ (đã gộp vào đây từ 3.0.0), chuyển nguyên trạng từ `scripts/pad/classification.py`; sửa logic phải sửa cả hai, chạy `pytest scripts/pad/tests` và `scripts/pad/parity.py` (phải OK). Cảnh báo lâm sàng giữ tiếng Anh như bản gốc (để parity khớp); mô tả giai đoạn hiển thị tiếng Việt trong `ttba.js`.
 - Kiểm thử: `window.__TTBA_MOCK__` thay lời gọi Claude bằng hàm giả (không tốn phí, không gửi dữ liệu).
 
 ## Điểm cần lưu ý

@@ -1,4 +1,4 @@
-r"""Kiểm tra pad/classification.js khớp 100% với bản Python chuẩn (classification.py).
+r"""Kiểm tra ttba/pad.js khớp 100% với bản Python chuẩn (classification.py).
 
 Cách dùng (Git Bash, từ gốc dự án):
   .venv/Scripts/python webapp/scripts/pad/parity.py <thư mục tạm>
@@ -59,9 +59,9 @@ for w, i, fi in itertools.product(range(4), range(4), range(4)):
     cases.append(["desc", dict(w=w, i=i, fi=fi), [C._W_DESCRIPTIONS[w], C._I_DESCRIPTIONS[i], C._FI_DESCRIPTIONS[fi]]])
 
 json.dump(cases, open(os.path.join(out, "cases.json"), "w", encoding="utf-8"), ensure_ascii=False)
-shutil.copy(os.path.join(HERE, "..", "..", "pad", "classification.js"), out)
+shutil.copy(os.path.join(HERE, "..", "..", "ttba", "pad.js"), out)
 open(os.path.join(out, "parity.html"), "w", encoding="utf-8").write("""<!doctype html><meta charset="utf-8"><body>
-<script src="classification.js"></script>
+<script src="pad.js"></script>
 <script>
 const x = new XMLHttpRequest(); x.open("GET", "cases.json", false); x.send();
 const cases = JSON.parse(x.responseText), bad = [];

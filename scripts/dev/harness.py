@@ -11,7 +11,7 @@ Cách dùng (Git Bash, từ gốc dự án Trieu's Note, thư mục chứa .venv
 
 - Luôn bọc Edge bằng `timeout`. Edge headless không dựng trang hẹp hơn ~495px: muốn xem bản điện thoại dùng --window-size=520,…
 - Trang: index.html (trang chủ), notes/index.html (Ghi chú: n1 có Markdown/checklist/bảng + nhãn, n2–n3 thường,
-  n4 lưu trữ, n5 trong thùng rác, n6 thùng rác quá 30 ngày phải tự xóa; mở một ghi chú bằng #n1), pad/index.html,
+  n4 lưu trữ, n5 trong thùng rác, n6 thùng rác quá 30 ngày phải tự xóa; mở một ghi chú bằng #n1),
   finance/index.html (Quản lý tài chính).
 - Tham số URL của finance: lotdate=YYYY-MM-DD (ngày mua lô vàng mẫu), prof=balanced|aggressive, dep=1 (thêm nạp 100 tr),
   subs={"tab":"mục con"} (đã URL-encode) để mở đúng mục con.

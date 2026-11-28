@@ -2,6 +2,18 @@
 
 Phiên bản theo semver: sửa lỗi và điều chỉnh nhỏ → patch, cập nhật lớn → minor, đổi cấu trúc tab hoặc mô hình dữ liệu → major. Số phiên bản là tham số `?v=` trong các file `index.html`.
 
+## 3.0.0 – 28/11/2026
+
+- **Gộp PAD Classification vào Tóm tắt bệnh án, xóa mục `pad/`** (đổi cấu trúc app → major).
+  - Tab Duyệt, mục **Chỉ số mạch máu**: nút **Phân độ** mở bảng tính tiếng Việt. Nhập:
+    - chân, triệu chứng nặng nhất (không triệu chứng / đau cách hồi / đau khi nghỉ / loét–hoại tử);
+    - quãng đường đi không đau, thảm lăn, mức mất mô, W và fI;
+    - ABI, áp lực cổ chân, áp lực ngón, TcPO₂.
+  - Kết quả tính ngay: Fontaine, Rutherford, và WIfI (khi đau khi nghỉ hoặc mất mô: giai đoạn, nguy cơ cắt cụt 1 năm, lợi ích tái thông), kèm lưu ý lâm sàng.
+  - **Chèn vào mục** ghi một dòng "- Phân độ (chân …): …" (thay dòng Phân độ cũ nếu có). Dữ liệu nhập được nhớ theo ca và đồng bộ cùng ca.
+  - Logic giữ nguyên, chuyển sang `ttba/pad.js`: 47 test Python pass, parity JS ↔ Python 24.487 ca OK.
+  - Đường dẫn cũ `/pad/` không còn.
+
 ## 2.12.1 – 28/11/2026
 
 - Bỏ tên tài khoản khỏi chú thích trong `config.js` (thay bằng ví dụ chung).

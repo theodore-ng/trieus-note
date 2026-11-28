@@ -23,7 +23,7 @@ const FIELDS = [
   ['benh_su', 'Bệnh sử', 'Quá trình bệnh lý và diễn biến lâm sàng'],
   ['tien_su', 'Tiền sử', 'Bản thân, gia đình, dị ứng, thuốc đang dùng'],
   ['kham', 'Khám lâm sàng', 'Những dấu hiệu lâm sàng chính'],
-  ['mach_mau', 'Chỉ số mạch máu', 'ABI/TBI, siêu âm Doppler, phân độ Rutherford / Fontaine / WIfI, CEAP'],
+  ['mach_mau', 'Chỉ số mạch máu', 'ABI/TBI, siêu âm Doppler, CEAP; nút Phân độ tính Fontaine / Rutherford / WIfI'],
   ['cls', 'Cận lâm sàng', 'Kết quả xét nghiệm, chẩn đoán hình ảnh có giá trị chẩn đoán'],
   ['cd_vao', 'Chẩn đoán vào viện', 'Kèm mã ICD-10 (gợi ý, cần xác nhận)'],
   ['cd_hien_tai', 'Chẩn đoán xác định / ra viện', 'Bệnh chính, bệnh kèm, mã ICD-10 (gợi ý, cần xác nhận)'],
@@ -455,6 +455,70 @@ async function runOrganize(c) {
 }
 
 // --- Duyệt ---
+// --- Phân độ PAD (Fontaine / Rutherford / WIfI) — logic ở pad.js (bản chuyển từ scripts/pad/classification.py) ---
+const FONT_VI = { I: 'không triệu chứng', IIa: 'đau cách hồi nhẹ, đi > 200 m', IIb: 'đau cách hồi vừa–nặng, đi ≤ 200 m', III: 'đau khi nghỉ do thiếu máu', IV: 'loét hoặc hoại tử' };
+const RUTH_VI = ['không triệu chứng', 'đau cách hồi nhẹ', 'đau cách hồi vừa', 'đau cách hồi nặng', 'đau khi nghỉ do thiếu máu', 'mất mô nhỏ, dưới mức khớp cổ–bàn ngón', 'mất mô lớn, trên mức khớp cổ–bàn ngón'];
+const LVL_VI = { 1: 'rất thấp', 2: 'thấp', 3: 'trung bình', 4: 'cao' };
+const PAD_DEF = { side: 'phải', sym: 'none', dist: '', tread: 'na', post: '', tm: 'below', w: '1', fi: '0', abi: '', rap: '', tp: '', tc: '' };
+function padForm(v) {
+  const r = (n, val, l) => `<label class="pc-o"><input type="radio" name="${n}" value="${val}"${v[n] === val ? ' checked' : ''}> ${l}</label>`;
+  const n = (k, l, u, step = 1) => `<label class="pc-n">${l}<input name="${k}" type="number" inputmode="decimal" min="0" step="${step}" value="${esc(v[k])}">${u ? `<small>${u}</small>` : ''}</label>`;
+  return `<form class="pc" onsubmit="return false" autocomplete="off">
+    <div class="pc-g pc-in"><b>Chân</b>${r('side', 'phải', 'Phải')}${r('side', 'trái', 'Trái')}</div>
+    <div class="pc-g pc-in"><b>Triệu chứng nặng nhất</b>${r('sym', 'none', 'Không triệu chứng')}${r('sym', 'claud', 'Đau cách hồi')}${r('sym', 'rest', 'Đau khi nghỉ')}${r('sym', 'tissue', 'Loét / hoại tử')}</div>
+    <div class="pc-g" data-if="claud"><b>Đau cách hồi</b>${n('dist', 'Quãng đường đi không đau', 'm')}
+      <span class="pc-sub">Thảm lăn (5 phút, dốc 12%, 2 mph):</span>${r('tread', 'yes', 'Đi hết')}${r('tread', 'no', 'Không đi hết')}${r('tread', 'na', 'Không làm')}${n('post', 'Áp lực cổ chân sau gắng sức', 'mmHg')}</div>
+    <div class="pc-g" data-if="tissue"><b>Mất mô</b>${r('tm', 'below', 'Dưới mức khớp cổ–bàn ngón')}${r('tm', 'above', 'Trên mức đó / bàn chân không bảo tồn được')}${r('tm', 'unknown', 'Chưa rõ')}
+      <span class="pc-sub">W — vết thương:</span>${r('w', '1', '1 · Loét nhỏ, nông, không lộ xương')}${r('w', '2', '2 · Loét sâu lộ gân/bao khớp/xương, hoặc loét gót nông')}${r('w', '3', '3 · Loét rộng sâu bàn chân trước ± giữa, hoặc loét gót sâu')}
+      <span class="pc-sub">fI — nhiễm trùng bàn chân:</span>${r('fi', '0', '0 · Không')}${r('fi', '1', '1 · Nhẹ, tại chỗ (quầng đỏ 0,5–2 cm)')}${r('fi', '2', '2 · Vừa (quầng đỏ > 2 cm, viêm bạch mạch, áp xe sâu, hoại thư)')}${r('fi', '3', '3 · Nặng (kèm ≥ 2 tiêu chuẩn SIRS)')}</div>
+    <div class="pc-g"><b>Huyết động</b><div class="pc-ns">${n('abi', 'ABI', '', 0.01)}${n('rap', 'Áp lực cổ chân', 'mmHg')}${n('tp', 'Áp lực ngón', 'mmHg')}${n('tc', 'TcPO₂', 'mmHg')}</div></div>
+  </form><div class="pc-res"></div>`;
+}
+function padCalc(v) {
+  const num = k => { const x = parseFloat(String(v[k]).replace(',', '.')); return Number.isFinite(x) ? x : null; };
+  const sym = v.sym, tissue = sym === 'tissue', rest = sym === 'rest', claud = sym === 'claud';
+  const f = PAD.classifyFontaine({ abi: num('abi'), hasClaudication: claud, walkingDistanceM: num('dist'), hasRestPain: rest, hasTissueLoss: tissue });
+  const ru = PAD.classifyRutherford({ hasTissueLoss: tissue, tissueLossAboveTm: tissue ? ({ above: true, below: false }[v.tm] ?? null) : null,
+    hasRestPain: rest, restingApMmhg: num('rap'), toePressureMmhg: num('tp'), hasClaudication: claud,
+    completesTreadmill: { yes: true, no: false }[v.tread] ?? null, postExerciseApMmhg: num('post'), restingApForClaudication: num('rap') });
+  const lines = [`Fontaine ${f.stage} (${FONT_VI[f.stage]})`, `Rutherford độ ${ru.grade}, nhóm ${ru.category} (${RUTH_VI[ru.category]})`];
+  const warns = [...f.warnings, ...ru.warnings];
+  let wifi = '';
+  if (rest || tissue) {
+    const m = { abi: num('abi'), anklePressureMmhg: num('rap'), toePressureMmhg: num('tp'), tcpo2Mmhg: num('tc') };
+    if (Object.values(m).every(x => x == null)) wifi = 'WIfI: cần ít nhất một chỉ số tưới máu (ABI, áp lực cổ chân, áp lực ngón hoặc TcPO₂).';
+    else {
+      const w = tissue ? +v.w : 0, fi = tissue ? +v.fi : 0, i = PAD.scoreWifiIschemia(m), r = PAD.classifyWifi({ w, i, fi });
+      lines.push(`WIfI W${w} I${i} fI${fi} → giai đoạn ${r.clinical_stage} (nguy cơ cắt cụt 1 năm ${LVL_VI[r.clinical_stage]}; lợi ích tái thông ${LVL_VI[r.revasc_benefit]})`);
+      warns.push(...r.notes);
+    }
+  }
+  return { text: `- Phân độ (chân ${v.side}): ${lines.join('; ')}.`, lines, wifi, warns };
+}
+function padPanel(c, box, t, onInsert) {
+  const v = Object.assign({}, PAD_DEF, c.pad || {});
+  box.innerHTML = padForm(v) + `<div class="row"><button type="button" class="grow pc-ins">Chèn vào mục</button><button type="button" class="ghost pc-x">Đóng</button></div>
+    <p class="small muted" style="margin:0">Theo Fontaine 1954, Rutherford 1986, WIfI (Mills 2014). Công cụ hỗ trợ, bác sĩ quyết định.</p>`;
+  const fm = box.querySelector('form'), res = box.querySelector('.pc-res');
+  let out;
+  const upd = () => {
+    new FormData(fm).forEach((x, k) => (v[k] = x));
+    fm.querySelectorAll('[data-if]').forEach(g => (g.hidden = g.dataset.if !== v.sym));
+    out = padCalc(v);
+    res.innerHTML = `<ul>${out.lines.map(l => `<li>${esc(l)}</li>`).join('')}</ul>${out.wifi ? `<p class="small muted">${esc(out.wifi)}</p>` : ''}
+      ${out.warns.length ? `<details><summary>Lưu ý (${out.warns.length})</summary><ul class="small">${out.warns.map(w => `<li>${esc(w)}</li>`).join('')}</ul></details>` : ''}`;
+  };
+  fm.addEventListener('input', upd); fm.addEventListener('change', upd); upd();
+  box.querySelector('.pc-x').onclick = () => { c.pad = { ...v }; touch(c); box.hidden = true; };
+  box.querySelector('.pc-ins').onclick = () => {
+    const ls = t.value.split('\n'), i = ls.findIndex(l => /^\s*-?\s*Phân độ/i.test(l));
+    if (i >= 0) ls[i] = out.text; else if (t.value.trim()) ls.push(out.text); else ls.splice(0, ls.length, out.text);
+    c.pad = { ...v };
+    onInsert(ls.join('\n'));
+    box.hidden = true;
+  };
+}
+
 function paneReview(c, $p) {
   if (!c.form) {
     $p.innerHTML = `<div class="notice">Chưa sắp xếp vào mẫu. Ghi các đoạn ở tab <b>Ghi</b> rồi bấm <b>Sắp xếp</b>.</div>
@@ -471,16 +535,24 @@ function paneReview(c, $p) {
     <div class="fields">${FIELDS.map(([k, t, h]) => {
       const fl = flags.filter(f => f.muc === k);
       return `<div class="field${c.form[k].trim() ? '' : ' blank'}" data-k="${k}">
-        <div class="fh"><b>${esc(t)}${h ? `<small>${esc(h)}</small>` : ''}</b>${SR ? `<button class="mic" type="button" aria-label="Đọc vào mục ${esc(t)}">🎤</button>` : ''}</div>
+        <div class="fh"><b>${esc(t)}${h ? `<small>${esc(h)}</small>` : ''}</b>${k === 'mach_mau' && typeof PAD !== 'undefined' ? '<button class="padbtn" type="button">Phân độ</button>' : ''}${SR ? `<button class="mic" type="button" aria-label="Đọc vào mục ${esc(t)}">🎤</button>` : ''}</div>
         <textarea aria-label="${esc(t)}" placeholder="Trống — nói hoặc gõ thêm">${esc(c.form[k])}</textarea>
+        ${k === 'mach_mau' ? '<div class="padbox" hidden></div>' : ''}
         ${fl.length ? `<div class="flags">${fl.map(f => `<div class="flag"><b>Kiểm tra:</b> ${esc(f.noi_dung)} — ${esc(f.ly_do)}</div>`).join('')}</div>` : ''}
       </div>`;
     }).join('')}</div>
     <div class="row"><button type="button" id="reorg" class="grow">${newSegs > 0 ? `Sắp xếp thêm ${newSegs} đoạn mới` : 'Sắp xếp lại'}</button><button type="button" id="toexp" class="grow">Xem bản xuất →</button></div>
     ${m.usage ? `<p class="cost">${esc(m.usage.model)} · ${m.usage.in.toLocaleString('vi-VN')} + ${m.usage.out.toLocaleString('vi-VN')} token · ~${Math.round(m.usage.usd * USD_VND).toLocaleString('vi-VN')} đ</p>` : ''}`;
   $p.querySelectorAll('.field').forEach(f => {
-    const k = f.dataset.k, t = f.querySelector('textarea'), mic = f.querySelector('.mic');
+    const k = f.dataset.k, t = f.querySelector('textarea'), mic = f.querySelector('.mic'), pb = f.querySelector('.padbtn');
     autosize(t);
+    if (pb) pb.onclick = () => {
+      const box = f.querySelector('.padbox');
+      if (!box.hidden) { box.hidden = true; return; }
+      box.hidden = false;
+      padPanel(c, box, t, val => { t.value = val; c.form[k] = val; touch(c); autosize(t); f.classList.remove('blank'); toast('Đã chèn phân độ'); });
+      box.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    };
     t.oninput = () => { autosize(t); f.classList.toggle('blank', !t.value.trim()); };
     t.onchange = () => { c.form[k] = t.value; touch(c); };
     if (mic) mic.onclick = async () => {

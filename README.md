@@ -13,11 +13,10 @@ Web app cá nhân gồm nhiều mục, mở từ một trang chủ dạng thẻ 
 | [**Notes**](notes/README.md) | `notes/` | Ghi chú Markdown: checklist, tag, ghim, Archive / Trash, tìm kiếm không dấu, Paste, **+ GitHub** (tóm tắt + review repo) | English |
 | [**Finance**](finance/README.md) | `finance/` | Quản lý danh mục vàng, tiền mặt, tiết kiệm, chứng khoán; phân bổ tối ưu theo CFA (SAA), điều chỉnh chiến thuật (TAA), lộ trình giảm tỷ trọng vàng, dữ liệu thị trường VN và thế giới | Tiếng Việt |
 | [**Procedure Catalog**](ky-thuat/README.md) | `ky-thuat/` | Tra cứu danh mục kỹ thuật tương đương (bộ mã QĐ 7603, giá TT39/TT13) và quy trình kỹ thuật khoa Phẫu thuật mạch máu, kèm giải thích theo văn bản | Tiếng Việt |
-| [**PAD Classification**](pad/README.md) | `pad/` | Phân loại bệnh động mạch chi dưới: Fontaine, Rutherford, WIfI | English |
 | [**Heparin IV Calc.**](heparin/README.md) | `heparin/` | Liều heparin IV theo cân nặng, chỉnh liều theo aPTT (Dager 2018) | English |
-| [**Tóm tắt bệnh án**](ttba/README.md) | `ttba/` | Đọc ca bệnh trên iPhone, Claude chuẩn hóa thuật ngữ và xếp vào mẫu tóm tắt bệnh án; duyệt, xuất Word. Dữ liệu chỉ trên máy | Tiếng Việt |
+| [**Tóm tắt bệnh án**](ttba/README.md) | `ttba/` | Đọc ca bệnh trên iPhone, Claude chuẩn hóa thuật ngữ và xếp vào mẫu tóm tắt bệnh án; phân độ PAD (Fontaine, Rutherford, WIfI); duyệt, xuất Word; đồng bộ Supabase khi đăng nhập | Tiếng Việt |
 
-PAD Classification và Heparin IV Calc. là công cụ hỗ trợ quyết định lâm sàng, không thay thế đánh giá của bác sĩ. Finance là công cụ theo dõi và lập kế hoạch, không phải khuyến nghị đầu tư.
+Phân độ PAD (trong Tóm tắt bệnh án) và Heparin IV Calc. là công cụ hỗ trợ quyết định lâm sàng, không thay thế đánh giá của bác sĩ. Finance là công cụ theo dõi và lập kế hoạch, không phải khuyến nghị đầu tư.
 
 ## Kiến trúc
 
@@ -26,10 +25,10 @@ index.html, core.js     Trang chủ: đăng nhập dùng chung (Supabase Auth), 
 style.css               Giao diện chung: retro nền giấy, chỉ giao diện sáng, Newsreader + Be Vietnam Pro
 config.js               URL + khóa publishable của Supabase (để trống = chế độ cục bộ)
 logo.svg, favicon-32.png, apple-touch-icon.png
-notes/  finance/  ky-thuat/  pad/  heparin/  ttba/     Các mục (mỗi mục có README riêng)
+notes/  finance/  ky-thuat/  heparin/  ttba/     Các mục (mỗi mục có README riêng)
 data/                   Dữ liệu thị trường JSON (GitHub Actions cập nhật), các mục đọc bằng ../data/
 scripts/                Cập nhật dữ liệu (update_*.py), build Danh mục kỹ thuật (ky_thuat/),
-                        bản gốc + kiểm tra khớp logic (pad/, heparin/), bản thử để kiểm thử (dev/harness.py)
+                        bản gốc + kiểm tra khớp logic (pad/ → ttba/pad.js, heparin/), bản thử để kiểm thử (dev/harness.py)
 supabase/schema.sql     Bảng portfolios, profiles, notes + Row Level Security
 .github/workflows/prices.yml   Cập nhật dữ liệu 4 lần/ngày (9:15, 11:15, 14:15, 17:15 giờ VN) và commit vào data/
 CHANGELOG.md            Nhật ký phiên bản
@@ -77,5 +76,5 @@ python scripts/update_prices.py && python scripts/update_invest.py && python scr
 
 - **Phiên bản** (semver, xem `CHANGELOG.md`): tham số `?v=` của css/js trong **mọi** `index.html` là số phiên bản, hiện ở chân trang chủ. Mỗi lần deploy phải tăng (GitHub Pages cache 10 phút). Sửa nhỏ → patch, mục/tính năng mới → minor, đổi cấu trúc hoặc mô hình dữ liệu → major. Mỗi bản: tag `vX.Y.Z` + GitHub release.
 - **Kiểm thử:** `scripts/dev/harness.py <thư mục tạm>` dựng bản thử với dữ liệu mẫu ở chế độ cục bộ (hướng dẫn ở đầu file), rồi mở bằng trình duyệt headless để đọc lỗi JS và chụp màn hình (khổ 1100px và 520px).
-- **Logic chuyển từ bản gốc:** PAD (`scripts/pad/`: 47 test pytest + `parity.py` so JS với Python) và Heparin (`scripts/heparin/parity.py` so JS với TypeScript gốc) phải "OK" sau mỗi lần sửa logic.
+- **Logic chuyển từ bản gốc:** PAD (`ttba/pad.js` ↔ `scripts/pad/`: 47 test pytest + `parity.py` so JS với Python) và Heparin (`scripts/heparin/parity.py` so JS với TypeScript gốc) phải "OK" sau mỗi lần sửa logic.
 - **Danh mục kỹ thuật:** `ky-thuat/index.html` sinh từ `scripts/ky_thuat/`, không sửa tay (xem [README](ky-thuat/README.md#cập-nhật-dữ-liệu)).

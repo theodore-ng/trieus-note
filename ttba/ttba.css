@@ -97,3 +97,26 @@ details.norm ul { margin: 6px 0 0; padding-left: 18px; line-height: 1.6; }
 @media (prefers-reduced-motion: reduce) { .rec.on, .spin { animation: none; } }
 .demo { width: 100%; height: 44px; }
 .delcase { margin-left: auto; color: var(--down); }
+
+/* phân độ PAD (trong mục Chỉ số mạch máu) */
+.padbtn { flex: none; height: 40px; padding: 0 12px; font-size: 14px; background: var(--card); color: var(--accent); border: 1px solid var(--line); border-radius: 20px; }
+.padbox { display: grid; gap: 10px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.pc { display: grid; gap: 10px; }
+.pc-g { display: grid; gap: 2px; }
+.pc-g[hidden] { display: none; }
+.pc-g > b { font-size: 13.5px; font-weight: 600; }
+.pc-sub { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+.pc-o { display: flex; gap: 8px; align-items: flex-start; font-size: 14.5px; line-height: 1.4; padding: 5px 0; font-weight: 400; }
+.pc-o input { margin-top: 2px; flex: none; width: 18px; height: 18px; accent-color: var(--accent); }
+.pc-ns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pc-n { display: grid; gap: 3px; font-size: 13px; color: var(--muted); }
+.pc-n input { width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--ink); }
+.pc-n small { font-size: 11.5px; }
+.pc-g[data-if] .pc-n { max-width: 260px; }
+.pc-res { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 14px; }
+.pc-res ul { margin: 0; padding-left: 18px; line-height: 1.5; }
+.pc-res details { margin-top: 6px; }
+.pc-res summary { cursor: pointer; color: var(--flag); font-weight: 600; font-size: 13px; }
+.pc-in { grid-template-columns: 1fr 1fr; column-gap: 8px; }
+.pc-in > b { grid-column: 1 / -1; }
+.pc-n { align-content: start; }
